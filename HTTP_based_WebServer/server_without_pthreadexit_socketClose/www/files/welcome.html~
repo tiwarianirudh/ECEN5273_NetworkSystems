@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Welcome to my SHS</title>
+</head>
+<style>
+body {
+    background-image: url("images/background.png");
+
+}
+</style>
+<body>
+
+<!-- Main content -->
+<h1>Select from the menu</h1>
+
+<p>Welcome to my Simple HTTP Server
+
+<ul class="navbar">
+  <li><a href="#">Home page</a>
+  <li><a href="#">Image GIF</a>
+  <li><a href="#">Image PNG</a>
+  <li><a href="#">Text File</a>
+</ul>
+
+<img src="welcome.png" alt="Image" style="width:304px;height:228px" align="center">
+
+</body>
+</html>
