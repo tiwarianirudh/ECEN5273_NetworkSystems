@@ -114,7 +114,7 @@ void *client_handler(void* arg){
         printf("%s", buffer);
       }
 
-      else /*(c = strstr(c_pckt->req_url, ".js"))*/{
+      else {
         while(i<NUMBEROFELEMENT){
           if(strstr(filepath, attr.p_struct.file_ext[i])!=NULL){
             //  printf("%d\n", i);
@@ -129,116 +129,6 @@ void *client_handler(void* arg){
         printf("%s\n", buffer);
       }
 
-      // else if(c = strstr(c_pckt->req_url, ".css")){
-      //   while(i<NUMBEROFELEMENT){
-      //     if((c = strstr(attr.p_struct.file_ext[i], ".css"))==NULL){
-      //         i++;
-      //       //  printf("%d\n", i);
-      //         continue;
-      //     }
-      //     else break;
-      //   }
-      //   char str1[64];
-      //   sscanf((attr.p_struct.content_type[i]), "%s", str1);
-      //   printf("%s\n", str1 );
-      //   sprintf(buffer, OKRESPONSE, header, str1, n);
-      //   printf("%s\n", buffer);
-      // }
-      //
-      // else if(c = strstr(c_pckt->req_url, ".png")){
-      //   while(i<NUMBEROFELEMENT){
-      //     if((c = strstr(attr.p_struct.file_ext[i], ".png"))==NULL){
-      //         i++;
-      //       //  printf("%d\n", i);
-      //         continue;
-      //     }
-      //     else break;
-      //   }
-      //   char str1[64];
-      //   sscanf((attr.p_struct.content_type[i]), "%s", str1);
-      //   printf("%s\n", str1 );
-      //   sprintf(buffer, OKRESPONSE, header, str1, n);
-      //   printf("%s\n", buffer);
-      // }
-      // else if(c = strstr(c_pckt->req_url, ".gif")){
-      //   while(i<NUMBEROFELEMENT){
-      //     if((c = strstr(attr.p_struct.file_ext[i], ".gif"))==NULL){
-      //         i++;
-      //       //  printf("%d\n", i);
-      //         continue;
-      //     }
-      //     else break;
-      //   }
-      //   char str1[64];
-      //   sscanf((attr.p_struct.content_type[i]), "%s", str1);
-      //   printf("%s\n", str1 );
-      //   sprintf(buffer, OKRESPONSE, header, str1, n);
-      //   printf("%s\n", buffer);
-      // }
-      //
-      // else if(c = strstr(c_pckt->req_url, ".txt")){
-      //   while(i<NUMBEROFELEMENT){
-      //     if((c = strstr(attr.p_struct.file_ext[i], ".txt"))==NULL){
-      //         i++;
-      //       //  printf("%d\n", i);
-      //         continue;
-      //     }
-      //     else break;
-      //   }
-      //   char str1[64];
-      //   sscanf((attr.p_struct.content_type[i]), "%s", str1);
-      //   printf("%s\n", str1 );
-      //   sprintf(buffer, OKRESPONSE, header, str1, n);
-      //   printf("%s\n", buffer);
-      // }
-      //
-      // else if(c = strstr(c_pckt->req_url, ".htm")){
-      //   while(i<NUMBEROFELEMENT){
-      //     if((c = strstr(attr.p_struct.file_ext[i], ".htm"))==NULL){
-      //         i++;
-      //       //  printf("%d\n", i);
-      //         continue;
-      //     }
-      //     else break;
-      //   }
-      //   char str1[64];
-      //   sscanf((attr.p_struct.content_type[i]), "%s", str1);
-      //   printf("%s\n", str1 );
-      //   sprintf(buffer, OKRESPONSE, header, str1, n);
-      //   printf("%s\n", buffer);
-      // }
-      //
-      // else if(c = strstr(c_pckt->req_url, ".ico")){
-      //   while(i<NUMBEROFELEMENT){
-      //     if((c = strstr(attr.p_struct.file_ext[i], ".ico"))==NULL){
-      //         i++;
-      //       //  printf("%d\n", i);
-      //         continue;
-      //     }
-      //     else break;
-      //   }
-      //   char str1[64];
-      //   sscanf((attr.p_struct.content_type[i]), "%s", str1);
-      //   printf("%s\n", str1 );
-      //   sprintf(buffer, OKRESPONSE, header, str1, n);
-      //   printf("%s\n", buffer);
-      // }
-      //
-      // else if(c = strstr(c_pckt->req_url, ".jpg")){
-      //   while(i<NUMBEROFELEMENT){
-      //     if((c = strstr(attr.p_struct.file_ext[i], ".jpg"))==NULL){
-      //         i++;
-      //       //  printf("%d\n", i);
-      //         continue;
-      //     }
-      //     else break;
-      //   }
-      //   char str1[64];
-      //   sscanf((attr.p_struct.content_type[i]), "%s", str1);
-      //   printf("%s\n", str1 );
-      //   sprintf(buffer, OKRESPONSE, header, str1, n);
-      //   printf("%s\n", buffer);
-      // }
       if(nbytes = write(newsockfd, buffer, strlen(buffer)) < 0){
         printf("Error: Writing to the socket\n");
       }
@@ -247,7 +137,7 @@ void *client_handler(void* arg){
       bzero(buffer, MAXBUFSIZE);
       int read_length = fread(buffer, 1, MAXBUFSIZE, fp);
       //printf("%s\n", buffer );
-      printf("Read Length of file requested:%d\n", read_length );
+      //printf("Read Length of file requested:%d\n", read_length );
       if(nbytes = write(newsockfd, buffer, sizeof(buffer)) < 0){
         printf("Error: Writing to the socket\n");
         fseek(fp, (-1)*sizeof(buffer), SEEK_CUR);
@@ -285,7 +175,7 @@ int parse_file(struct_parse *parse){
       if(c = strstr(line, "Listen")){
         split = strtok(line, "Listen ");
         (*parse).port_num = atoi(split);
-        printf("%d\n", (*parse).port_num );
+        //printf("%d\n", (*parse).port_num );
       }
 
       else if(c = strstr(line, "DocumentRoot")){
@@ -342,7 +232,7 @@ int main(int argc, char* argv[]){
     printf("Error Parsing the Configuration File\n");
     exit(1);
   }
-  printf("%d\n", parse.port_num );
+  //printf("%d\n", parse.port_num );
 
   bzero(&server_addr, sizeof(server_addr));
   server_addr.sin_family = AF_INET;
@@ -352,6 +242,7 @@ int main(int argc, char* argv[]){
   if(bind(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0){
 	   printf("unable to bind socket\n");
   }
+  printf("**********Waiting for New Connection**********\n\n");
   struct_thread.p_struct = parse;
 
   if(listen(sockfd, 1024) < 0){
@@ -364,13 +255,14 @@ int main(int argc, char* argv[]){
       exit(-1);
     }
     else{
+      printf("**********New Connection at Port %d - Socket : %d**********\n\n", parse.port_num, newsockfd);
       struct_thread.thread_id = newsockfd;
       pthread_create(&threads, NULL, client_handler, (void*)&struct_thread);
       if(rc){
         printf("Could not create thread.\n");
         exit(-1);
       }
-      printf("**********************Thread Created: %d*************************\n", thread_num);
+      printf("**********Thread Created: %d**********\n", thread_num);
     }
     thread_num++;
   //  pthread_join(threads, NULL);
