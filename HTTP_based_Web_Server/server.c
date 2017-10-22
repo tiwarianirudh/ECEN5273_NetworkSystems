@@ -18,8 +18,6 @@
 #define MAXBUFSIZE 1024
 #define NUMBEROFELEMENT 64
 #define SIZEOFELEMENTS 64
-#define INDEXRESPONSE "%s 200 Ok\n\rContent-Type: text/html; charset=UTF-8\n\rContent-Length: %d\r"
-#define INDEXRESPONSE2 "\n\n"
 #define OKRESPONSE "%s 200 Ok\n\rContent-Type: %s; charset=UTF-8\n\rContent-Length: %d\n\r\n"
 //void *client_handler(void*);
 //int parse_file(struct_req*);
@@ -42,6 +40,18 @@ typedef struct{
   struct_parse p_struct;
 }struct_attr;
 
+void internalError(int sockfd){
+  int newsockfd = sockfd;
+  char header[MAXBUFSIZE];
+  int nbytes;
+  bzero(header, MAXBUFSIZE);
+  sprintf(header, "HTTP/1.1 500 Internal Server Error: cannot allocate memory\n\r\n\r");
+
+  if(nbytes = write(newsockfd, header, strlen(header)) < 0){
+    printf("Error: Writing to the socket\n");
+  }
+}
+
 void *client_handler(void* arg){
   struct_attr attr = *(struct_attr*) arg;
   int newsockfd = attr.thread_id;
@@ -56,6 +66,7 @@ void *client_handler(void* arg){
   FILE *fp;
   int i=0;
   char* line;
+  char header[MAXBUFSIZE];
 
   //while(1){
     //filepath = strdup(attr.p_struct.doc_root);
@@ -66,87 +77,164 @@ void *client_handler(void* arg){
       pthread_exit(NULL);
     }
     printf("Socket Id: %d\n", newsockfd);
+
+
+  //  internalError(newsockfd);
+
+
     printf("Buffer data with request: %s\n", buffer);
     if((line = strtok(buffer, "\n")) == NULL){
       printf("Error: Parsing the request\n");
+      internalError(newsockfd);
       close(newsockfd);
       pthread_exit(NULL);
     }
     else sscanf(line, "%s %s %s", c_pckt->req_method, c_pckt->req_url, c_pckt->req_version);
-    char header[MAXBUFSIZE];
+
+    if(((strcmp(c_pckt->req_version,"HTTP/1.0")!=0) && (strcmp(c_pckt->req_version,"HTTP/1.1")!=0))){
+      bzero(buffer, MAXBUFSIZE);
+      bzero(header, MAXBUFSIZE);
+      sprintf(header, "HTTP/1.1 400 Bad Request\nContent-Type: text/html; charset=UTF-8\n\r\n\r");
+      sprintf(buffer, "<html><body>400 Bad Request Reason: Invalid HTTP-Version: %s</body></html>", c_pckt->req_version);
+      strcat(header, buffer);
+      printf("%s\n", header );
+      if(nbytes = write(newsockfd, header, strlen(header)) < 0){
+        printf("Error: Writing to the socket\n");
+      }
+      close(newsockfd);
+      pthread_exit(NULL);
+    }
+
     strcpy(header, c_pckt->req_version);
     printf("%s\n", header );
 
-    if(!strcmp(c_pckt->req_url, "/")){
-      strcat(filepath, "/index.html");
-    }
-    else{
-      strcat(filepath, c_pckt->req_url);
-    }
-    printf("%s\n",filepath);
-    if((fp = fopen(filepath, "rb")) == NULL){
-      printf("Error opening file or it does not exist.\n");
-      bzero(buffer, MAXBUFSIZE);
-      strcpy(buffer,"HTTP/1.1 404 Not Found\n\rContent-Type: text/html; charset=UTF-8\n\r\n\r");
-      printf("%s\n", buffer );
-      if(nbytes = write(newsockfd, buffer, sizeof(buffer)) < 0){
-        printf("Error: Writing to the socket\n");
-      }
-      close(newsockfd);
-      pthread_exit(NULL);
-    }
-
-    fseek(fp, 0, SEEK_END);
-    int n = ftell(fp);
-    if(fseek(fp, 0, SEEK_SET) != 0 ) {
-      printf("Error Repositioning the File Pointer to the start\n");
-      close(newsockfd);
-      pthread_exit(NULL);
-    }
     //bzero(filepath, 256);
-    printf("File Length:%d\n", n);
 
     if(!strcmp(c_pckt->req_method, "GET")){
-      if(!strcmp(c_pckt->req_url, "/")){
 
-        sprintf(buffer, INDEXRESPONSE, header, n, INDEXRESPONSE2);
+      if(!(c_pckt->req_url[0] == '/')){
+        bzero(buffer, MAXBUFSIZE);
+        bzero(header, MAXBUFSIZE);
+        sprintf(header, "HTTP/1.1 400 Bad Request\nContent-Type: text/html; charset=UTF-8\n\r\n\r");
+        sprintf(buffer, "<html><body>400 Bad Request Reason: Invalid URL: %s</body></html>", c_pckt->req_url);
+        strcat(header, buffer);
+        printf("%s\n", header );
+        if(nbytes = write(newsockfd, header, strlen(header)) < 0){
+          printf("Error: Writing to the socket\n");
+        }
+        close(newsockfd);
+        pthread_exit(NULL);
 
-        printf("%s", buffer);
       }
 
-      else {
-        while(i<NUMBEROFELEMENT){
-          if(strstr(filepath, attr.p_struct.file_ext[i])!=NULL){
-            //  printf("%d\n", i);
+
+
+
+      if(!strcmp(c_pckt->req_url, "/")){
+        strcat(filepath, "/index.html");
+      }
+      else{
+        strcat(filepath, c_pckt->req_url);
+      }
+      printf("%s\n",filepath);
+
+      if((fp = fopen(filepath, "rb")) == NULL){
+        //printf("Error opening file or it does not exist.\n");
+        bzero(buffer, MAXBUFSIZE);
+        bzero(header, MAXBUFSIZE);
+        sprintf(header,"%s 404 Not Found\nContent-Type: text/html; charset=UTF-8\n\r\n\r", c_pckt->req_version);
+        sprintf(buffer, "<html><body><H3>404 Not Found Reason URL does not exist : %s </H3></body></html>", c_pckt->req_url);
+        strcat(header, buffer);
+        printf("%s\n", header );
+        if(nbytes = write(newsockfd, header, strlen(header)) < 0){
+          printf("Error: Writing to the socket\n");
+        }
+        close(newsockfd);
+        pthread_exit(NULL);
+      }
+
+      else{
+        fseek(fp, 0, SEEK_END);
+        int n = ftell(fp);
+        if(fseek(fp, 0, SEEK_SET) != 0 ) {
+        printf("Error Repositioning the File Pointer to the start\n");
+        internalError(newsockfd);
+        close(newsockfd);
+        pthread_exit(NULL);
+        }
+        printf("Requested File Length:%d\n", n);
+
+
+
+        if(!strcmp(c_pckt->req_url, "/")){
+
+          sprintf(buffer, "%s 200 Ok\nContent-Type: text/html; charset=UTF-8\n", header, "Content-Length: %d", n, "\n\n");
+          printf("%s", buffer);
+        }
+
+        else {
+          while(i<NUMBEROFELEMENT){
+            if(strstr(filepath, attr.p_struct.file_ext[i])!=NULL){
+              //  printf("%d\n", i);
+              break;
+            }
+          i++;
+          }
+          char str1[64];
+          sscanf((attr.p_struct.content_type[i]), "%s", str1);
+          printf("%s\n", str1 );
+          sprintf(buffer, OKRESPONSE, header, str1, n);
+          printf("%s\n", buffer);
+        }
+
+        if(nbytes = write(newsockfd, buffer, strlen(buffer)) < 0){
+          printf("Error: Writing to the socket\n");
+        }
+        do{
+          bzero(buffer, MAXBUFSIZE);
+          int read_length = fread(buffer, 1, MAXBUFSIZE, fp);
+          //printf("%s\n", buffer );
+          //printf("Read Length of file requested:%d\n", read_length );
+          if(nbytes = write(newsockfd, buffer, sizeof(buffer)) < 0){
+            printf("Error: Writing to the socket\n");
+            fseek(fp, (-1)*sizeof(buffer), SEEK_CUR);
+          }
+          if(read_length != MAXBUFSIZE){
             break;
           }
-        i++;
-        }
-        char str1[64];
-        sscanf((attr.p_struct.content_type[i]), "%s", str1);
-        printf("%s\n", str1 );
-        sprintf(buffer, OKRESPONSE, header, str1, n);
-        printf("%s\n", buffer);
-      }
-
-      if(nbytes = write(newsockfd, buffer, strlen(buffer)) < 0){
-        printf("Error: Writing to the socket\n");
+        }while(1);
+        fclose(fp);
       }
     }
-    do{
+    else if((strcmp(c_pckt->req_method, "POST")==0) || (strcmp(c_pckt->req_method, "DELETE")==0) || (strcmp(c_pckt->req_method, "HEAD")==0)
+            || (strcmp(c_pckt->req_method, "OPTIONS")==0)){
       bzero(buffer, MAXBUFSIZE);
-      int read_length = fread(buffer, 1, MAXBUFSIZE, fp);
-      //printf("%s\n", buffer );
-      //printf("Read Length of file requested:%d\n", read_length );
-      if(nbytes = write(newsockfd, buffer, sizeof(buffer)) < 0){
+      bzero(header, MAXBUFSIZE);
+      sprintf(header,"%s 501 Not Implemented\nContent-Type: text/html; charset=UTF-8\n\r\n\r", c_pckt->req_version);
+      sprintf(buffer, "<html><body><H3>501 Not Implemented %s : %s </H3></body></html>", c_pckt->req_method, c_pckt->req_url);
+      strcat(header, buffer);
+      printf("%s\n", header );
+      if(nbytes = write(newsockfd, header, strlen(header)) < 0){
         printf("Error: Writing to the socket\n");
-        fseek(fp, (-1)*sizeof(buffer), SEEK_CUR);
       }
-      if(read_length != MAXBUFSIZE){
-        break;
+      close(newsockfd);
+      pthread_exit(NULL);
+    }
+
+    else{
+      bzero(buffer, MAXBUFSIZE);
+      bzero(header, MAXBUFSIZE);
+      sprintf(header, "HTTP/1.1 400 Bad Request\nContent-Type: text/html; charset=UTF-8\n\r\n\r");
+      sprintf(buffer, "<html><body>400 Bad Request Reason: Invalid Method: %s</body></html>", c_pckt->req_method);
+      strcat(header, buffer);
+      printf("%s\n", header );
+      if(nbytes = write(newsockfd, header, strlen(header)) < 0){
+        printf("Error: Writing to the socket\n");
       }
-    }while(1);
-    fclose(fp);
+      close(newsockfd);
+      pthread_exit(NULL);
+    }
+
 
     //else printf("Out of Main if\n" );
   //}
@@ -241,6 +329,7 @@ int main(int argc, char* argv[]){
 
   if(bind(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0){
 	   printf("unable to bind socket\n");
+     exit(-1);
   }
   printf("**********Waiting for New Connection**********\n\n");
   struct_thread.p_struct = parse;
