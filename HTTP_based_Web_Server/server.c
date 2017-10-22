@@ -16,7 +16,7 @@
 #include <pthread.h>
 #include <sched.h>
 #define MAXBUFSIZE 1024
-#define NUMBEROFELEMENT 9
+#define NUMBEROFELEMENT 64
 #define SIZEOFELEMENTS 64
 #define INDEXRESPONSE "%s 200 Ok\n\rContent-Type: text/html; charset=UTF-8\n\rContent-Length: %d\r"
 #define INDEXRESPONSE2 "\n\n"
@@ -114,14 +114,13 @@ void *client_handler(void* arg){
         printf("%s", buffer);
       }
 
-      else if(c = strstr(c_pckt->req_url, ".js")){
+      else /*(c = strstr(c_pckt->req_url, ".js"))*/{
         while(i<NUMBEROFELEMENT){
-          if((c = strstr(attr.p_struct.file_ext[i], ".js"))==NULL){
-              i++;
+          if(strstr(filepath, attr.p_struct.file_ext[i])!=NULL){
             //  printf("%d\n", i);
-              continue;
+            break;
           }
-          else break;
+        i++;
         }
         char str1[64];
         sscanf((attr.p_struct.content_type[i]), "%s", str1);
@@ -130,116 +129,116 @@ void *client_handler(void* arg){
         printf("%s\n", buffer);
       }
 
-      else if(c = strstr(c_pckt->req_url, ".css")){
-        while(i<NUMBEROFELEMENT){
-          if((c = strstr(attr.p_struct.file_ext[i], ".css"))==NULL){
-              i++;
-            //  printf("%d\n", i);
-              continue;
-          }
-          else break;
-        }
-        char str1[64];
-        sscanf((attr.p_struct.content_type[i]), "%s", str1);
-        printf("%s\n", str1 );
-        sprintf(buffer, OKRESPONSE, header, str1, n);
-        printf("%s\n", buffer);
-      }
-
-      else if(c = strstr(c_pckt->req_url, ".png")){
-        while(i<NUMBEROFELEMENT){
-          if((c = strstr(attr.p_struct.file_ext[i], ".png"))==NULL){
-              i++;
-            //  printf("%d\n", i);
-              continue;
-          }
-          else break;
-        }
-        char str1[64];
-        sscanf((attr.p_struct.content_type[i]), "%s", str1);
-        printf("%s\n", str1 );
-        sprintf(buffer, OKRESPONSE, header, str1, n);
-        printf("%s\n", buffer);
-      }
-      else if(c = strstr(c_pckt->req_url, ".gif")){
-        while(i<NUMBEROFELEMENT){
-          if((c = strstr(attr.p_struct.file_ext[i], ".gif"))==NULL){
-              i++;
-            //  printf("%d\n", i);
-              continue;
-          }
-          else break;
-        }
-        char str1[64];
-        sscanf((attr.p_struct.content_type[i]), "%s", str1);
-        printf("%s\n", str1 );
-        sprintf(buffer, OKRESPONSE, header, str1, n);
-        printf("%s\n", buffer);
-      }
-
-      else if(c = strstr(c_pckt->req_url, ".txt")){
-        while(i<NUMBEROFELEMENT){
-          if((c = strstr(attr.p_struct.file_ext[i], ".txt"))==NULL){
-              i++;
-            //  printf("%d\n", i);
-              continue;
-          }
-          else break;
-        }
-        char str1[64];
-        sscanf((attr.p_struct.content_type[i]), "%s", str1);
-        printf("%s\n", str1 );
-        sprintf(buffer, OKRESPONSE, header, str1, n);
-        printf("%s\n", buffer);
-      }
-
-      else if(c = strstr(c_pckt->req_url, ".htm")){
-        while(i<NUMBEROFELEMENT){
-          if((c = strstr(attr.p_struct.file_ext[i], ".htm"))==NULL){
-              i++;
-            //  printf("%d\n", i);
-              continue;
-          }
-          else break;
-        }
-        char str1[64];
-        sscanf((attr.p_struct.content_type[i]), "%s", str1);
-        printf("%s\n", str1 );
-        sprintf(buffer, OKRESPONSE, header, str1, n);
-        printf("%s\n", buffer);
-      }
-
-      else if(c = strstr(c_pckt->req_url, ".ico")){
-        while(i<NUMBEROFELEMENT){
-          if((c = strstr(attr.p_struct.file_ext[i], ".ico"))==NULL){
-              i++;
-            //  printf("%d\n", i);
-              continue;
-          }
-          else break;
-        }
-        char str1[64];
-        sscanf((attr.p_struct.content_type[i]), "%s", str1);
-        printf("%s\n", str1 );
-        sprintf(buffer, OKRESPONSE, header, str1, n);
-        printf("%s\n", buffer);
-      }
-
-      else if(c = strstr(c_pckt->req_url, ".jpg")){
-        while(i<NUMBEROFELEMENT){
-          if((c = strstr(attr.p_struct.file_ext[i], ".jpg"))==NULL){
-              i++;
-            //  printf("%d\n", i);
-              continue;
-          }
-          else break;
-        }
-        char str1[64];
-        sscanf((attr.p_struct.content_type[i]), "%s", str1);
-        printf("%s\n", str1 );
-        sprintf(buffer, OKRESPONSE, header, str1, n);
-        printf("%s\n", buffer);
-      }
+      // else if(c = strstr(c_pckt->req_url, ".css")){
+      //   while(i<NUMBEROFELEMENT){
+      //     if((c = strstr(attr.p_struct.file_ext[i], ".css"))==NULL){
+      //         i++;
+      //       //  printf("%d\n", i);
+      //         continue;
+      //     }
+      //     else break;
+      //   }
+      //   char str1[64];
+      //   sscanf((attr.p_struct.content_type[i]), "%s", str1);
+      //   printf("%s\n", str1 );
+      //   sprintf(buffer, OKRESPONSE, header, str1, n);
+      //   printf("%s\n", buffer);
+      // }
+      //
+      // else if(c = strstr(c_pckt->req_url, ".png")){
+      //   while(i<NUMBEROFELEMENT){
+      //     if((c = strstr(attr.p_struct.file_ext[i], ".png"))==NULL){
+      //         i++;
+      //       //  printf("%d\n", i);
+      //         continue;
+      //     }
+      //     else break;
+      //   }
+      //   char str1[64];
+      //   sscanf((attr.p_struct.content_type[i]), "%s", str1);
+      //   printf("%s\n", str1 );
+      //   sprintf(buffer, OKRESPONSE, header, str1, n);
+      //   printf("%s\n", buffer);
+      // }
+      // else if(c = strstr(c_pckt->req_url, ".gif")){
+      //   while(i<NUMBEROFELEMENT){
+      //     if((c = strstr(attr.p_struct.file_ext[i], ".gif"))==NULL){
+      //         i++;
+      //       //  printf("%d\n", i);
+      //         continue;
+      //     }
+      //     else break;
+      //   }
+      //   char str1[64];
+      //   sscanf((attr.p_struct.content_type[i]), "%s", str1);
+      //   printf("%s\n", str1 );
+      //   sprintf(buffer, OKRESPONSE, header, str1, n);
+      //   printf("%s\n", buffer);
+      // }
+      //
+      // else if(c = strstr(c_pckt->req_url, ".txt")){
+      //   while(i<NUMBEROFELEMENT){
+      //     if((c = strstr(attr.p_struct.file_ext[i], ".txt"))==NULL){
+      //         i++;
+      //       //  printf("%d\n", i);
+      //         continue;
+      //     }
+      //     else break;
+      //   }
+      //   char str1[64];
+      //   sscanf((attr.p_struct.content_type[i]), "%s", str1);
+      //   printf("%s\n", str1 );
+      //   sprintf(buffer, OKRESPONSE, header, str1, n);
+      //   printf("%s\n", buffer);
+      // }
+      //
+      // else if(c = strstr(c_pckt->req_url, ".htm")){
+      //   while(i<NUMBEROFELEMENT){
+      //     if((c = strstr(attr.p_struct.file_ext[i], ".htm"))==NULL){
+      //         i++;
+      //       //  printf("%d\n", i);
+      //         continue;
+      //     }
+      //     else break;
+      //   }
+      //   char str1[64];
+      //   sscanf((attr.p_struct.content_type[i]), "%s", str1);
+      //   printf("%s\n", str1 );
+      //   sprintf(buffer, OKRESPONSE, header, str1, n);
+      //   printf("%s\n", buffer);
+      // }
+      //
+      // else if(c = strstr(c_pckt->req_url, ".ico")){
+      //   while(i<NUMBEROFELEMENT){
+      //     if((c = strstr(attr.p_struct.file_ext[i], ".ico"))==NULL){
+      //         i++;
+      //       //  printf("%d\n", i);
+      //         continue;
+      //     }
+      //     else break;
+      //   }
+      //   char str1[64];
+      //   sscanf((attr.p_struct.content_type[i]), "%s", str1);
+      //   printf("%s\n", str1 );
+      //   sprintf(buffer, OKRESPONSE, header, str1, n);
+      //   printf("%s\n", buffer);
+      // }
+      //
+      // else if(c = strstr(c_pckt->req_url, ".jpg")){
+      //   while(i<NUMBEROFELEMENT){
+      //     if((c = strstr(attr.p_struct.file_ext[i], ".jpg"))==NULL){
+      //         i++;
+      //       //  printf("%d\n", i);
+      //         continue;
+      //     }
+      //     else break;
+      //   }
+      //   char str1[64];
+      //   sscanf((attr.p_struct.content_type[i]), "%s", str1);
+      //   printf("%s\n", str1 );
+      //   sprintf(buffer, OKRESPONSE, header, str1, n);
+      //   printf("%s\n", buffer);
+      // }
       if(nbytes = write(newsockfd, buffer, strlen(buffer)) < 0){
         printf("Error: Writing to the socket\n");
       }
