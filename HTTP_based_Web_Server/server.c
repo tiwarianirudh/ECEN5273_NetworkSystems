@@ -19,6 +19,7 @@
 #define NUMBEROFELEMENT 9
 #define SIZEOFELEMENTS 64
 #define INDEXRESPONSE "%s 200 Ok\n\rContent-Type: text/html; charset=UTF-8\n\rContent-Length: %d\r"
+#define INDEXRESPONSE2 "\n\n"
 #define OKRESPONSE "%s 200 Ok\n\rContent-Type: %s; charset=UTF-8\n\rContent-Length: %d\n\r\n"
 //void *client_handler(void*);
 //int parse_file(struct_req*);
@@ -54,18 +55,24 @@ void *client_handler(void* arg){
   struct_req* c_pckt = malloc(sizeof(struct_req));
   FILE *fp;
   int i=0;
+  char* line;
 
   //while(1){
     //filepath = strdup(attr.p_struct.doc_root);
     bzero(buffer, MAXBUFSIZE);
     if((nbytes = read(newsockfd, buffer, sizeof(buffer))) < 0){
       printf("Error: Reading from the socket\n");
+      close(newsockfd);
+      pthread_exit(NULL);
     }
     printf("Socket Id: %d\n", newsockfd);
-    char* line = strtok(buffer, "\n");
-    printf("%s\n", line );
-
-    sscanf(line, "%s %s %s", c_pckt->req_method, c_pckt->req_url, c_pckt->req_version);
+    printf("Buffer data with request: %s\n", buffer);
+    if((line = strtok(buffer, "\n")) == NULL){
+      printf("Error: Parsing the request\n");
+      close(newsockfd);
+      pthread_exit(NULL);
+    }
+    else sscanf(line, "%s %s %s", c_pckt->req_method, c_pckt->req_url, c_pckt->req_version);
     char header[MAXBUFSIZE];
     strcpy(header, c_pckt->req_version);
     printf("%s\n", header );
@@ -78,9 +85,9 @@ void *client_handler(void* arg){
     }
     printf("%s\n",filepath);
     if((fp = fopen(filepath, "rb")) == NULL){
-      printf("Error opening file\n");
+      printf("Error opening file or it does not exist.\n");
       bzero(buffer, MAXBUFSIZE);
-      strcpy(buffer,"HTTP/1.1 404 Not Found\n\rContent-Type: text/html; charset=UTF-8\n\r");
+      strcpy(buffer,"HTTP/1.1 404 Not Found\n\rContent-Type: text/html; charset=UTF-8\n\r\n\r");
       printf("%s\n", buffer );
       if(nbytes = write(newsockfd, buffer, sizeof(buffer)) < 0){
         printf("Error: Writing to the socket\n");
@@ -102,7 +109,7 @@ void *client_handler(void* arg){
     if(!strcmp(c_pckt->req_method, "GET")){
       if(!strcmp(c_pckt->req_url, "/")){
 
-        sprintf(buffer, INDEXRESPONSE, header, n);
+        sprintf(buffer, INDEXRESPONSE, header, n, INDEXRESPONSE2);
 
         printf("%s", buffer);
       }
@@ -313,6 +320,8 @@ int main(int argc, char* argv[]){
   struct sockaddr_in server_addr, client_addr;
   int length_client = sizeof(client_addr);
   int newsockfd;
+  int rc;
+  int thread_num=1;
   pthread_attr_t attr;
   pthread_attr_init(&attr);
   pthread_t threads;
@@ -345,21 +354,26 @@ int main(int argc, char* argv[]){
 	   printf("unable to bind socket\n");
   }
   struct_thread.p_struct = parse;
-  listen(sockfd, 32 );
+
+  if(listen(sockfd, 1024) < 0){
+    printf("*******Error in Listen*******\n");
+  }
 
   while(1){
     if((newsockfd = accept(sockfd, (struct sockaddr *)&client_addr, &length_client)) < 0){
       printf("Error in accept. \n");
-      exit(1);
+      exit(-1);
     }
     else{
       struct_thread.thread_id = newsockfd;
-      if(pthread_create(&threads, NULL, client_handler, (void*)&struct_thread) < 0){
+      pthread_create(&threads, NULL, client_handler, (void*)&struct_thread);
+      if(rc){
         printf("Could not create thread.\n");
-        exit(1);
+        exit(-1);
       }
-      printf("Thread Created\n");
+      printf("**********************Thread Created: %d*************************\n", thread_num);
     }
+    thread_num++;
   //  pthread_join(threads, NULL);
   }
   //memset((*parse), 0, sizeof(struct_parse));
