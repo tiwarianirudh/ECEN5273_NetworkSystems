@@ -1,3 +1,9 @@
+//Author: Anirudh Tiwari
+//Programming Assignment 2
+// Date October 22, 2017
+
+
+//Includes
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -15,32 +21,47 @@
 #include <dirent.h>
 #include <pthread.h>
 #include <sched.h>
+#include <time.h>
+#include <sys/time.h>
+#include <sys/wait.h>
+
+//MACROS
 #define MAXBUFSIZE 1024
 #define NUMBEROFELEMENT 64
 #define SIZEOFELEMENTS 64
+#define KEEPALIVE 1
 #define OKRESPONSE "%s 200 Ok\n\rContent-Type: %s; charset=UTF-8\n\rContent-Length: %d\n\r\n"
 #define OKRESPONSEPOST "%s 200 Ok\n\rContent-Type: %s; charset=UTF-8\n\rContent-Length: %d\n\r\n<html><body><pre><h1>POSTDATA </h1></pre>"
 //void *client_handler(void*);
 //int parse_file(struct_req*);
 
+//Declaring Struct for keep-alive
+struct timeval tv;
+
+//Structure for The client request parameters
 typedef struct{
   char req_method[16];
   char req_url[256];
   char req_version[16];
 }struct_req;
 
+
+//Structure for the parsed file paramaeters
 typedef struct{
   int port_num;
   char doc_root[256];
   char content_type[NUMBEROFELEMENT][SIZEOFELEMENTS];
   char file_ext[NUMBEROFELEMENT][SIZEOFELEMENTS];
+  int timeout;
 }struct_parse;
 
+//struct to be passed to the client handler for multiple requests
 typedef struct{
   int thread_id;
   struct_parse p_struct;
 }struct_attr;
 
+//Internal Error 500 Function
 void internalError(int sockfd){
   int newsockfd = sockfd;
   char header[MAXBUFSIZE];
@@ -53,12 +74,14 @@ void internalError(int sockfd){
   }
 }
 
+//client handler for multiple requests
 void *client_handler(void* arg){
   struct_attr attr = *(struct_attr*) arg;
   int newsockfd = attr.thread_id;
   struct sockaddr_in server_addr, client_addr;
   int nbytes;
   char buffer[MAXBUFSIZE];
+  char buffer_pipeline[MAXBUFSIZE];
   char *c;
   char filepath[MAXBUFSIZE];
   strcpy(filepath, attr.p_struct.doc_root);
@@ -71,27 +94,29 @@ void *client_handler(void* arg){
 
   //while(1){
     //filepath = strdup(attr.p_struct.doc_root);
+
+
     bzero(buffer, MAXBUFSIZE);
     if((nbytes = read(newsockfd, buffer, sizeof(buffer))) < 0){
       printf("Error: Reading from the socket\n");
-      close(newsockfd);
+      //close(newsockfd);
       pthread_exit(NULL);
     }
     printf("Socket Id: %d\n", newsockfd);
 
-
-  //  internalError(newsockfd);
-
+    strncpy(buffer_pipeline, buffer, strlen(buffer));
 
     printf("Buffer data with request: %s\n", buffer);
     if((line = strtok(buffer, "\n")) == NULL){
       printf("Error: Parsing the request\n");
-      internalError(newsockfd);
+    //  internalError(newsockfd);
       close(newsockfd);
       pthread_exit(NULL);
     }
     else sscanf(line, "%s %s %s", c_pckt->req_method, c_pckt->req_url, c_pckt->req_version);
 
+
+    /***** Check for 400 INVALID HTTP VERSION *****/
     if(((strcmp(c_pckt->req_version,"HTTP/1.0")!=0) && (strcmp(c_pckt->req_version,"HTTP/1.1")!=0))){
       bzero(buffer, MAXBUFSIZE);
       bzero(header, MAXBUFSIZE);
@@ -109,10 +134,10 @@ void *client_handler(void* arg){
     strcpy(header, c_pckt->req_version);
     printf("%s\n", header );
 
-    //bzero(filepath, 256);
-
+    /*****Check for GET Method *****/
     if(!strcmp(c_pckt->req_method, "GET")){
 
+      /*****Check for 400 ERROR for INVALID URL *****/
       if(!(c_pckt->req_url[0] == '/')){
         bzero(buffer, MAXBUFSIZE);
         bzero(header, MAXBUFSIZE);
@@ -139,6 +164,8 @@ void *client_handler(void* arg){
       }
       printf("%s\n",filepath);
 
+
+      /***** Check for 404 Error: File not found *****/
       if((fp = fopen(filepath, "rb")) == NULL){
         //printf("Error opening file or it does not exist.\n");
         bzero(buffer, MAXBUFSIZE);
@@ -173,6 +200,7 @@ void *client_handler(void* arg){
           printf("%s", buffer);
         }
 
+        /***** Extracting the index from the parsed file buffer for the requested file *****/
         else {
           while(i<NUMBEROFELEMENT){
             if(strstr(filepath, attr.p_struct.file_ext[i])!=NULL){
@@ -191,6 +219,8 @@ void *client_handler(void* arg){
         if(nbytes = write(newsockfd, buffer, strlen(buffer)) < 0){
           printf("Error: Writing to the socket\n");
         }
+
+        /*****Write file on the socket *****/
         do{
           bzero(buffer, MAXBUFSIZE);
           int read_length = fread(buffer, 1, MAXBUFSIZE, fp);
@@ -208,6 +238,7 @@ void *client_handler(void* arg){
       }
     }
 
+    /***** Check for POST Method *****/
     else if(!strcmp(c_pckt->req_method, "POST")){
       if(!(c_pckt->req_url[0] == '/')){
         bzero(buffer, MAXBUFSIZE);
@@ -219,7 +250,7 @@ void *client_handler(void* arg){
         if(nbytes = write(newsockfd, header, strlen(header)) < 0){
           printf("Error: Writing to the socket\n");
         }
-        close(newsockfd);
+    //    close(newsockfd);
         pthread_exit(NULL);
 
       }
@@ -232,7 +263,7 @@ void *client_handler(void* arg){
         strcat(filepath, c_pckt->req_url);
       }
       printf("%s\n",filepath);
-
+      /*****Check for 404: Not Found error in POST *****/
       if((fp = fopen(filepath, "rb")) == NULL){
         //printf("Error opening file or it does not exist.\n");
         bzero(buffer, MAXBUFSIZE);
@@ -244,7 +275,7 @@ void *client_handler(void* arg){
         if(nbytes = write(newsockfd, header, strlen(header)) < 0){
           printf("Error: Writing to the socket\n");
         }
-        close(newsockfd);
+        //close(newsockfd);
         pthread_exit(NULL);
       }
 
@@ -254,7 +285,7 @@ void *client_handler(void* arg){
         if(fseek(fp, 0, SEEK_SET) != 0 ) {
         printf("Error Repositioning the File Pointer to the start\n");
         internalError(newsockfd);
-        close(newsockfd);
+      //  close(newsockfd);
         pthread_exit(NULL);
         }
         printf("Requested File Length:%d\n", n);
@@ -266,7 +297,7 @@ void *client_handler(void* arg){
           sprintf(buffer, "%s 200 Ok\nContent-Type: text/html; charset=UTF-8\n", header, "Content-Length: %d", n, "\n\n");
           printf("%s", buffer);
         }
-
+        /***** Extracting index of the requested file from the parsed file data *****/
         else {
           while(i<NUMBEROFELEMENT){
             if(strstr(filepath, attr.p_struct.file_ext[i])!=NULL){
@@ -285,6 +316,8 @@ void *client_handler(void* arg){
         if(nbytes = write(newsockfd, buffer, strlen(buffer)) < 0){
           printf("Error: Writing to the socket\n");
         }
+
+        /***** Writing data to the socket*****/
         do{
           bzero(buffer, MAXBUFSIZE);
           int read_length = fread(buffer, 1, MAXBUFSIZE, fp);
@@ -300,9 +333,9 @@ void *client_handler(void* arg){
         }while(1);
         fclose(fp);
       }
-    }  
+    }
 
-
+    /***** Checking for Other not Implemented Methods: 501 ERROR*****/
     else if(/*(strcmp(c_pckt->req_method, "POST")==0) || */(strcmp(c_pckt->req_method, "DELETE")==0) || (strcmp(c_pckt->req_method, "HEAD")==0)
             || (strcmp(c_pckt->req_method, "OPTIONS")==0)){
       bzero(buffer, MAXBUFSIZE);
@@ -318,6 +351,7 @@ void *client_handler(void* arg){
       pthread_exit(NULL);
     }
 
+    /*****Error check for Method not implemented: 400 BAD REQUEST *****/
     else{
       bzero(buffer, MAXBUFSIZE);
       bzero(header, MAXBUFSIZE);
@@ -333,14 +367,73 @@ void *client_handler(void* arg){
     }
 
 
+    /***** Keep-Alive request fulfillment*****/
+    if(KEEPALIVE==1){
+      char p_line[MAXBUFSIZE];
+      char *line;
+      int n = 0;
+      int rc = 0;
+
+      line = strtok(buffer_pipeline, "\n");
+      while(line != NULL){
+        if(strstr(line, "Connection") != NULL){
+          bzero(p_line, MAXBUFSIZE);
+          sprintf(p_line, "%s", line+12);
+        }
+        printf("***************************************************************************************%s\n", p_line);
+        line = strtok(NULL, "\n");
+      }
+      printf("KEEPALIVE: %s\n", p_line );
+
+      if(strstr(p_line, "keep-alive") != NULL){
+
+
+        fd_set fd;
+        FD_ZERO(&fd);
+        FD_SET(newsockfd, &fd);
+        n = newsockfd + 1;
+
+        printf("****************Timer Starts Here***********\n");
+        tv.tv_sec = attr.p_struct.timeout;
+        tv.tv_usec = 0;
+
+        rc = select(n, &fd, NULL, NULL, &tv);
+        if(rc == -1){
+          printf("Error in Select Call\n");
+          close(newsockfd);
+          pthread_exit(NULL);
+        }
+        else if(rc == 0){
+          printf("****************Timed OUT\n");
+          close(newsockfd);
+          pthread_exit(NULL);
+        }
+        else{
+          printf("****************New Request within timeout\n");
+          if(FD_ISSET(newsockfd, &fd)){
+            pthread_t threads;
+            printf("****************In the new thread within time out\n");
+
+          //  pthread_create(&threads, NULL, client_handler, arg);
+           client_handler(arg);
+          }
+        }
+
+      }
+    }
+
+
+
     //else printf("Out of Main if\n" );
   //}
   //shutdown(newsockfd, 0);
-  close(newsockfd);
-  pthread_exit(NULL);
+  //close(newsockfd);
+  //pthread_exit(NULL);
 //  memset(c_pckt, 0, sizeof(struct_req));
 }
 
+
+/***** Function for file parsing*****/
 int parse_file(struct_parse *parse){
   FILE *fp;
   char line[MAXBUFSIZE];
@@ -379,6 +472,11 @@ int parse_file(struct_parse *parse){
         //printf("Content Type: %s \tFile Ext: %s \n",(*parse).content_type[entry], (*parse).file_ext[entry]);
         entry++;
       }
+
+      else if(c = strstr(line, "keep-alive")){
+        (*parse).timeout = atoi(line + 10);
+        printf("************************Timeout:%d\n", (*parse).timeout);
+      }
     }
     //printf("Content Type: %s %lu \tFile Ext: %s %lu\n",(*parse).content_type, strlen((*parse).content_type), (*parse).file_ext, strlen((*parse).file_ext));
 
@@ -386,6 +484,7 @@ int parse_file(struct_parse *parse){
   }
 }
 
+/*****Main Function *****/
 int main(int argc, char* argv[]){
   int sockfd;
   int parse_status;
@@ -408,6 +507,7 @@ int main(int argc, char* argv[]){
   //   exit(1);
   // }
 
+/***** Creating the socket*****/
   if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0){
     printf("Error creating socket \n");
   }
@@ -424,18 +524,20 @@ int main(int argc, char* argv[]){
   server_addr.sin_port = htons((parse.port_num));
   server_addr.sin_addr.s_addr = INADDR_ANY;
 
+/*****binding the socket *****/
   if(bind(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0){
 	   printf("unable to bind socket\n");
      exit(-1);
   }
   printf("**********Waiting for New Connection**********\n\n");
   struct_thread.p_struct = parse;
-
+/*****Waiting for new connections *****/
   if(listen(sockfd, 1024) < 0){
     printf("*******Error in Listen*******\n");
   }
 
   while(1){
+    /***** Accepting new functions*****/
     if((newsockfd = accept(sockfd, (struct sockaddr *)&client_addr, &length_client)) < 0){
       printf("Error in accept. \n");
       exit(-1);
@@ -443,7 +545,7 @@ int main(int argc, char* argv[]){
     else{
       printf("**********New Connection at Port %d - Socket : %d**********\n\n", parse.port_num, newsockfd);
       struct_thread.thread_id = newsockfd;
-      pthread_create(&threads, NULL, client_handler, (void*)&struct_thread);
+      rc = pthread_create(&threads, NULL, client_handler, (void*)&struct_thread);
       if(rc){
         printf("Could not create thread.\n");
         exit(-1);
