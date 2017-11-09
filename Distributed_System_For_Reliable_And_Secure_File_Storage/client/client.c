@@ -109,7 +109,7 @@ Code by: https://stackoverflow.com/questions/10324611/how-to-calculate-the-md5-h
 char* MD5sum(char *filename){
   unsigned char hash_hex[MD5_DIGEST_LENGTH];
   int i;
-  char *md5string = malloc(sizeof(char)*256);
+  char *md5string =(char*) malloc(sizeof(char)*256);
   FILE *fp = fopen(filename, "rb");
   MD5_CTX mdContext;
   int nbytes;
@@ -136,7 +136,7 @@ char* MD5sum(char *filename){
 }
 
 int* intMD5sum(char * hash_value){
-  int *hash_int = malloc(sizeof(int));
+  int *hash_int = (int*)malloc(sizeof(int));
   *hash_int = strtol(hash_value+31, NULL, 16);
   printf("Integer Hash: %d\n", *hash_int );
   return (int *)hash_int;
@@ -147,7 +147,7 @@ int* intMD5sum(char * hash_value){
 int main(int argc, char * argv[]){
   int parse_status;
   struct_parse parse;
-  struct_authenticate *auth = malloc(sizeof(struct_authenticate));
+  struct_authenticate *auth = (struct_authenticate*)malloc(sizeof(struct_authenticate));
   char command[32];
   char *cname;
   char *filename;
@@ -155,7 +155,7 @@ int main(int argc, char * argv[]){
   int sockfd[4];
   struct sockaddr_in server_addr, client_addr;
   int nbytes;
-
+  char buffer[MAXBUFSIZE];
   int x; //Modulo4 value of hash_int
 
   if (argc != 2)
@@ -218,7 +218,7 @@ int main(int argc, char * argv[]){
       printf("%s\n", (parse).dfs_ip[i]);
     	if(connect(sockfd[i],(struct sockaddr *) &server_addr, sizeof(server_addr)) < 0)
     	{
-        perror("Error: ");
+        perror("Error: \n");
         printf("Error in Connecting to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
         continue;
     	}
@@ -227,7 +227,16 @@ int main(int argc, char * argv[]){
         printf("%d\n", nbytes);
         printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
       }
-printf("Nbytes: %d\n", nbytes);
+      printf("Nbytes Sent: %d\n", nbytes);
+      bzero(buffer, MAXBUFSIZE);
+      nbytes = 0;
+      if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
+        perror("Error: \n");
+      }
+      //for(int i=0; i<entry;i++){
+      else printf("%s\n", buffer);
+      //}
+
     }
 
     FILE *fp;

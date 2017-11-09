@@ -24,8 +24,6 @@
 #include <dirent.h>
 #define MAXBUFSIZE 1024
 
-int entry=0;
-
 typedef struct{
   char username[4][64];
   char password[4][64];
@@ -38,7 +36,10 @@ typedef struct{
   char filename[32];
 }struct_authenticate;
 
-int parse_file(struct_parse *parse, char* conf){
+int parse_file(struct_parse *parse, char* conf, int* entry);
+
+
+int parse_file(struct_parse *parse, char* conf, int* entry){
   FILE *fp;
   char line[MAXBUFSIZE];
 
@@ -49,11 +50,12 @@ int parse_file(struct_parse *parse, char* conf){
   }
   else{
     while(fgets(line, sizeof(line), fp) > 0){
-        sscanf(line, "%s %s", (*parse).username[entry], (*parse).password[entry]);
+        sscanf(line, "%s %s", (*parse).username[*entry], (*parse).password[*entry]);
         printf("******From Conf File******\n");
-        printf("Username is: %s\n", (*parse).username[entry]);
-        printf("The password is: %s\n", (*parse).password[entry]);
-        entry++;
+        printf("Username is: %s", (*parse).username[*entry]);
+        printf("The password is: %s\n", (*parse).password[*entry]);
+        (*entry)++;
+        //printf("entry in parse%d\n", entry );
     }
     return 0;
   }
@@ -62,12 +64,15 @@ int parse_file(struct_parse *parse, char* conf){
 int main(int argc, char * argv[]){
   int parse_status;
   struct_parse parse;
-  struct_authenticate *auth = malloc(sizeof(struct_authenticate));
+  struct_authenticate *auth = (struct_authenticate*)malloc(sizeof(struct_authenticate));
   int sockfd;
   char port_num[32]= {0};
   struct sockaddr_in server_addr, client_addr;
   int newsockfd;
-  int length_client = sizeof(client_addr);
+  unsigned int length_client = sizeof(client_addr);
+  char buffer[MAXBUFSIZE];
+  int nbytes;
+  int* entry = (int*)malloc(sizeof(int));
 
   if (argc != 2)
 	{
@@ -76,12 +81,12 @@ int main(int argc, char * argv[]){
 	}
   strcpy(port_num, argv[1]);
   char *conf = "dfs.conf";
-  parse_status = parse_file(&(parse), conf);
+  parse_status = parse_file(&(parse), conf, entry);
   if(parse_status==-1){
     printf("Error Parsing the Configuration File\n");
     exit(1);
   }
-
+printf("%d\n", *entry);
 
   if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0){
     printf("Error creating socket \n");
@@ -110,10 +115,43 @@ int main(int argc, char * argv[]){
       exit(-1);
     }
     printf("**********New Connection at Port %s - Socket : %d**********\n\n", port_num, newsockfd);
-  }
-  recv(newsockfd, auth, sizeof(*auth), 0);
-  for(int i=0; i<entry;i++){
-    printf("Username in struct_auth: %s\t\t Password: %s", &auth->username[i], &auth->password[i] );
+    recv(newsockfd, auth, sizeof(*auth), 0);
+    //for(int i=0; i<entry;i++){
+      printf("Username in struct_auth recieved: %s\t\t Password: %s\n\n", &auth->username[0], &auth->password[0] );
+    //}
+    for(int i=0; i<*entry; i++){
+      if(!(strcmp((parse).username[i], &auth->username[0]))){
+        if(!(strcmp((parse).password[i], &auth->password[0]))){
+          bzero(buffer, MAXBUFSIZE);
+          strcpy(buffer, "User Exists");
+          if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
+            printf("exists nbytes%d\n", nbytes);
+            perror("Error: \n");
+          }
+          break;
+        }
+        else{
+          bzero(buffer, MAXBUFSIZE);
+          strcpy(buffer, "password error");
+          if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
+            printf("error nbytes%d\n", nbytes);
+            perror("Error: \n");
+
+          }
+          break;
+        }
+      }
+      else if(i == *entry-1){
+        bzero(buffer, MAXBUFSIZE);
+        strcpy(buffer, "Invalid User: User Does not exist");
+        if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
+          printf("invalid nbytes%d\n", nbytes);
+          perror("Error: \n");
+        }
+        break;
+      }
+    }
+    printf("Yaha tak to aa gaya\n");
   }
   return 0;
 }
