@@ -9,6 +9,7 @@
 /***** INCLUDES *****/
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/stat.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
@@ -73,20 +74,28 @@ int main(int argc, char * argv[]){
   char buffer[MAXBUFSIZE];
   int nbytes;
   int* entry = (int*)malloc(sizeof(int));
+  int part_num = 0;
+  unsigned long int len_part = 0;
+  char part_file[64];
+  char dfs[64];
+  char dfs_partname[128];
+  char path_directory[64];
 
-  if (argc != 2)
+
+  if (argc != 3)
 	{
-		printf ("\nUsage: <conf file>\n");
+		printf ("\nUsage: <DFS/n> <portNo>\n");
 		exit(1);
 	}
-  strcpy(port_num, argv[1]);
+  strcpy(port_num, argv[2]);
+  strcpy(dfs, argv[1]);
   char *conf = "dfs.conf";
   parse_status = parse_file(&(parse), conf, entry);
   if(parse_status==-1){
     printf("Error Parsing the Configuration File\n");
     exit(1);
   }
-printf("%d\n", *entry);
+  printf("%d\n", *entry);
 
   if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0){
     printf("Error creating socket \n");
@@ -151,7 +160,97 @@ printf("%d\n", *entry);
         break;
       }
     }
-    printf("Yaha tak to aa gaya\n");
+    //Recieving Servers First-Part
+    bzero(buffer, MAXBUFSIZE);
+    recv(newsockfd, buffer, sizeof(buffer), 0);
+    printf("%s ****\n", buffer );
+    sscanf(buffer, "%*[^:]%*c%d %s %lu", &part_num, part_file, &len_part);
+    printf("Part Number:%d, Filename: %s, Part Length:%lu\n", part_num, part_file, len_part );
+    int parts_iteration = (len_part/MAXBUFSIZE);
+    printf("********** Number of iterations: %d **********\n", parts_iteration);
+    int temp = 0;
+
+    FILE* dfs_file;
+
+    bzero(path_directory, MAXBUFSIZE);
+    sprintf(path_directory, ".%s/%s", argv[1], &auth->username[0] );
+    printf("%s\n", path_directory );
+    mkdir(path_directory, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+
+    // if(part_num == 1){
+      bzero(dfs_partname, sizeof(dfs_partname));
+      sprintf(dfs_partname, "%s/.%s.%d", path_directory, part_file, part_num);
+      printf("%s \n", dfs_partname );
+      dfs_file = fopen(dfs_partname, "ab");
+      if(!dfs_file){
+        printf("Error creating part number: %d\n", part_num);
+        return -1;
+      }
+      do{
+        bzero(buffer, MAXBUFSIZE);
+        nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
+        fwrite(buffer, 1, nbytes, dfs_file);
+        temp++;
+        if(temp == (parts_iteration)){
+          bzero(buffer, MAXBUFSIZE);
+          nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
+          fwrite(buffer, 1, nbytes, dfs_file);
+        }
+      }while(temp<parts_iteration);
+      printf("LoopRan : %d\n", temp);
+      temp=0;
+      part_num = 0;
+      len_part = 0;
+
+      bzero(part_file, sizeof(part_file));
+      fclose(dfs_file);
+    // }
+
+
+    //Recieving Servers Second-Part
+    bzero(buffer, MAXBUFSIZE);
+    recv(newsockfd, buffer, sizeof(buffer), 0);
+    printf("%s \n", buffer );
+    sscanf(buffer, "%*[^:]%*c%d %s %lu", &part_num, part_file, &len_part);
+    printf("Part Number:%d, Filename: %s, Part Length:%lu\n", part_num, part_file, len_part );
+    parts_iteration = (len_part/MAXBUFSIZE);
+    printf("********** Number of iterations: %d **********\n", parts_iteration);
+
+
+    //FILE* dfs_file;
+
+    bzero(path_directory, MAXBUFSIZE);
+    sprintf(path_directory, ".%s/%s", argv[1], &auth->username[0] );
+    printf("%s\n", path_directory );
+    mkdir(path_directory, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+
+    // if(part_num == 1){
+      bzero(dfs_partname, sizeof(dfs_partname));
+      sprintf(dfs_partname, "%s/.%s.%d", path_directory, part_file, part_num);
+      printf("%s\n", dfs_partname );
+      dfs_file = fopen(dfs_partname, "ab");
+      if(!dfs_file){
+        printf("Error creating part number: %d\n", part_num);
+        return -1;
+      }
+      do{
+        bzero(buffer, MAXBUFSIZE);
+        nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
+        fwrite(buffer, 1, nbytes, dfs_file);
+        temp++;
+        if(temp == (parts_iteration)){
+          bzero(buffer, MAXBUFSIZE);
+          nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
+          fwrite(buffer, 1, nbytes, dfs_file);
+        }
+      }while(temp<parts_iteration);
+      printf("LoopRan2 : %d\n", temp);
+      temp=0;
+      temp = 0;
+      part_num = 0;
+      len_part = 0;
+      bzero(part_file, sizeof(part_file));
+      fclose(dfs_file);
   }
   return 0;
 }
