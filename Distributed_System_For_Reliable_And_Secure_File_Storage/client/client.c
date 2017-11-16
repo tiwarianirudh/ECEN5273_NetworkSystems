@@ -2,7 +2,7 @@
 # Programming Assignment 3
 # client.c
 # Code Adapted from Professor's example-code
-# Date: November 12, 2017
+# Date: November 19, 2017
 #Author: Anirudh Tiwari
 ******************************************/
 
@@ -117,6 +117,7 @@ char* MD5sum(char *filename){
 
   if(fp == NULL) {
       printf ("Error opening file for MD5SUM Calculation\n");
+      exit(-1);
       return 0;
   }
 
@@ -323,7 +324,10 @@ int main(int argc, char * argv[]){
               printf("Sending to DFS2: %d bytes\n", nbytes);
               printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
             }
-            usleep(1000);
+            bzero(buffer, MAXBUFSIZE);
+            recv(sockfd[i], buffer, sizeof(buffer), 0);
+            printf("%s \n", buffer );
+
 
             fseek(fp_part, 0, SEEK_SET);
 
@@ -336,10 +340,14 @@ int main(int argc, char * argv[]){
                 //printf("Sending to DFS1: %d bytes\n", nbytes);
                 printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
               }printf("Sending to DFS1: %d bytes\n", nbytes);
+              bzero(buffer, MAXBUFSIZE);
+              recv(sockfd[i], buffer, sizeof(buffer), 0);
+              printf("%s \n", buffer );
               //temp = len_part - nbytes;
               temp++;
-              usleep(1000);
+
               if(temp == (parts_iteration)){
+                bzero(buffer, MAXBUFSIZE);
                 read_length = fread(buffer, 1, (len_part%MAXBUFSIZE), fp_part);
                 printf("Read length in the Temp check: %lu\n", read_length );
                 printf("String Length of Buffer: %lu\n", read_length);
@@ -347,7 +355,9 @@ int main(int argc, char * argv[]){
                   printf("Sending to DFS1: %d bytes\n", nbytes);
                   printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
                 }printf("Sending to DFS1: %d bytes\n", nbytes);
-                usleep(1000);
+                bzero(buffer, MAXBUFSIZE);
+                recv(sockfd[i], buffer, sizeof(buffer), 0);
+                printf("%s \n", buffer );
               }
             }while(temp<parts_iteration);
             temp=0;
@@ -362,7 +372,10 @@ int main(int argc, char * argv[]){
               printf("Sending to DFS2: %d bytes\n", nbytes);
               printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
             }printf("Sending to DFS2: %d bytes\n", nbytes);
-            usleep(1000);
+            bzero(buffer, MAXBUFSIZE);
+            recv(sockfd[i], buffer, sizeof(buffer), 0);
+            printf("%s \n", buffer );
+
 
             fseek(fp_part, len_part, SEEK_SET);
 
@@ -376,15 +389,21 @@ int main(int argc, char * argv[]){
               }printf("Sending to DFS2: %d bytes\n", nbytes);
               //temp = len_part - nbytes;
               temp++;
-              usleep(1000);
+              bzero(buffer, MAXBUFSIZE);
+              recv(sockfd[i], buffer, sizeof(buffer), 0);
+              printf("%s \n", buffer );
+
               if(temp == (parts_iteration)){
+                bzero(buffer, MAXBUFSIZE);
                 read_length = fread(buffer, 1, (len_part%MAXBUFSIZE), fp_part);
                 printf("Read length in the Temp check: %lu\n", read_length );
                 printf("String Length of Buffer: %lu\n",  read_length);
                 if((nbytes = send(sockfd[i], buffer, read_length, 0)) < 0){
                   printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
                 }printf("Sending to DFS2: %d bytes\n", nbytes);
-                usleep(1000);
+                bzero(buffer, MAXBUFSIZE);
+                recv(sockfd[i], buffer, sizeof(buffer), 0);
+                printf("%s \n", buffer );
               }
             }while(temp<parts_iteration);
             temp=0;
@@ -399,7 +418,10 @@ int main(int argc, char * argv[]){
               //printf("Sending to DFS3: %d bytes\n", nbytes);
               printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
             }printf("Sending to DFS3: %d bytes\n", nbytes);
-            usleep(1000);
+            bzero(buffer, MAXBUFSIZE);
+            recv(sockfd[i], buffer, sizeof(buffer), 0);
+            printf("%s \n", buffer );
+
 
             fseek(fp_part, (2*len_part), SEEK_SET);
 
@@ -413,15 +435,21 @@ int main(int argc, char * argv[]){
               }printf("Sending to DFS3: %d bytes\n", nbytes);
               //temp = len_part - nbytes;
               temp++;
-              usleep(1000);
+              bzero(buffer, MAXBUFSIZE);
+              recv(sockfd[i], buffer, sizeof(buffer), 0);
+              printf("%s \n", buffer );
+
               if(temp == (parts_iteration)){
+                bzero(buffer, MAXBUFSIZE);
                 read_length = fread(buffer, 1, (len_part%MAXBUFSIZE), fp_part);
                 printf("Read length in the Temp check: %lu\n", read_length );
                 if((nbytes = send(sockfd[i], buffer, read_length, 0)) < 0){
                   printf("Sending to DFS3: %d bytes\n", nbytes);
                   printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
                 }printf("Sending to DFS2: %d bytes\n", nbytes);
-                usleep(1000);
+                bzero(buffer, MAXBUFSIZE);
+                recv(sockfd[i], buffer, sizeof(buffer), 0);
+                printf("%s \n", buffer );
               }
             }while(temp<parts_iteration);
             temp=0;
@@ -436,7 +464,10 @@ int main(int argc, char * argv[]){
               printf("Sending to DFS4: %d bytes\n", nbytes);
               printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
             }printf("Sending to DFS4: %d bytes\n", nbytes);
-            usleep(1000);
+            bzero(buffer, MAXBUFSIZE);
+            recv(sockfd[i], buffer, sizeof(buffer), 0);
+            printf("%s \n", buffer );
+
             fseek(fp_part, (3*len_part), SEEK_SET);
 
             do{
@@ -449,15 +480,21 @@ int main(int argc, char * argv[]){
               }printf("Sending to DFS4: %d bytes\n", nbytes);
               //temp = len_part - nbytes;
               temp++;
-              usleep(1000);
+              bzero(buffer, MAXBUFSIZE);
+              recv(sockfd[i], buffer, sizeof(buffer), 0);
+              printf("%s \n", buffer );
+
               if(temp == (parts_iteration)){
+                bzero(buffer, MAXBUFSIZE);
                 read_length = fread(buffer, 1, (len_part4%MAXBUFSIZE), fp_part);
                 printf("Read length in the Temp check: %lu\n", read_length );
                 if((nbytes = send(sockfd[i], buffer, read_length, 0)) < 0){
                   printf("Sending to DFS4: %d bytes\n", nbytes);
                   printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
                 }printf("Sending to DFS4: %d bytes\n", nbytes);
-                usleep(1000);
+                bzero(buffer, MAXBUFSIZE);
+                recv(sockfd[i], buffer, sizeof(buffer), 0);
+                printf("%s \n", buffer );
               }
             }while(temp<parts_iteration);
             temp=0;
