@@ -80,6 +80,7 @@ int main(int argc, char * argv[]){
   char dfs[64];
   char dfs_partname[128];
   char path_directory[64];
+  int auth_flag = 0;
 
 
   if (argc != 3)
@@ -95,7 +96,7 @@ int main(int argc, char * argv[]){
     printf("Error Parsing the Configuration File\n");
     exit(1);
   }
-  printf("%d\n", *entry);
+  //printf("%d\n", *entry);
 
   if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0){
     printf("Error creating socket \n");
@@ -126,13 +127,14 @@ int main(int argc, char * argv[]){
     printf("**********New Connection at Port %s - Socket : %d**********\n\n", port_num, newsockfd);
     recv(newsockfd, auth, sizeof(*auth), 0);
     //for(int i=0; i<entry;i++){
-      printf("Username in struct_auth recieved: %s\t\t Password: %s\n\n", &auth->username[0], &auth->password[0] );
+      printf("Username in struct_auth recieved: %s\t Password: %s Command: %s \n\n", &auth->username[0], &auth->password[0],&auth->command[0]);
     //}
     for(int i=0; i<*entry; i++){
       if(!(strcmp((parse).username[i], &auth->username[0]))){
         if(!(strcmp((parse).password[i], &auth->password[0]))){
           bzero(buffer, MAXBUFSIZE);
           strcpy(buffer, "User Exists");
+          auth_flag = 1;
           if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
             printf("exists nbytes%d\n", nbytes);
             perror("Error: \n");
@@ -145,9 +147,8 @@ int main(int argc, char * argv[]){
           if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
             printf("error nbytes%d\n", nbytes);
             perror("Error: \n");
-
           }
-          break;
+        break;
         }
       }
       else if(i == *entry-1){
@@ -160,137 +161,144 @@ int main(int argc, char * argv[]){
         break;
       }
     }
-    //Recieving Servers First-Part
-    bzero(buffer, MAXBUFSIZE);
-    recv(newsockfd, buffer, sizeof(buffer), 0);
-    printf("%s ****\n", buffer );
-    sscanf(buffer, "%*[^:]%*c%d %s %lu", &part_num, part_file, &len_part);
-    printf("Part Number:%d, Filename: %s, Part Length:%lu\n", part_num, part_file, len_part );
+    if(auth_flag==1){
 
-    bzero(buffer, MAXBUFSIZE);
-    strcpy(buffer, "Recieved Iteration");
-    if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
-      printf("In Synq Send()\n");
-      perror("Error: \n");
-    }
-
-    int parts_iteration = (len_part/MAXBUFSIZE);
-    printf("********** Number of iterations: %d **********\n", parts_iteration);
-    int temp = 0;
-
-    //FILE* dfs_file;
-
-    bzero(path_directory, MAXBUFSIZE);
-    sprintf(path_directory, ".%s/%s", argv[1], &auth->username[0] );
-    printf("%s\n", path_directory );
-    mkdir(path_directory, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-
-    // if(part_num == 1){
-      bzero(dfs_partname, sizeof(dfs_partname));
-      sprintf(dfs_partname, "%s/.%s.%d", path_directory, part_file, part_num);
-      printf("%s \n", dfs_partname );
-
-      FILE* dfs_file;
-      dfs_file = fopen(dfs_partname, "ab");
-      if(!dfs_file){
-        printf("Error creating part number: %d\n", part_num);
-        return -1;
-      }
-      do{
+/***************************
+*****Functionality: PUT
+***************************/
+      if(!strcmp(&auth->command[0], "put")){
+        //Recieving Servers Part-A
         bzero(buffer, MAXBUFSIZE);
-        nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
-        fwrite(buffer, 1, nbytes, dfs_file);
-        temp++;
+        recv(newsockfd, buffer, sizeof(buffer), 0);
+        printf("%s ****\n", buffer );
+        sscanf(buffer, "%*[^:]%*c%d %s %lu", &part_num, part_file, &len_part);
+        printf("Part Number:%d, Filename: %s, Part Length:%lu\n", part_num, part_file, len_part );
+
         bzero(buffer, MAXBUFSIZE);
         strcpy(buffer, "Recieved Iteration");
         if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
           printf("In Synq Send()\n");
           perror("Error: \n");
         }
-        if(temp == (parts_iteration)){
-          bzero(buffer, MAXBUFSIZE);
-          nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
-          fwrite(buffer, 1, nbytes, dfs_file);
 
-          bzero(buffer, MAXBUFSIZE);
-          strcpy(buffer, "Recieved Iteration");
-          if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
-            printf("In Synq Send()\n");
-            perror("Error: \n");
+        int parts_iteration = (len_part/MAXBUFSIZE);
+        printf("********** Number of iterations: %d **********\n", parts_iteration);
+        int temp = 0;
+
+        //FILE* dfs_file;
+
+        bzero(path_directory, MAXBUFSIZE);
+        sprintf(path_directory, ".%s/%s", argv[1], &auth->username[0] );
+        printf("%s\n", path_directory );
+        mkdir(path_directory, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+
+        // if(part_num == 1){
+          bzero(dfs_partname, sizeof(dfs_partname));
+          sprintf(dfs_partname, "%s/.%s.%d", path_directory, part_file, part_num);
+          printf("%s \n", dfs_partname );
+
+          FILE* dfs_file;
+          dfs_file = fopen(dfs_partname, "ab");
+          if(!dfs_file){
+            printf("Error creating part number: %d\n", part_num);
+            return -1;
           }
-        }
-      }while(temp<parts_iteration);
-      printf("LoopRan : %d\n", temp);
-      temp=0;
-      part_num = 0;
-      len_part = 0;
+          do{
+            bzero(buffer, MAXBUFSIZE);
+            nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
+            fwrite(buffer, 1, nbytes, dfs_file);
+            temp++;
+            bzero(buffer, MAXBUFSIZE);
+            strcpy(buffer, "Recieved Iteration");
+            if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
+              printf("In Synq Send()\n");
+              perror("Error: \n");
+            }
+            if(temp == (parts_iteration)){
+              bzero(buffer, MAXBUFSIZE);
+              nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
+              fwrite(buffer, 1, nbytes, dfs_file);
 
-      bzero(part_file, sizeof(part_file));
-      fclose(dfs_file);
-    // }
+              bzero(buffer, MAXBUFSIZE);
+              strcpy(buffer, "Recieved Iteration");
+              if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
+                printf("In Synq Send()\n");
+                perror("Error: \n");
+              }
+            }
+          }while(temp<parts_iteration);
+          printf("LoopRan : %d\n", temp);
+          temp=0;
+          part_num = 0;
+          len_part = 0;
 
+          bzero(part_file, sizeof(part_file));
+          fclose(dfs_file);
+        // }
 
-    //Recieving Servers Second-Part
-    bzero(buffer, MAXBUFSIZE);
-    recv(newsockfd, buffer, sizeof(buffer), 0);
-    printf("%s \n", buffer );
-    sscanf(buffer, "%*[^:]%*c%d %s %lu", &part_num, part_file, &len_part);
-    printf("Part Number:%d, Filename: %s, Part Length:%lu\n", part_num, part_file, len_part );
-    parts_iteration = (len_part/MAXBUFSIZE);
-    printf("********** Number of iterations: %d **********\n", parts_iteration);
-
-    bzero(buffer, MAXBUFSIZE);
-    strcpy(buffer, "Recieved Iteration");
-    if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
-      printf("In Synq Send()\n");
-      perror("Error: \n");
-    }
-    //FILE* dfs_file;
-
-    bzero(path_directory, MAXBUFSIZE);
-    sprintf(path_directory, ".%s/%s", argv[1], &auth->username[0] );
-    printf("%s\n", path_directory );
-    mkdir(path_directory, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-
-    // if(part_num == 1){
-      bzero(dfs_partname, sizeof(dfs_partname));
-      sprintf(dfs_partname, "%s/.%s.%d", path_directory, part_file, part_num);
-      printf("%s\n", dfs_partname );
-      dfs_file = fopen(dfs_partname, "ab");
-      if(!dfs_file){
-        printf("Error creating part number: %d\n", part_num);
-        return -1;
-      }
-      do{
+        //Recieving Servers PART-B
         bzero(buffer, MAXBUFSIZE);
-        nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
-        fwrite(buffer, 1, nbytes, dfs_file);
-        temp++;
+        recv(newsockfd, buffer, sizeof(buffer), 0);
+        printf("%s \n", buffer );
+        sscanf(buffer, "%*[^:]%*c%d %s %lu", &part_num, part_file, &len_part);
+        printf("Part Number:%d, Filename: %s, Part Length:%lu\n", part_num, part_file, len_part );
+        parts_iteration = (len_part/MAXBUFSIZE);
+        printf("********** Number of iterations: %d **********\n", parts_iteration);
+
         bzero(buffer, MAXBUFSIZE);
         strcpy(buffer, "Recieved Iteration");
         if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
           printf("In Synq Send()\n");
           perror("Error: \n");
         }
-        if(temp == (parts_iteration)){
+        //FILE* dfs_file;
+
+        bzero(path_directory, MAXBUFSIZE);
+        sprintf(path_directory, ".%s/%s", argv[1], &auth->username[0] );
+        printf("%s\n", path_directory );
+        mkdir(path_directory, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+
+        // if(part_num == 1){
+        bzero(dfs_partname, sizeof(dfs_partname));
+        sprintf(dfs_partname, "%s/.%s.%d", path_directory, part_file, part_num);
+        printf("%s\n", dfs_partname );
+        dfs_file = fopen(dfs_partname, "ab");
+        if(!dfs_file){
+          printf("Error creating part number: %d\n", part_num);
+          return -1;
+        }
+        do{
           bzero(buffer, MAXBUFSIZE);
           nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
           fwrite(buffer, 1, nbytes, dfs_file);
+          temp++;
           bzero(buffer, MAXBUFSIZE);
           strcpy(buffer, "Recieved Iteration");
           if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
             printf("In Synq Send()\n");
             perror("Error: \n");
           }
-        }
-      }while(temp<parts_iteration);
-      printf("LoopRan2 : %d\n", temp);
-      temp=0;
-      temp = 0;
-      part_num = 0;
-      len_part = 0;
-      bzero(part_file, sizeof(part_file));
-      fclose(dfs_file);
-  }
+          if(temp == (parts_iteration)){
+            bzero(buffer, MAXBUFSIZE);
+            nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
+            fwrite(buffer, 1, nbytes, dfs_file);
+            bzero(buffer, MAXBUFSIZE);
+            strcpy(buffer, "Recieved Iteration");
+            if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
+              printf("In Synq Send()\n");
+              perror("Error: \n");
+            }
+          }
+        }while(temp<parts_iteration);
+        printf("LoopRan2 : %d\n", temp);
+        temp=0;
+        temp = 0;
+        part_num = 0;
+        len_part = 0;
+        bzero(part_file, sizeof(part_file));
+        fclose(dfs_file);
+      }
+    }
+}
   return 0;
 }
