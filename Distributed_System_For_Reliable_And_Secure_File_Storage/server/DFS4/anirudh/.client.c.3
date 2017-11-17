@@ -1,0 +1,90 @@
+     printf("PUT information: %s\n", buffer );
+            if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
+              printf("Sending to DFS2: %d bytes\n", nbytes);
+              printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
+            }
+            bzero(buffer, MAXBUFSIZE);
+            recv(sockfd[i], buffer, sizeof(buffer), 0);
+            printf("%s \n", buffer );
+
+
+            fseek(fp_part, 0, SEEK_SET);
+
+            do{
+              bzero(buffer, MAXBUFSIZE);
+              read_length = fread(buffer, 1, MAXBUFSIZE, fp_part);
+              //printf("Read length out of the Temp check: %lu\n", read_length );
+              //printf("String Length of Buffer: %lu\n",  read_length);
+              if((nbytes = send(sockfd[i], buffer, read_length, 0)) < 0){
+                printf("Sending to DFS1: %d bytes\n", nbytes);
+                printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
+              }//printf("Sending to DFS1: %d bytes\n", nbytes);
+              bzero(buffer, MAXBUFSIZE);
+              recv(sockfd[i], buffer, sizeof(buffer), 0);
+              //printf("%s \n", buffer );
+              //temp = len_part - nbytes;
+              temp++;
+
+              if(temp == (parts_iteration)){
+                bzero(buffer, MAXBUFSIZE);
+                read_length = fread(buffer, 1, (len_part%MAXBUFSIZE), fp_part);
+                //printf("Read length in the Temp check: %lu\n", read_length );
+                //printf("String Length of Buffer: %lu\n", read_length);
+                if((nbytes = send(sockfd[i], buffer, read_length, 0)) < 0){
+                  printf("Sending to DFS1: %d bytes\n", nbytes);
+                  printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
+                }//printf("Sending to DFS1: %d bytes\n", nbytes);
+                bzero(buffer, MAXBUFSIZE);
+                recv(sockfd[i], buffer, sizeof(buffer), 0);
+                //printf("%s \n", buffer );
+              }
+            }while(temp<parts_iteration);
+            temp=0;
+          }
+
+          if(part_map[x][i][0]==2 || part_map[x][i][1]==2){
+            bzero(buffer, MAXBUFSIZE);
+            sprintf(buffer, "Part:2 %s %lu", filename, len_part);
+            printf("PUT information: %s\n", buffer );
+            //printf("String Length of Buffer: %lu\n",  strlen(buffer));
+            if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
+              printf("Sending to DFS2: %d bytes\n", nbytes);
+              printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
+            }//printf("Sending to DFS2: %d bytes\n", nbytes);
+            bzero(buffer, MAXBUFSIZE);
+            recv(sockfd[i], buffer, sizeof(buffer), 0);
+            //printf("%s \n", buffer );
+            fseek(fp_part, len_part, SEEK_SET);
+
+            do{
+              bzero(buffer, MAXBUFSIZE);
+              read_length = fread(buffer, 1, MAXBUFSIZE, fp_part);
+              //printf("Read length out of the Temp check: %lu\n", read_length );
+              //printf("String Length of Buffer: %lu\n",  read_length);
+              if((nbytes = send(sockfd[i], buffer, read_length, 0)) < 0){
+                printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
+              }//printf("Sending to DFS2: %d bytes\n", nbytes);
+              //temp = len_part - nbytes;
+              temp++;
+              bzero(buffer, MAXBUFSIZE);
+              recv(sockfd[i], buffer, sizeof(buffer), 0);
+              //printf("%s \n", buffer );
+
+              if(temp == (parts_iteration)){
+                bzero(buffer, MAXBUFSIZE);
+                read_length = fread(buffer, 1, (len_part%MAXBUFSIZE), fp_part);
+                //printf("Read length in the Temp check: %lu\n", read_length );
+                //printf("String Length of Buffer: %lu\n",  read_length);
+                if((nbytes = send(sockfd[i], buffer, read_length, 0)) < 0){
+                  printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
+                }//printf("Sending to DFS2: %d bytes\n", nbytes);
+                bzero(buffer, MAXBUFSIZE);
+                recv(sockfd[i], buffer, sizeof(buffer), 0);
+                //printf("%s \n", buffer );
+              }
+            }while(temp<parts_iteration);
+            temp=0;
+          }
+
+
+          if(part_map[x][i][0]==3 || pa
