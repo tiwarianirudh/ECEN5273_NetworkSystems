@@ -301,6 +301,8 @@ int main(int argc, char * argv[]){
       }
 
     else if(!strcmp(&auth->command[0],"list")){
+      bzero(buffer, MAXBUFSIZE);
+      recv(newsockfd, buffer, sizeof(buffer), 0);
 			DIR *current_dir;
 			struct dirent *struct_dir;
 
@@ -312,9 +314,11 @@ int main(int argc, char * argv[]){
 			current_dir = opendir(path_directory);
 			if(current_dir == NULL){
 				char msg[] = "Unable to read Directory";
+        printf("%s\n", msg );
 				/* sending error if unable to read the directory */
 				nbytes = send(newsockfd, msg, strlen(msg), 0);
 				perror("Error");
+        continue;
 			}
 			else{
 				bzero(buffer, sizeof(buffer));
@@ -333,6 +337,8 @@ int main(int argc, char * argv[]){
         //printf("");
         perror("Error: \n");
       }//printf("%d\n", nbytes );
+      bzero(buffer, MAXBUFSIZE);
+      recv(newsockfd, buffer, sizeof(buffer), 0);
 			}
 		}
   }

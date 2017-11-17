@@ -195,7 +195,7 @@ int main(int argc, char * argv[]){
     cname = strdup(command);
     strtok(cname, " ");
     filename = strtok(NULL, " ");
-    printf("Filename: %s\n", filename);
+    //printf("Filename: %s\n", filename);
 
     strcpy(auth->username, *parse.username);
     strcpy(auth->password, *parse.password);
@@ -483,17 +483,28 @@ int main(int argc, char * argv[]){
         if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
           perror("Error: \n");
         }
+        char msg[] = "Synq";
+        if((nbytes = send(sockfd[i], msg, strlen(msg), 0)) < 0){
+          printf("In Synq Send()\n");
+          perror("Error: \n");
+        }
         //for(int i=0; i<entry;i++){
-        //printf("%s\n", buffer);
+        else printf("Data in Buffer with Auth: %s\n", buffer);
         //}
         if(!(strcmp(buffer, "User Exists" ))){
-          printf("User Exists Check\n");
+          printf("User Exists: Server Ready to List File\n");
           bzero(buffer, MAXBUFSIZE);
           nbytes = 0;
           if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
             perror("Error: \n");
+            exit(1);
           }
-          //printf("List Data From Server: %s\n", buffer);
+          if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
+            printf("In Synq Send()\n");
+            perror("Error: \n");
+          }
+          printf("List Data From Server: %s\n", buffer);
+
 
           FILE *fp;
           fp = fopen("list_file_temp", "ab");
