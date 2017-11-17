@@ -11,18 +11,18 @@ CFLAGS= -O0 -g $(INCLUDE_DIRS) $(CDEFS)
 LIBS=
 
 HFILES=
-CFILES= client.c
+CFILES= dfc.c
 
 SRCS= ${HFILES} ${CFILES}
 OBJS= ${CFILES:.c=.o}
 
-all:	client
+all:	dfc
 
 clean:
 	-rm -f *.o *.d
-	-rm -f client
+	-rm -f dfc
 
-client: client.o
+dfc: dfc.o
 	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $@.o -lpthread -lcrypto -lssl
 
 depend:

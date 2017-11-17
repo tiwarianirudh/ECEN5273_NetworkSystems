@@ -11,18 +11,18 @@ CFLAGS= -O0 -g $(INCLUDE_DIRS) $(CDEFS)
 LIBS=
 
 HFILES=
-CFILES= server.c
+CFILES= dfs.c
 
 SRCS= ${HFILES} ${CFILES}
 OBJS= ${CFILES:.c=.o}
 
-all:	server
+all:	dfs
 
 clean:
 	-rm -f *.o *.d
-	-rm -f server
+	-rm -f dfs
 
-server: server.o
+dfs: dfs.o
 	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $@.o -lpthread
 
 depend:
