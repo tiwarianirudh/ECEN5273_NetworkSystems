@@ -231,23 +231,23 @@ int main(int argc, char * argv[]){
 /***************************
 *****Functionality: PUT
 ***************************/
-    if(!strcmp(cname, "put")){
-      printf("\n************IN PUT*********\n");
-      printf("Put File: \"%s\" on the server.\n", filename);
+      if(!strcmp(cname, "put")){
+        printf("\n************IN PUT*********\n");
+        printf("Put File: \"%s\" on the server.\n", filename);
 
-      char *hash_value = MD5sum(filename);
-      if(hash_value == 0){
-        printf("Error Opening file or it Does not exist\n");
-        continue;
-      }
-      printf ("Hash Value in PUT: %s\n\n", hash_value);
+        char *hash_value = MD5sum(filename);
+        if(hash_value == 0){
+          printf("Error Opening file or it Does not exist\n");
+          continue;
+        }
+        printf ("Hash Value in PUT: %s\n\n", hash_value);
 
-      int *hash_int = intMD5sum(hash_value);
-      printf ("Hash Integer Value in PUT: %d\n\n", *hash_int);
+        int *hash_int = intMD5sum(hash_value);
+        printf ("Hash Integer Value in PUT: %d\n\n", *hash_int);
 
-      x = (*hash_int)%4;
-      printf("\n************\n");
-      printf("MD5HASH%%4 value: %d\n", x );
+        x = (*hash_int)%4;
+        printf("\n************\n");
+        printf("MD5HASH%%4 value: %d\n", x );
 
 
         //printf("Nbytes Sent: %d\n", nbytes);
@@ -467,16 +467,13 @@ int main(int argc, char * argv[]){
             }while(temp<parts_iteration);
             temp=0;
           }
-
         }
       }
       /***************************
       *****Functionality: LIST
       ***************************/
       else if(!strcmp(cname, "list")){
-        printf("\n************IN List*********\n");
-
-
+        //printf("\n************IN List*********\n");
         //printf("Nbytes Sent: %d\n", nbytes);
         bzero(buffer, MAXBUFSIZE);
         nbytes = 0;
@@ -489,7 +486,7 @@ int main(int argc, char * argv[]){
           perror("Error: \n");
         }
         //for(int i=0; i<entry;i++){
-        else printf("Data in Buffer with Auth: %s\n", buffer);
+        //else printf("Data in Buffer with Auth: %s\n", buffer);
         //}
         if(!(strcmp(buffer, "User Exists" ))){
           printf("User Exists: Server Ready to List File\n");
@@ -503,7 +500,7 @@ int main(int argc, char * argv[]){
             printf("In Synq Send()\n");
             perror("Error: \n");
           }
-          printf("List Data From Server: %s\n", buffer);
+          //printf("List Data From Server: %s\n", buffer);
 
 
           FILE *fp;
@@ -516,11 +513,59 @@ int main(int argc, char * argv[]){
           fclose(fp);
           if(i==3){
             system("sort list_file_temp | uniq > list_file");
+
+            FILE *fp;
+            FILE *fp_dup;
+            char line[MAXBUFSIZE];
+            char line_dup[MAXBUFSIZE];
+            char * c;
+            char list_filename[128];
+            char list_filename_dup[128];
+            int count = 0;
+
+            fp = fopen("list_file", "r");
+            if(!fp){
+              printf("Error reading list file\n");
+              return -1;
+            }
+            else{
+              printf("\n\n*****List from Servers ****** \n");
+              fgets(line, sizeof(line), fp) > 0;
+              if(c = strstr((char *)line, ".")){
+                bzero(list_filename, sizeof(list_filename));
+                strncpy(list_filename, line+strlen("."), strlen(line)-4);
+                //printf("File name in the LIST: %s\n", list_filename);
+                //strcpy(line_dup,line);
+                fp_dup = fp;
+                while(fgets(line_dup, sizeof(line_dup), fp_dup)){
+                  if(c = strstr((char *)line_dup, ".")){
+                    bzero(list_filename_dup, sizeof(list_filename_dup));
+                    strncpy(list_filename_dup, line_dup+strlen("."), strlen(line_dup)-4);
+                    //printf("Dup File name in the LIST: %s\n", list_filename_dup);
+                    if(!strcmp(list_filename_dup, list_filename)){
+                      count = count + 1;
+                      //printf("*************Count : %d\n", count );
+                    }
+                    else{
+                      if(count==3){
+                        printf("\t%s [complete]\n",list_filename);
+                      }
+                      else{
+                        printf("\t%s [incomplete]\n",list_filename);
+                      }
+                      count = 0;
+                      bzero(list_filename, sizeof(list_filename));
+                      strcpy(list_filename, list_filename_dup);
+                    }
+                  }
+                }
+              }
+            }
+            remove("list_file");
+            remove("list_file_temp");
           }
         }
-
       }
-
     }
   }
   return 0;
