@@ -90,7 +90,7 @@ int main(int argc, char * argv[]){
 	}
   strcpy(port_num, argv[2]);
   strcpy(dfs, argv[1]);
-  char *conf = "dfs.conf";
+  char *conf = (char *)"dfs.conf";
   parse_status = parse_file(&(parse), conf, entry);
   if(parse_status==-1){
     printf("Error Parsing the Configuration File\n");
@@ -341,6 +341,10 @@ int main(int argc, char * argv[]){
       recv(newsockfd, buffer, sizeof(buffer), 0);
 			}
 		}
+
+    else if(!strcmp(&auth->command[0],"get")){
+
+    }
   }
 }
   return 0;

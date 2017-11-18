@@ -45,7 +45,6 @@ typedef struct{
 int parse_file(struct_parse *parse, char* conf){
   FILE *fp;
   char line[MAXBUFSIZE];
-  char str[MAXBUFSIZE]={0};
   char *c;
   fp = fopen(conf, "r");
   if(!fp){
@@ -55,7 +54,7 @@ int parse_file(struct_parse *parse, char* conf){
   else{
     while(fgets(line, sizeof(line), fp) > 0){
       //printf("%s\n", line );
-      if(c = strstr(line, "DFS1")){
+      if((c = strstr(line, "DFS1"))){
         sscanf(c, "%s %[^:]%*c%d", (*parse).dfs[0], (*parse).dfs_ip[0], (*parse).port_num[0]);
         printf("************\n");
         printf("%d\n", *(*parse).port_num[0]);
@@ -63,7 +62,7 @@ int parse_file(struct_parse *parse, char* conf){
         printf("%s\n", (*parse).dfs_ip[0]);
       }
 
-      else if(c = strstr(line, "DFS2")){
+      else if((c = strstr(line, "DFS2"))){
         sscanf(c, "%s %[^:]%*c%d", (*parse).dfs[1], (*parse).dfs_ip[1], (*parse).port_num[1]);
         printf("************\n");
         printf("%d\n", *(*parse).port_num[1]);
@@ -71,7 +70,7 @@ int parse_file(struct_parse *parse, char* conf){
         printf("%s\n", (*parse).dfs_ip[1]);
       }
 
-      else if(c = strstr(line, "DFS3")){
+      else if((c = strstr(line, "DFS3"))){
         sscanf(c, "%s %[^:]%*c%d", (*parse).dfs[2], (*parse).dfs_ip[2], (*parse).port_num[2]);
         printf("************\n");
         printf("%d\n", *(*parse).port_num[2]);
@@ -79,7 +78,7 @@ int parse_file(struct_parse *parse, char* conf){
         printf("%s\n", (*parse).dfs_ip[2]);
       }
 
-      else if(c = strstr(line, "DFS4")){
+      else if((c = strstr(line, "DFS4"))){
         sscanf(c, "%s %[^:]%*c%d", (*parse).dfs[3], (*parse).dfs_ip[3], (*parse).port_num[3]);
         printf("************\n");
         printf("%d\n", *(*parse).port_num[3]);
@@ -87,13 +86,13 @@ int parse_file(struct_parse *parse, char* conf){
         printf("%s\n", (*parse).dfs_ip[3]);
       }
 
-      else if(c = strstr(line, "Username: ")){
+      else if((c = strstr(line, "Username: "))){
         sscanf(line, "%*s %s", (*parse).username[0]);
         printf("************\n");
         printf("Username is: %s\n", (*parse).username[0]);
       }
 
-      else if(c = strstr(line, "Password: ")){
+      else if((c = strstr(line, "Password: "))){
         sscanf(line, "%*s %s", (*parse).password[0]);
         printf("The password is: %s\n", (*parse).password[0]);
       }
@@ -153,19 +152,19 @@ int main(int argc, char * argv[]){
   char *filename;
   char* conf;
   int sockfd[4];
-  struct sockaddr_in server_addr, client_addr;
+  struct sockaddr_in server_addr;
   int nbytes;
   char buffer[MAXBUFSIZE];
   int x; //Modulo4 value of hash_int
-  FILE* fp;
+  //FILE* fp;
   unsigned long int file_length;
   unsigned long int len_part;
   unsigned long int len_part4;
   int parts_iteration;
-  int parts_iteration4;
+  //int parts_iteration4;
   unsigned long int read_length;
   int temp=0;
-  int read_bytes;
+  //int read_bytes;
 
 
 
@@ -279,7 +278,7 @@ int main(int argc, char * argv[]){
           printf("first 3: %lu, last: %lu\n", len_part, len_part4 );
           parts_iteration = (len_part/MAXBUFSIZE);
           printf("Iterations: %d\n", parts_iteration);
-          parts_iteration4 = (len_part4/MAXBUFSIZE);
+          //parts_iteration4 = (len_part4/MAXBUFSIZE);
 
 
           int part_map[4][4][2] = {
@@ -530,15 +529,15 @@ int main(int argc, char * argv[]){
             }
             else{
               printf("\n\n*****List from Servers ****** \n");
-              fgets(line, sizeof(line), fp) > 0;
-              if(c = strstr((char *)line, ".")){
+              fgets(line, sizeof(line), fp);
+              if((c = strstr((char *)line, "."))){
                 bzero(list_filename, sizeof(list_filename));
                 strncpy(list_filename, line+strlen("."), strlen(line)-4);
                 //printf("File name in the LIST: %s\n", list_filename);
                 //strcpy(line_dup,line);
                 fp_dup = fp;
                 while(fgets(line_dup, sizeof(line_dup), fp_dup)){
-                  if(c = strstr((char *)line_dup, ".")){
+                  if((c = strstr((char *)line_dup, "."))){
                     bzero(list_filename_dup, sizeof(list_filename_dup));
                     strncpy(list_filename_dup, line_dup+strlen("."), strlen(line_dup)-4);
                     //printf("Dup File name in the LIST: %s\n", list_filename_dup);
@@ -559,12 +558,28 @@ int main(int argc, char * argv[]){
                     }
                   }
                 }
+                if(count==3){
+                  printf("\t%s [complete]\n",list_filename);
+                }
+                else{
+                  printf("\t%s [incomplete]\n",list_filename);
+                }
+                count = 0;
+                bzero(list_filename, sizeof(list_filename));
+                strcpy(list_filename, list_filename_dup);
               }
             }
             remove("list_file");
             remove("list_file_temp");
           }
         }
+      }
+
+      /***************************
+      *****Functionality: GET
+      ***************************/
+      else if(!strcmp(cname, "get")){
+
       }
     }
   }
