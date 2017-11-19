@@ -266,7 +266,7 @@ int main(int argc, char * argv[]){
           perror("Error: \n");
         }
         //for(int i=0; i<entry;i++){
-        else printf("%s\n", buffer);
+        else printf("\n/**********\n%s\n**********/\n", buffer);
         //}
         if(!(strcmp(buffer, "User Exists" ))){
           printf("User Exists: Server Ready to Put File\n");
@@ -489,6 +489,8 @@ int main(int argc, char * argv[]){
         if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
           perror("Error: \n");
         }
+
+        else printf("\n/**********\n %s \n**********/\n", buffer);
         char msg[] = "Synq";
         if((nbytes = send(sockfd[i], msg, strlen(msg), 0)) < 0){
           printf("In Synq Send()\n");
@@ -536,7 +538,7 @@ int main(int argc, char * argv[]){
           perror("Error: \n");
         }
         //for(int i=0; i<entry;i++){
-        else printf("%s\n", buffer);
+        else printf("\n/**********\n%s\n**********/\n", buffer);
         //}
         if(!(strcmp(buffer, "User Exists" ))){
           printf("User Exists: Server Ready to SEND File\n");

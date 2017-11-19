@@ -352,11 +352,26 @@ int main(int argc, char * argv[]){
 					  strcat(buffer, "\n");
           }
 				}
+      //printf("SIZE of Buffer: %s\n",  );
 			/* Sending the file-names to the client*/
-      if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
-        //printf("");
-        perror("Error: \n");
-      }//printf("%d\n", nbytes );
+      if(strlen(buffer) != 0){
+        printf("Buffer Sending In list(NOT NULL):%s\n", buffer );
+        if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
+          //printf("");
+          perror("Error: \n");
+        }//printf("%d\n", nbytes );
+      }
+      else{
+        bzero(buffer, sizeof(buffer));
+        sprintf(buffer, "...NO FILES on SERVER....%s  \n", argv[1]);
+        printf("Buffer Sending In list:%s\n", buffer );
+        if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
+          //printf("");
+          perror("Error: \n");
+        }//printf("%d\n", nbytes );
+      }
+
+
       bzero(buffer, MAXBUFSIZE);
       recv(newsockfd, buffer, sizeof(buffer), 0);
 			}
