@@ -27,6 +27,26 @@
 #define SERVERS 4
 
 
+/***** Declaring the data encryption/decryption functions *****/
+void data_encryption(char *buffer, int data_len, char key1[]);
+void data_decryption(char *buffer, int data_len, char key1[]);
+
+/***** DATA Encryption Function *****/
+void data_encryption(char *buffer, int data_len, char key1[]){
+  int key1_length = strlen(key1);
+	for(int i=0; i<data_len; i++){
+		buffer[i] ^= key1[i%(key1_length-1)];
+	}
+}
+
+/***** DATA DECRYPTION FUNCTION *****/
+void data_decryption(char *buffer, int data_len, char key1[]){
+  int key1_length = strlen(key1);
+	for(int i=0; i<data_len; i++){
+		buffer[i] ^= key1[i%(key1_length-1)];
+	}
+}
+
 typedef struct{
   char dfs[4][64];
   int port_num[4][64];
@@ -210,6 +230,11 @@ int main(int argc, char * argv[]){
     strcpy(auth->password, *parse.password);
     strcpy(auth->command, cname);
     //strcpy(auth->filename, filename);
+
+    int key_length = strlen(*parse.password);
+    char key1[key_length];
+    strcpy(key1, *parse.password);
+
     printf("Username:%sPassword:%sCommand:%s\n", auth->username, auth->password, auth->command);
 
     for(int i=0; i<4; i++){
@@ -318,6 +343,7 @@ int main(int argc, char * argv[]){
               read_length = fread(buffer, 1, MAXBUFSIZE, fp_part);
               //printf("Read length out of the Temp check: %lu\n", read_length );
               //printf("String Length of Buffer: %lu\n",  read_length);
+              data_encryption(buffer, read_length, key1); //encrypting data to be sent on the server
               if((nbytes = send(sockfd[i], buffer, read_length, 0)) < 0){
                 printf("Sending to DFS1: %d bytes\n", nbytes);
                 printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
@@ -333,6 +359,7 @@ int main(int argc, char * argv[]){
                 read_length = fread(buffer, 1, (len_part%MAXBUFSIZE), fp_part);
                 //printf("Read length in the Temp check: %lu\n", read_length );
                 //printf("String Length of Buffer: %lu\n", read_length);
+                data_encryption(buffer, read_length, key1);
                 if((nbytes = send(sockfd[i], buffer, read_length, 0)) < 0){
                   printf("Sending to DFS1: %d bytes\n", nbytes);
                   printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
@@ -364,6 +391,7 @@ int main(int argc, char * argv[]){
               read_length = fread(buffer, 1, MAXBUFSIZE, fp_part);
               //printf("Read length out of the Temp check: %lu\n", read_length );
               //printf("String Length of Buffer: %lu\n",  read_length);
+              data_encryption(buffer, read_length, key1);
               if((nbytes = send(sockfd[i], buffer, read_length, 0)) < 0){
                 printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
               }//printf("Sending to DFS2: %d bytes\n", nbytes);
@@ -378,6 +406,7 @@ int main(int argc, char * argv[]){
                 read_length = fread(buffer, 1, (len_part%MAXBUFSIZE), fp_part);
                 //printf("Read length in the Temp check: %lu\n", read_length );
                 //printf("String Length of Buffer: %lu\n",  read_length);
+                data_encryption(buffer, read_length, key1);
                 if((nbytes = send(sockfd[i], buffer, read_length, 0)) < 0){
                   printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
                 }//printf("Sending to DFS2: %d bytes\n", nbytes);
@@ -407,6 +436,7 @@ int main(int argc, char * argv[]){
               bzero(buffer, MAXBUFSIZE);
               read_length = fread(buffer, 1, MAXBUFSIZE, fp_part);
               //printf("Read length out of the Temp check: %lu\n", read_length );
+              data_encryption(buffer, read_length, key1);
               if((nbytes = send(sockfd[i], buffer, read_length, 0)) < 0){
                 printf("Sending to DFS2: %d bytes\n", nbytes);printf("Sending to DFS3: %d bytes\n", nbytes);
                 printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
@@ -421,6 +451,7 @@ int main(int argc, char * argv[]){
                 bzero(buffer, MAXBUFSIZE);
                 read_length = fread(buffer, 1, (len_part%MAXBUFSIZE), fp_part);
                 //printf("Read length in the Temp check: %lu\n", read_length );
+                data_encryption(buffer, read_length, key1);
                 if((nbytes = send(sockfd[i], buffer, read_length, 0)) < 0){
                   printf("Sending to DFS3: %d bytes\n", nbytes);
                   printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
@@ -451,6 +482,7 @@ int main(int argc, char * argv[]){
               bzero(buffer, MAXBUFSIZE);
               read_length = fread(buffer, 1, MAXBUFSIZE, fp_part);
               //printf("Read length out of the Temp check: %lu\n", read_length );
+              data_encryption(buffer, read_length, key1);
               if((nbytes = send(sockfd[i], buffer, read_length, 0)) < 0){
                 printf("Sending to DFS4: %d bytes\n", nbytes);
                 printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
@@ -465,6 +497,7 @@ int main(int argc, char * argv[]){
                 bzero(buffer, MAXBUFSIZE);
                 read_length = fread(buffer, 1, (len_part4%MAXBUFSIZE), fp_part);
                 printf("Read length in the Temp check: %lu\n", read_length );
+                data_encryption(buffer, read_length, key1);
                 if((nbytes = send(sockfd[i], buffer, read_length, 0)) < 0){
                   printf("Sending to DFS4: %d bytes\n", nbytes);
                   printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
@@ -598,6 +631,8 @@ int main(int argc, char * argv[]){
 
                 //printf("File write wala buffer%s\n", buffer);
                 printf("Read length %d\n", nbytes );
+
+                data_decryption(buffer, nbytes, key1);
                 int write_length = fwrite(buffer, 1, nbytes, fp);
 
                 if(write_length != MAXBUFSIZE){
@@ -666,6 +701,9 @@ int main(int argc, char * argv[]){
 
                 //printf("File write wala buffer%s\n", buffer);
                 printf("Read length %d\n", nbytes );
+
+                data_decryption(buffer, nbytes, key1);
+
                 int write_length = fwrite(buffer, 1, nbytes, fp);
 
                 if(write_length != MAXBUFSIZE){
@@ -693,7 +731,6 @@ int main(int argc, char * argv[]){
               printf("In Part Send\n");
               perror("Error: \n");
             }
-            printf("In GET PART-2, nbytes: %d\n", nbytes );
             sleep(1);
             // bzero(buffer, MAXBUFSIZE);
             // recv(sockfd[i], buffer, sizeof(buffer), 0);
@@ -740,6 +777,8 @@ int main(int argc, char * argv[]){
 
                 //printf("File write wala buffer%s\n", buffer);
                 printf("Read length %d\n", nbytes );
+
+                data_decryption(buffer, nbytes, key1);
                 int write_length = fwrite(buffer, 1, nbytes, fp);
 
                 if(write_length != MAXBUFSIZE){
@@ -813,6 +852,8 @@ int main(int argc, char * argv[]){
 
                 //printf("File write wala buffer%s\n", buffer);
                 printf("Read length %d\n", nbytes );
+                data_decryption(buffer, nbytes, key1);
+
                 int write_length = fwrite(buffer, 1, nbytes, fp);
 
                 if(write_length != MAXBUFSIZE){
@@ -857,6 +898,8 @@ int main(int argc, char * argv[]){
         }
       }
     }
+
+    
     if(!strcmp(cname, "list")){
       system("sort list_file_temp | uniq > list_file");
 
