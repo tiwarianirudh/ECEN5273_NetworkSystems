@@ -164,6 +164,10 @@ int main(int argc, char * argv[]){
   //int parts_iteration4;
   unsigned long int read_length;
   int temp=0;
+  int flag1 = 0;
+  int flag2 = 0;
+  int flag3 = 0;
+  int flag4 = 0;
   //int read_bytes;
 
 
@@ -579,7 +583,326 @@ int main(int argc, char * argv[]){
       *****Functionality: GET
       ***************************/
       else if(!strcmp(cname, "get")){
+        printf("\n************IN GET*********\n");
+        char msg[] = "Synq message";
+        printf("Get File: \"%s\" from the server.\n", filename);
+        bzero(buffer, MAXBUFSIZE);
+        nbytes = 0;
+        if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
+          perror("Error: \n");
+        }
+        //for(int i=0; i<entry;i++){
+        else printf("%s\n", buffer);
+        //}
+        if(!(strcmp(buffer, "User Exists" ))){
+          printf("User Exists: Server Ready to SEND File\n");
 
+          if((nbytes = send(sockfd[i], filename, strlen(filename), 0)) < 0){
+            printf("Sending to DFS%d: %d bytes\n", i+1, nbytes);
+            printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
+          }
+
+          char filename1[128];
+          bzero(filename1, sizeof(filename1));
+          sprintf(filename1, ".%s.1", filename);
+          //printf("Part1: %s\n", filename1);
+          char filename2[128];
+          bzero(filename2, sizeof(filename2));
+          sprintf(filename2, ".%s.2", filename);
+          //printf("Part2: %s\n", filename2);
+          char filename3[128];
+          bzero(filename3, sizeof(filename3));
+          sprintf(filename3, ".%s.3", filename);
+          //printf("Part3: %s\n", filename3);
+          char filename4[128];
+          bzero(filename4, sizeof(filename4));
+          sprintf(filename4, ".%s.4", filename);
+          //printf("Part4: %s\n", filename4);
+
+
+          /****************
+              GET PART-1
+          ****************/
+          bzero(buffer, MAXBUFSIZE);
+          recv(sockfd[i], buffer, sizeof(buffer), 0);
+          printf("Part status: %s \n", buffer );
+          // if((nbytes = send(sockfd[i], msg, strlen(msg), 0)) < 0){
+          //   printf("In Synq Send()\n");
+          //   perror("Error: \n");
+          // }
+          if((strstr(buffer, "YES") != NULL) && (strstr(buffer, filename1) != NULL) && (flag1==0)){
+            if((nbytes = send(sockfd[i], "SEND", strlen("SEND"), 0)) < 0){
+              printf("In Part Send\n");
+              perror("Error: \n");
+            }
+            FILE* fp;
+            fp = fopen(filename1, "ab");
+            if(!fp){
+              printf("Error Opening : %s\n", filename1);
+              perror("Error \n");
+            }
+            else{
+              do{
+                bzero(buffer, MAXBUFSIZE);
+                //printf("%s\n", buffer );
+                //printf("Read Length of file requested:%d\n", read_length );
+                if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0)) < 0){
+                  printf("Error: Reading from the socket\n");
+                  //fseek(fp, (-1)*sizeof(buffer), SEEK_CUR);
+                }
+
+                //printf("File write wala buffer%s\n", buffer);
+                printf("Read length %d\n", nbytes );
+                int write_length = fwrite(buffer, 1, nbytes, fp);
+
+                if(write_length != MAXBUFSIZE){
+                  break;
+                }
+                if((nbytes = send(sockfd[i], msg, strlen(msg), 0)) < 0){
+                  printf("In Synq Send()\n");
+                  perror("Error: \n");
+                }
+
+              }while(1);
+              flag1 = 1;
+              fclose(fp);
+
+            }
+          }
+          // else{
+          //   if((nbytes = send(sockfd[i], "DONT", strlen("DONT"), 0)) < 0){
+          //     printf("In Part Send\n");
+          //     perror("Error: \n");
+          //   }
+          //   // bzero(buffer, MAXBUFSIZE);
+          //   // recv(sockfd[i], buffer, sizeof(buffer), 0);
+          //   // printf("%s \n", buffer );
+          // }
+          bzero(buffer, MAXBUFSIZE);
+          strcpy(buffer, "Last Synq message");
+          if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
+            printf("In Synq Send()\n");
+            perror("Error: \n");
+          }
+
+
+          /****************
+              GET PART-2
+          ****************/
+          bzero(buffer, MAXBUFSIZE);
+          recv(sockfd[i], buffer, sizeof(buffer), 0);
+          printf("Part status: %s \n", buffer );
+          // if((nbytes = send(sockfd[i], msg, strlen(msg), 0)) < 0){
+          //   printf("In Synq Send()\n");
+          //   perror("Error: \n");
+          // }
+          if((strstr(buffer, "YES") != NULL) && (strstr(buffer, filename2) != NULL) && (flag2==0)){
+            if((nbytes = send(sockfd[i], "SEND", strlen("SEND"), 0)) < 0){
+              printf("In Part Send\n");
+              perror("Error: \n");
+            }
+            FILE* fp;
+            fp = fopen(filename2, "ab");
+            if(!fp){
+              printf("Error Opening : %s\n", filename2);
+              perror("Error \n");
+            }
+            else{
+              do{
+                bzero(buffer, MAXBUFSIZE);
+                //printf("%s\n", buffer );
+                //printf("Read Length of file requested:%d\n", read_length );
+                if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0)) < 0){
+                  printf("Error: Reading from the socket\n");
+                  //fseek(fp, (-1)*sizeof(buffer), SEEK_CUR);
+                }
+
+                //printf("File write wala buffer%s\n", buffer);
+                printf("Read length %d\n", nbytes );
+                int write_length = fwrite(buffer, 1, nbytes, fp);
+
+                if(write_length != MAXBUFSIZE){
+                  break;
+                }
+                if((nbytes = send(sockfd[i], msg, strlen(msg), 0)) < 0){
+                  printf("In Synq Send()\n");
+                  perror("Error: \n");
+                }
+
+              }while(1);
+              flag2 = 1;
+              fclose(fp);
+
+              // bzero(buffer, MAXBUFSIZE);
+              // strcpy(buffer, "Recieved Part");
+              // if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
+              //   printf("In Synq Send()\n");
+              //   perror("Error: \n");
+              // }
+            }
+          }
+          // else{
+          //   if((nbytes = send(sockfd[i], "DONT", strlen("DONT"), 0)) < 0){
+          //     printf("In Part Send\n");
+          //     perror("Error: \n");
+          //   }
+          //   // bzero(buffer, MAXBUFSIZE);
+          //   // recv(sockfd[i], buffer, sizeof(buffer), 0);
+          //   // printf("%s \n", buffer );
+          // }
+          bzero(buffer, MAXBUFSIZE);
+          strcpy(buffer, "Last Synq message");
+          if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
+            printf("In Synq Send()\n");
+            perror("Error: \n");
+          }
+
+
+          /****************
+              GET PART-3
+          ****************/
+          bzero(buffer, MAXBUFSIZE);
+          recv(sockfd[i], buffer, sizeof(buffer), 0);
+          printf("Part Status: %s \n", buffer );
+          // if((nbytes = send(sockfd[i], msg, strlen(msg), 0)) < 0){
+          //   printf("In Synq Send()\n");
+          //   perror("Error: \n");
+          // }
+          if((strstr(buffer, "YES") != NULL) && (strstr(buffer, filename3) != NULL) && (flag3==0)){
+            if((nbytes = send(sockfd[i], "SEND", strlen("SEND"), 0)) < 0){
+              printf("In Part Send\n");
+              perror("Error: \n");
+            }
+            FILE* fp;
+            fp = fopen(filename3, "ab");
+            if(!fp){
+              printf("Error Opening : %s\n", filename3);
+              perror("Error \n");
+            }
+            else{
+              do{
+                bzero(buffer, MAXBUFSIZE);
+                //printf("%s\n", buffer );
+                //printf("Read Length of file requested:%d\n", read_length );
+                if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0)) < 0){
+                  printf("Error: Reading from the socket\n");
+                  //fseek(fp, (-1)*sizeof(buffer), SEEK_CUR);
+                }
+
+                //printf("File write wala buffer%s\n", buffer);
+                printf("Read length %d\n", nbytes );
+                int write_length = fwrite(buffer, 1, nbytes, fp);
+
+                if(write_length != MAXBUFSIZE){
+                  break;
+                }
+                if((nbytes = send(sockfd[i], msg, strlen(msg), 0)) < 0){
+                  printf("In Synq Send()\n");
+                  perror("Error: \n");
+                }
+
+              }while(1);
+              flag3 = 1;
+              fclose(fp);
+
+              // bzero(buffer, MAXBUFSIZE);
+              // strcpy(buffer, "Recieved Part");
+              // if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
+              //   printf("In Synq Send()\n");
+              //   perror("Error: \n");
+              // }
+            }
+          }
+          // else{
+          //   if((nbytes = send(sockfd[i], "DONT", strlen("DONT"), 0)) < 0){
+          //     printf("In Part Send\n");
+          //     perror("Error: \n");
+          //   }
+          //   // bzero(buffer, MAXBUFSIZE);
+          //   // recv(sockfd[i], buffer, sizeof(buffer), 0);
+          //   // printf("%s \n", buffer );
+          // }
+          bzero(buffer, MAXBUFSIZE);
+          strcpy(buffer, "Last Synq message");
+          if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
+            printf("In Synq Send()\n");
+            perror("Error: \n");
+          }
+
+
+          /****************
+              GET PART-4
+          ****************/
+          bzero(buffer, MAXBUFSIZE);
+          recv(sockfd[i], buffer, sizeof(buffer), 0);
+          printf("Part Status: %s \n", buffer );
+          // if((nbytes = send(sockfd[i], msg, strlen(msg), 0)) < 0){
+          //   printf("In Synq Send()\n");
+          //   perror("Error: \n");
+          // }
+          if((strstr(buffer, "YES") != NULL) && (strstr(buffer, filename4) != NULL) && (flag4==0)){
+            if((nbytes = send(sockfd[i], "SEND", strlen("SEND"), 0)) < 0){
+              printf("In Part Send\n");
+              perror("Error: \n");
+            }
+            FILE* fp;
+            fp = fopen(filename4, "ab");
+            if(!fp){
+              printf("Error Opening : %s\n", filename4);
+              perror("Error \n");
+            }
+            else{
+              do{
+                bzero(buffer, MAXBUFSIZE);
+                //printf("%s\n", buffer );
+                //printf("Read Length of file requested:%d\n", read_length );
+                if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0)) < 0){
+                  printf("Error: Reading from the socket\n");
+                  //fseek(fp, (-1)*sizeof(buffer), SEEK_CUR);
+                }
+
+                //printf("File write wala buffer%s\n", buffer);
+                printf("Read length %d\n", nbytes );
+                int write_length = fwrite(buffer, 1, nbytes, fp);
+
+                if(write_length != MAXBUFSIZE){
+                  break;
+                }
+                if((nbytes = send(sockfd[i], msg, strlen(msg), 0)) < 0){
+                  printf("In Synq Send()\n");
+                  perror("Error: \n");
+                }
+
+              }while(1);
+              flag4 = 1;
+              fclose(fp);
+
+              // bzero(buffer, MAXBUFSIZE);
+              // strcpy(buffer, "Recieved Part");
+              // if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
+              //   printf("In Synq Send()\n");
+              //   perror("Error: \n");
+              // }
+            }
+          }
+          // else{
+          //   if((nbytes = send(sockfd[i], "DONT", strlen("DONT"), 0)) < 0){
+          //     printf("In Part Send\n");
+          //     perror("Error: \n");
+          //   }
+          //   // bzero(buffer, MAXBUFSIZE);
+          //   // recv(sockfd[i], buffer, sizeof(buffer), 0);
+          //   // printf("%s \n", buffer );
+          // }
+          bzero(buffer, MAXBUFSIZE);
+          strcpy(buffer, "Last Synq message");
+          if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
+            printf("In Synq Send()\n");
+            perror("Error: \n");
+          }
+
+
+        }
       }
     }
   }
