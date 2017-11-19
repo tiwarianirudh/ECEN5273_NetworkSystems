@@ -218,7 +218,7 @@ int main(int argc, char * argv[]){
 
     /* Display the availble commands for the user */
     printf("\n\tEnter Command as under: \n");
-    printf("\t1. list \n" "\t2. get <filename>\n" "\t3. put <filename>\n");
+    printf("\t1. list \n" "\t2. get <filename>\n" "\t3. put <filename>\n" "\t4. mkdir <direname>\n");
     scanf(" %[^\n]s",command);	// store the command entered by the user
 
     cname = strdup(command);
@@ -897,9 +897,35 @@ int main(int argc, char * argv[]){
           printf("Check For Credentials\n");
         }
       }
+
+      /***************************
+      *****Functionality: MKDIR
+      ***************************/
+      else if(!strcmp(cname, "mkdir")){
+        printf("\n************IN MKDIR*********\n");
+        char msg[] = "Synq message";
+        printf("Make Subfolder: \"%s\" on the server.\n", filename);
+        bzero(buffer, MAXBUFSIZE);
+        nbytes = 0;
+        if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
+          perror("Error: \n");
+        }
+        //for(int i=0; i<entry;i++){
+        else printf("\n/**********\n%s\n**********/\n", buffer);
+        //}
+        if(!(strcmp(buffer, "User Exists" ))){
+          printf("User Exists: Server Ready to MAKE subfolder\n");
+
+          if((nbytes = send(sockfd[i], filename, strlen(filename), 0)) < 0){
+            printf("Sending to DFS%d: %d bytes\n", i+1, nbytes);
+            printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
+          }
+
+        }
+      }
     }
 
-    
+
     if(!strcmp(cname, "list")){
       system("sort list_file_temp | uniq > list_file");
 

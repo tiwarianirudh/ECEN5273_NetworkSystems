@@ -88,7 +88,7 @@ int main(int argc, char * argv[]){
   char part_file[64];
   char dfs[64];
   char dfs_partname[128];
-  char path_directory[64];
+  char path_directory[128];
   int auth_flag = 0;
 //  char msg[] = "synq";
 
@@ -668,6 +668,31 @@ int main(int argc, char * argv[]){
 
 
     }
+
+    /***************************
+    *****Functionality: MKDIR
+    ***************************/
+        else if(!strcmp(&auth->command[0],"mkdir")){
+          printf("\n************IN MKDIR*********\n");
+
+          bzero(buffer, MAXBUFSIZE);
+          recv(newsockfd, buffer, sizeof(buffer), 0);
+          printf("Sub-Directory Request: %s \n", buffer );
+          char dir_name[128];
+          bzero(dir_name, sizeof(dir_name));
+          //sscanf(buffer, "%s", dir_name);
+          strcpy(dir_name, buffer);
+          //printf("MKDIR:%s:::::\n", dir_name );
+
+          bzero(path_directory, sizeof(path_directory));
+          sprintf(path_directory, ".%s/%s/%s", argv[1], &auth->username[0], dir_name);
+          //printf("PATH: %s.....\n", path_directory );
+          mkdir(path_directory, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+
+          printf("\n\n******* Sub-Directory %s Created *******\n", dir_name);
+        }
+
+
   }
 }
   return 0;
