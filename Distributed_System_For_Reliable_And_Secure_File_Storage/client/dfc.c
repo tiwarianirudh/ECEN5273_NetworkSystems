@@ -164,10 +164,7 @@ int main(int argc, char * argv[]){
   //int parts_iteration4;
   unsigned long int read_length;
   int temp=0;
-  int flag1 = 0;
-  int flag2 = 0;
-  int flag3 = 0;
-  int flag4 = 0;
+
   //int read_bytes;
 
 
@@ -187,6 +184,11 @@ int main(int argc, char * argv[]){
     }
 
   while(1){
+    int flag1 = 0;
+    int flag2 = 0;
+    int flag3 = 0;
+    int flag4 = 0;
+
     printf("\n\n*******************Files in your folder*********************\n");
     system("ls");
 
@@ -632,8 +634,7 @@ int main(int argc, char * argv[]){
           // }
           if((strstr(buffer, "YES") != NULL) && (strstr(buffer, filename1) != NULL) && (flag1==0)){
             if((nbytes = send(sockfd[i], "SEND", strlen("SEND"), 0)) < 0){
-              printf("In Part Send\n");
-              perror("Error: \n");
+              perror("Error In Part Send: \n");
             }
             FILE* fp;
             fp = fopen(filename1, "ab");
@@ -669,17 +670,19 @@ int main(int argc, char * argv[]){
 
             }
           }
-          // else{
-          //   if((nbytes = send(sockfd[i], "DONT", strlen("DONT"), 0)) < 0){
-          //     printf("In Part Send\n");
-          //     perror("Error: \n");
-          //   }
-          //   // bzero(buffer, MAXBUFSIZE);
-          //   // recv(sockfd[i], buffer, sizeof(buffer), 0);
-          //   // printf("%s \n", buffer );
-          // }
+          else if((strstr(buffer, "YES") != NULL) && (strstr(buffer, filename1) != NULL) && (flag1==1)){
+            if((nbytes = send(sockfd[i], "DONT", strlen("DONT"), 0)) < 0){
+              printf("In Part Send\n");
+              perror("Error: \n");
+            }
+            sleep(1);
+            // bzero(buffer, MAXBUFSIZE);
+            // recv(sockfd[i], buffer, sizeof(buffer), 0);
+            // printf("%s \n", buffer );
+          }
+
           bzero(buffer, MAXBUFSIZE);
-          strcpy(buffer, "Last Synq message");
+          strcpy(buffer, "Last Synq message in part-1");
           if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
             printf("In Synq Send()\n");
             perror("Error: \n");
@@ -741,17 +744,19 @@ int main(int argc, char * argv[]){
               // }
             }
           }
-          // else{
-          //   if((nbytes = send(sockfd[i], "DONT", strlen("DONT"), 0)) < 0){
-          //     printf("In Part Send\n");
-          //     perror("Error: \n");
-          //   }
-          //   // bzero(buffer, MAXBUFSIZE);
-          //   // recv(sockfd[i], buffer, sizeof(buffer), 0);
-          //   // printf("%s \n", buffer );
-          // }
+          else if((strstr(buffer, "YES") != NULL) && (strstr(buffer, filename2) != NULL) && (flag2==1)){
+            if((nbytes = send(sockfd[i], "DONT", strlen("DONT"), 0)) < 0){
+              printf("In Part Send\n");
+              perror("Error: \n");
+            }
+            printf("In GET PART-2, nbytes: %d\n", nbytes );
+            sleep(1);
+            // bzero(buffer, MAXBUFSIZE);
+            // recv(sockfd[i], buffer, sizeof(buffer), 0);
+            // printf("%s \n", buffer );
+          }
           bzero(buffer, MAXBUFSIZE);
-          strcpy(buffer, "Last Synq message");
+          strcpy(buffer, "Last Synq message in part2");
           if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
             printf("In Synq Send()\n");
             perror("Error: \n");
@@ -813,17 +818,18 @@ int main(int argc, char * argv[]){
               // }
             }
           }
-          // else{
-          //   if((nbytes = send(sockfd[i], "DONT", strlen("DONT"), 0)) < 0){
-          //     printf("In Part Send\n");
-          //     perror("Error: \n");
-          //   }
-          //   // bzero(buffer, MAXBUFSIZE);
-          //   // recv(sockfd[i], buffer, sizeof(buffer), 0);
-          //   // printf("%s \n", buffer );
-          // }
+          else if((strstr(buffer, "YES") != NULL) && (strstr(buffer, filename3) != NULL) && (flag3==1)){
+            if((nbytes = send(sockfd[i], "DONT", strlen("DONT"), 0)) < 0){
+              printf("In Part Send\n");
+              perror("Error: \n");
+            }
+            sleep(1);
+            // bzero(buffer, MAXBUFSIZE);
+            // recv(sockfd[i], buffer, sizeof(buffer), 0);
+            // printf("%s \n", buffer );
+          }
           bzero(buffer, MAXBUFSIZE);
-          strcpy(buffer, "Last Synq message");
+          strcpy(buffer, "Last Synq message in part3");
           if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
             printf("In Synq Send()\n");
             perror("Error: \n");
@@ -885,23 +891,45 @@ int main(int argc, char * argv[]){
               // }
             }
           }
-          // else{
-          //   if((nbytes = send(sockfd[i], "DONT", strlen("DONT"), 0)) < 0){
-          //     printf("In Part Send\n");
-          //     perror("Error: \n");
-          //   }
-          //   // bzero(buffer, MAXBUFSIZE);
-          //   // recv(sockfd[i], buffer, sizeof(buffer), 0);
-          //   // printf("%s \n", buffer );
-          // }
+          else if((strstr(buffer, "YES") != NULL) && (strstr(buffer, filename4) != NULL) && (flag4==1)){
+            if((nbytes = send(sockfd[i], "DONT", strlen("DONT"), 0)) < 0){
+              printf("In Part Send\n");
+              perror("Error: \n");
+            }
+            sleep(1);
+            // bzero(buffer, MAXBUFSIZE);
+            // recv(sockfd[i], buffer, sizeof(buffer), 0);
+            // printf("%s \n", buffer );
+          }
           bzero(buffer, MAXBUFSIZE);
-          strcpy(buffer, "Last Synq message");
+          strcpy(buffer, "Last Synq message in part4");
           if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
             printf("In Synq Send()\n");
             perror("Error: \n");
           }
 
+          if(i==3){
+            if((flag1==1) && (flag2==1) && (flag3==1) && (flag4==1)){
+              char concat_parts_rm[264];
+              char concat_command[264];
+              bzero(concat_parts_rm, sizeof(concat_parts_rm));
+              bzero(concat_command, sizeof(concat_command));
+              sprintf(concat_parts_rm, "rm %s %s %s %s", filename1, filename2, filename3, filename4);
+              //printf("RM %s\n", concat_parts_rm );
+              sprintf(concat_command, "cat %s %s %s %s > %s", filename1, filename2, filename3, filename4, filename);
+              //printf("COMM %s\n", concat_command );
+              system(concat_command);
+              system(concat_parts_rm);
+            }
+            else{
+              printf("************File is Incomplete*************\n");
+            }
+          }
 
+
+        }
+        else{
+          printf("Check For Credentials\n");
         }
       }
     }

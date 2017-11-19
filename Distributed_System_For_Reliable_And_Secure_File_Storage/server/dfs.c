@@ -342,6 +342,10 @@ int main(int argc, char * argv[]){
 			}
 		}
 
+
+    /***************************
+    *****Functionality: GET
+    ***************************/
     else if(!strcmp(&auth->command[0],"get")){
       printf("\n************IN GET*********\n");
 
@@ -377,7 +381,7 @@ int main(int argc, char * argv[]){
         strcpy(buffer, filename1);
         strcat(buffer, " NO");
         if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
-          perror("Error: \n");
+          perror("Error \n");
         }
         printf("Part 1 does not exist\n");
         // bzero(buffer, MAXBUFSIZE);
@@ -414,12 +418,12 @@ int main(int argc, char * argv[]){
             printf("buffer recv for parts iteration : %s\n", buffer);
           }while(1);
         }
-        else{
-          if((nbytes = send(newsockfd, msg, strlen(msg), 0) < 0)){
-            printf("Error: Writing to the socket\n");
-            perror("Error:\n");
-          }
-        }
+        // else{
+        //   if((nbytes = recv(newsockfd, buffer, strlen(buffer), 0) < 0)){
+        //     printf("Error: Writing to the socket\n");
+        //     perror("Error:\n");
+        //   }
+        // }
         fclose(fp);
         // bzero(buffer, MAXBUFSIZE);
         // nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
@@ -482,12 +486,12 @@ int main(int argc, char * argv[]){
 
           }while(1);
         }
-        else{
-          if((nbytes = send(newsockfd, msg, strlen(msg), 0) < 0)){
-            printf("Error: Writing to the socket\n");
-            perror("Error:\n");
-          }
-        }
+        // else{
+        //   if((nbytes = send(newsockfd, msg, strlen(msg), 0) < 0)){
+        //     printf("Error: Writing to the socket\n");
+        //     perror("Error:\n");
+        //   }
+        // }
         fclose(fp);
       }
       bzero(buffer, MAXBUFSIZE);
@@ -547,12 +551,12 @@ int main(int argc, char * argv[]){
 
           }while(1);
         }
-        else{
-          if((nbytes = send(newsockfd, msg, strlen(msg), 0) < 0)){
-            printf("Error: Writing to the socket\n");
-            perror("Error:\n");
-          }
-        }
+        // else{
+        //   if((nbytes = send(newsockfd, msg, strlen(msg), 0) < 0)){
+        //     printf("Error: Writing to the socket\n");
+        //     perror("Error:\n");
+        //   }
+        // }
         fclose(fp);
       }
       bzero(buffer, MAXBUFSIZE);
@@ -612,12 +616,12 @@ int main(int argc, char * argv[]){
 
           }while(1);
         }
-        else{
-          if((nbytes = send(newsockfd, msg, strlen(msg), 0) < 0)){
-            printf("Error: Writing to the socket\n");
-            perror("Error:\n");
-          }
-        }
+        // else{
+        //   if((nbytes = send(newsockfd, msg, strlen(msg), 0) < 0)){
+        //     printf("Error: Writing to the socket\n");
+        //     perror("Error:\n");
+        //   }
+        // }
         fclose(fp);
       }
 
