@@ -25,11 +25,18 @@
 #include <dirent.h>
 #define MAXBUFSIZE 1024
 
+/*****************************************
+Structure for Pared data from dfs.conf file
+*****************************************/
 typedef struct{
   char username[4][64];
   char password[4][64];
 }struct_parse;
 
+
+/***************************************************
+Structure to store client details for authentication
+****************************************************/
 typedef struct{
   char username[64];
   char password[64];
@@ -39,7 +46,9 @@ typedef struct{
 
 int parse_file(struct_parse *parse, char* conf, int* entry);
 
-
+/******
+Function to parse the dfs.conf file
+******/
 int parse_file(struct_parse *parse, char* conf, int* entry){
   FILE *fp;
   char line[MAXBUFSIZE];
@@ -81,7 +90,7 @@ int main(int argc, char * argv[]){
   char dfs_partname[128];
   char path_directory[64];
   int auth_flag = 0;
-  char msg[] = "synq";
+//  char msg[] = "synq";
 
   if (argc != 3)
 	{
@@ -113,6 +122,7 @@ int main(int argc, char * argv[]){
      exit(-1);
   }
 
+  /****** Waiting for new connections******/
   printf("\n\n**********Waiting for New Connection**********\n\n");
   if(listen(sockfd, 1024) < 0){
     printf("*******Error in Listen*******\n");
@@ -129,6 +139,8 @@ int main(int argc, char * argv[]){
     //for(int i=0; i<entry;i++){
       printf("Username in struct_auth recieved: %s\t Password: %s Command: %s \n\n", &auth->username[0], &auth->password[0],&auth->command[0]);
     //}
+
+    /******Validating a Client******/
     for(int i=0; i<*entry; i++){
       if(!(strcmp((parse).username[i], &auth->username[0]))){
         if(!(strcmp((parse).password[i], &auth->password[0]))){
@@ -163,11 +175,14 @@ int main(int argc, char * argv[]){
     }
     if(auth_flag==1){
 
+
+
 /***************************
 *****Functionality: PUT
 ***************************/
       if(!strcmp(&auth->command[0], "put")){
-        //Recieving Servers Part-A
+
+        /******Recieving Servers Part-A******/
         bzero(buffer, MAXBUFSIZE);
         recv(newsockfd, buffer, sizeof(buffer), 0);
         printf("%s ****\n", buffer );
@@ -236,7 +251,7 @@ int main(int argc, char * argv[]){
           fclose(dfs_file);
         // }
 
-        //Recieving Servers PART-B
+        /******Recieving Servers Part-B ******/
         bzero(buffer, MAXBUFSIZE);
         recv(newsockfd, buffer, sizeof(buffer), 0);
         printf("%s \n", buffer );
@@ -300,6 +315,11 @@ int main(int argc, char * argv[]){
         printf("\n\n********PUT operation Complete********\n\n");
       }
 
+
+
+/***************************
+*****Functionality: LIST
+***************************/
     else if(!strcmp(&auth->command[0],"list")){
       bzero(buffer, MAXBUFSIZE);
       recv(newsockfd, buffer, sizeof(buffer), 0);
@@ -343,9 +363,9 @@ int main(int argc, char * argv[]){
 		}
 
 
-    /***************************
-    *****Functionality: GET
-    ***************************/
+/***************************
+*****Functionality: GET
+***************************/
     else if(!strcmp(&auth->command[0],"get")){
       printf("\n************IN GET*********\n");
 
@@ -432,6 +452,7 @@ int main(int argc, char * argv[]){
       bzero(buffer, MAXBUFSIZE);
       nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
       printf("Recv after last iteraction:%s\n", buffer );
+
 
 
       /****************
