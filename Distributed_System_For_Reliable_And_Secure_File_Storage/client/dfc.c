@@ -188,6 +188,10 @@ int main(int argc, char * argv[]){
     int flag2 = 0;
     int flag3 = 0;
     int flag4 = 0;
+    char filename1[128];
+    char filename2[128];
+    char filename3[128];
+    char filename4[128];
 
     printf("\n\n*******************Files in your folder*********************\n");
     system("ls");
@@ -516,68 +520,6 @@ int main(int argc, char * argv[]){
           }
           fwrite(buffer, 1, nbytes, fp);
           fclose(fp);
-          if(i==3){
-            system("sort list_file_temp | uniq > list_file");
-
-            FILE *fp;
-            FILE *fp_dup;
-            char line[MAXBUFSIZE];
-            char line_dup[MAXBUFSIZE];
-            char * c;
-            char list_filename[128];
-            char list_filename_dup[128];
-            int count = 0;
-
-            fp = fopen("list_file", "r");
-            if(!fp){
-              printf("Error reading list file\n");
-              return -1;
-            }
-            else{
-              printf("\n\n*****List from Servers ****** \n");
-              fgets(line, sizeof(line), fp);
-              if((c = strstr((char *)line, "."))){
-                bzero(list_filename, sizeof(list_filename));
-                strncpy(list_filename, line+strlen("."), strlen(line)-4);
-                //printf("File name in the LIST: %s\n", list_filename);
-                //strcpy(line_dup,line);
-                fp_dup = fp;
-                while(fgets(line_dup, sizeof(line_dup), fp_dup)){
-                  if((c = strstr((char *)line_dup, "."))){
-                    bzero(list_filename_dup, sizeof(list_filename_dup));
-                    strncpy(list_filename_dup, line_dup+strlen("."), strlen(line_dup)-4);
-                    //printf("Dup File name in the LIST: %s\n", list_filename_dup);
-                    if(!strcmp(list_filename_dup, list_filename)){
-                      count = count + 1;
-                      //printf("*************Count : %d\n", count );
-                    }
-                    else{
-                      if(count==3){
-                        printf("\t%s [complete]\n",list_filename);
-                      }
-                      else{
-                        printf("\t%s [incomplete]\n",list_filename);
-                      }
-                      count = 0;
-                      bzero(list_filename, sizeof(list_filename));
-                      strcpy(list_filename, list_filename_dup);
-                    }
-                  }
-                }
-                if(count==3){
-                  printf("\t%s [complete]\n",list_filename);
-                }
-                else{
-                  printf("\t%s [incomplete]\n",list_filename);
-                }
-                count = 0;
-                bzero(list_filename, sizeof(list_filename));
-                strcpy(list_filename, list_filename_dup);
-              }
-            }
-            remove("list_file");
-            remove("list_file_temp");
-          }
         }
       }
 
@@ -604,19 +546,19 @@ int main(int argc, char * argv[]){
             printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
           }
 
-          char filename1[128];
+          //char filename1[128];
           bzero(filename1, sizeof(filename1));
           sprintf(filename1, ".%s.1", filename);
           //printf("Part1: %s\n", filename1);
-          char filename2[128];
+          //char filename2[128];
           bzero(filename2, sizeof(filename2));
           sprintf(filename2, ".%s.2", filename);
           //printf("Part2: %s\n", filename2);
-          char filename3[128];
+          //char filename3[128];
           bzero(filename3, sizeof(filename3));
           sprintf(filename3, ".%s.3", filename);
           //printf("Part3: %s\n", filename3);
-          char filename4[128];
+          //char filename4[128];
           bzero(filename4, sizeof(filename4));
           sprintf(filename4, ".%s.4", filename);
           //printf("Part4: %s\n", filename4);
@@ -907,30 +849,89 @@ int main(int argc, char * argv[]){
             printf("In Synq Send()\n");
             perror("Error: \n");
           }
-
-          if(i==3){
-            if((flag1==1) && (flag2==1) && (flag3==1) && (flag4==1)){
-              char concat_parts_rm[264];
-              char concat_command[264];
-              bzero(concat_parts_rm, sizeof(concat_parts_rm));
-              bzero(concat_command, sizeof(concat_command));
-              sprintf(concat_parts_rm, "rm %s %s %s %s", filename1, filename2, filename3, filename4);
-              //printf("RM %s\n", concat_parts_rm );
-              sprintf(concat_command, "cat %s %s %s %s > %s", filename1, filename2, filename3, filename4, filename);
-              //printf("COMM %s\n", concat_command );
-              system(concat_command);
-              system(concat_parts_rm);
-            }
-            else{
-              printf("************File is Incomplete*************\n");
-            }
-          }
-
-
         }
         else{
           printf("Check For Credentials\n");
         }
+      }
+    }
+    if(!strcmp(cname, "list")){
+      system("sort list_file_temp | uniq > list_file");
+
+      FILE *fp;
+      FILE *fp_dup;
+      char line[MAXBUFSIZE];
+      char line_dup[MAXBUFSIZE];
+      char * c;
+      char list_filename[128];
+      char list_filename_dup[128];
+      int count = 0;
+
+      fp = fopen("list_file", "r");
+      if(!fp){
+        printf("Error reading list file\n");
+        return -1;
+      }
+      else{
+        printf("\n\n*****List from Servers ****** \n");
+        fgets(line, sizeof(line), fp);
+        if((c = strstr((char *)line, "."))){
+          bzero(list_filename, sizeof(list_filename));
+          strncpy(list_filename, line+strlen("."), strlen(line)-4);
+          //printf("File name in the LIST: %s\n", list_filename);
+          //strcpy(line_dup,line);
+          fp_dup = fp;
+          while(fgets(line_dup, sizeof(line_dup), fp_dup)){
+            if((c = strstr((char *)line_dup, "."))){
+              bzero(list_filename_dup, sizeof(list_filename_dup));
+              strncpy(list_filename_dup, line_dup+strlen("."), strlen(line_dup)-4);
+              //printf("Dup File name in the LIST: %s\n", list_filename_dup);
+              if(!strcmp(list_filename_dup, list_filename)){
+                count = count + 1;
+                //printf("*************Count : %d\n", count );
+              }
+              else{
+                if(count==3){
+                  printf("\t%s [complete]\n",list_filename);
+                }
+                else{
+                  printf("\t%s [incomplete]\n",list_filename);
+                }
+                count = 0;
+                bzero(list_filename, sizeof(list_filename));
+                strcpy(list_filename, list_filename_dup);
+              }
+            }
+          }
+          if(count==3){
+            printf("\t%s [complete]\n",list_filename);
+          }
+          else{
+            printf("\t%s [incomplete]\n",list_filename);
+          }
+          count = 0;
+          bzero(list_filename, sizeof(list_filename));
+          strcpy(list_filename, list_filename_dup);
+        }
+      }
+      remove("list_file");
+      remove("list_file_temp");
+    }
+    else if(!strcmp(cname, "get")){
+      if((flag1==1) && (flag2==1) && (flag3==1) && (flag4==1)){
+        char concat_parts_rm[264];
+        char concat_command[264];
+        bzero(concat_parts_rm, sizeof(concat_parts_rm));
+        bzero(concat_command, sizeof(concat_command));
+        sprintf(concat_parts_rm, "rm %s %s %s %s", filename1, filename2, filename3, filename4);
+        //printf("RM %s\n", concat_parts_rm );
+        sprintf(concat_command, "cat %s %s %s %s > %s", filename1, filename2, filename3, filename4, filename);
+        //printf("COMM %s\n", concat_command );
+        system(concat_command);
+        system(concat_parts_rm);
+      }
+      else{
+        printf("\n\n\n\n************File is Incomplete in Get*************\n\n\n");
       }
     }
   }
