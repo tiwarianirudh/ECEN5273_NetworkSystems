@@ -205,7 +205,7 @@ int main(int argc, char * argv[]){
 
           //FILE* dfs_file;
 
-          bzero(path_directory, MAXBUFSIZE);
+          bzero(path_directory, sizeof(path_directory));
           sprintf(path_directory, ".%s/%s", argv[1], &auth->username[0] );
           printf("%s\n", path_directory );
           mkdir(path_directory, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
@@ -325,13 +325,25 @@ int main(int argc, char * argv[]){
   ***************************/
       else if(!strcmp(&auth->command[0],"list")){
         bzero(buffer, MAXBUFSIZE);
+        char msg[] = "List synq";
         recv(newsockfd, buffer, sizeof(buffer), 0);
+        nbytes = send(newsockfd, msg, strlen(msg), 0);
   			DIR *current_dir;
   			struct dirent *struct_dir;
 
-        bzero(path_directory, MAXBUFSIZE);
-        sprintf(path_directory, ".%s/%s", argv[1], &auth->username[0] );
-        //printf("%s\n", path_directory );
+
+        bzero(buffer, MAXBUFSIZE);
+        recv(newsockfd, buffer, sizeof(buffer), 0);
+
+        char filepath[128];
+        bzero(filepath, sizeof(filepath));
+        sscanf(buffer, "%s", filepath);
+
+        nbytes = send(newsockfd, msg, strlen(msg), 0);
+
+        bzero(path_directory, sizeof(path_directory));
+        sprintf(path_directory, ".%s/%s", argv[1], filepath);
+        printf("Path Directory: %s\n", path_directory );
         mkdir(path_directory, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 
   			current_dir = opendir(path_directory);
@@ -387,21 +399,21 @@ int main(int argc, char * argv[]){
       else if(!strcmp(&auth->command[0],"get")){
         printf("\n************IN GET*********\n");
 
-        FILE *fp;
-        bzero(path_directory, MAXBUFSIZE);
-        sprintf(path_directory, ".%s/%s/", argv[1], &auth->username[0] );
-        //printf("%s\n", path_directory );
-        mkdir(path_directory, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-
-
         bzero(buffer, MAXBUFSIZE);
         recv(newsockfd, buffer, sizeof(buffer), 0);
         printf("Buffer: %s \n", buffer );
         char filename[128];
+        char filepath[128];
+        bzero(filepath, sizeof(filepath));
         bzero(filename, sizeof(filename));
+        bzero(path_directory, sizeof(path_directory));
         //sscanf(buffer, "%s", filename);
-        strcpy(filename, buffer);
-        printf("Filename:%s:::::\n", filename );
+        sscanf(buffer, "%s %s", filename, filepath);
+        //printf("Filename:%s:::::\n", filename );
+        FILE *fp;
+        sprintf(path_directory, ".%s/%s/", argv[1], filepath );
+        printf("%s\n", path_directory );
+        mkdir(path_directory, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 
 
 

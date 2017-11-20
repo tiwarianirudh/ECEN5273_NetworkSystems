@@ -168,8 +168,9 @@ int main(int argc, char * argv[]){
   struct_parse parse;
   struct_authenticate *auth = (struct_authenticate*)malloc(sizeof(struct_authenticate));
   char command[32];
-  char *cname;
-  char *filename;
+  char cname[32];
+  char filename[128] = "NONE";
+  char subfolder[128] = "NONE";
   char* conf;
   int sockfd[4];
   struct sockaddr_in server_addr;
@@ -218,12 +219,16 @@ int main(int argc, char * argv[]){
 
     /* Display the availble commands for the user */
     printf("\n\tEnter Command as under: \n");
-    printf("\t1. list \n" "\t2. get <filename>\n" "\t3. put <filename>\n" "\t4. mkdir <direname>\n");
+    printf("\t1. list \n" "\t2. get <filename>\n" "\t3. put <filename>\n" "\t4. mkdir <SubDirect-name>\n");
     scanf(" %[^\n]s",command);	// store the command entered by the user
+    bzero(cname, sizeof(cname));
+    bzero(filename, sizeof(filename));
+    bzero(subfolder, sizeof(subfolder));
 
-    cname = strdup(command);
-    strtok(cname, " ");
-    filename = strtok(NULL, " ");
+    strcpy(filename, "NONE");
+    strcpy(subfolder, "NONE");
+    sscanf(command, "%s %s %s", cname, filename, subfolder);
+    printf("%s %s %s\n", cname, filename, subfolder );
     //printf("Filename: %s\n", filename);
 
     strcpy(auth->username, *parse.username);
@@ -546,6 +551,38 @@ int main(int argc, char * argv[]){
           nbytes = 0;
           if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
             perror("Error: \n");
+          }
+
+          if(!strcmp(filename, "NONE")){
+            char filepath[128];
+            bzero(filepath, sizeof(filepath));
+            sprintf(filepath, "%s", *parse.username);
+            if((nbytes = send(sockfd[i], filepath, strlen(filepath), 0)) < 0){
+              perror("Error: \n");
+            }
+            bzero(buffer, MAXBUFSIZE);
+            nbytes = 0;
+            if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
+              perror("Error: \n");
+            }
+          }
+          else{
+            char filepath[128];
+            bzero(filepath, sizeof(filepath));
+            sprintf(filepath, "%s/%s", *parse.username, filename);
+            if((nbytes = send(sockfd[i], filepath, strlen(filepath), 0)) < 0){
+              perror("Error: \n");
+            }
+            bzero(buffer, MAXBUFSIZE);
+            nbytes = 0;
+            if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
+              perror("Error: \n");
+            }
+          }
+          bzero(buffer, MAXBUFSIZE);
+          nbytes = 0;
+          if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
+            perror("Error: \n");
             exit(1);
           }
           if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
@@ -584,10 +621,37 @@ int main(int argc, char * argv[]){
         if(!(strcmp(buffer, "User Exists" ))){
           printf("User Exists: Server Ready to SEND File\n");
 
-          if((nbytes = send(sockfd[i], filename, strlen(filename), 0)) < 0){
-            printf("Sending to DFS%d: %d bytes\n", i+1, nbytes);
-            printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
+          if(!strcmp(subfolder, "NONE")){
+            char filepath[128];
+            bzero(filepath, sizeof(filepath));
+            sprintf(filepath, "%s %s", filename, *parse.username);
+            if((nbytes = send(sockfd[i], filepath, strlen(filepath), 0)) < 0){
+              perror("Error: \n");
+            }
+            // bzero(buffer, MAXBUFSIZE);
+            // nbytes = 0;
+            // if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
+            //   perror("Error: \n");
+            // }
           }
+          else{
+            char filepath[128];
+            bzero(filepath, sizeof(filepath));
+            sprintf(filepath, "%s %s/%s", filename, *parse.username, subfolder);
+            if((nbytes = send(sockfd[i], filepath, strlen(filepath), 0)) < 0){
+              perror("Error: \n");
+            }
+            // bzero(buffer, MAXBUFSIZE);
+            // nbytes = 0;
+            // if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
+            //   perror("Error: \n");
+            // }
+          }
+
+          // if((nbytes = send(sockfd[i], filename, strlen(filename), 0)) < 0){
+          //   printf("Sending to DFS%d: %d bytes\n", i+1, nbytes);
+          //   printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
+          // }
 
           //char filename1[128];
           bzero(filename1, sizeof(filename1));
