@@ -271,6 +271,7 @@ int main(int argc, char * argv[]){
         printf("\n************IN PUT*********\n");
         printf("Put File: \"%s\" on the server.\n", filename);
 
+        /**** Calculating File MD5SUM Value ****/
         char *hash_value = MD5sum(filename);
         if(hash_value == 0){
           printf("Error Opening file or it Does not exist\n");
@@ -320,6 +321,7 @@ int main(int argc, char * argv[]){
             {{2,3},{3,4},{4,1},{1,2}},
           };
 
+          /**** IF Hash-Mod 0 ****/
           if(part_map[x][i][0]==1 || part_map[x][i][1]==1){
 
             if(!strcmp(subfolder, "NONE")){
@@ -373,6 +375,7 @@ int main(int argc, char * argv[]){
             temp=0;
           }
 
+          /**** IF Hash Mod is 1 ****/
           if(part_map[x][i][0]==2 || part_map[x][i][1]==2){
             if(!strcmp(subfolder, "NONE")){
               char filepath[128];
@@ -421,6 +424,7 @@ int main(int argc, char * argv[]){
           }
 
 
+          /**** If Hash Mod is 2****/
           if(part_map[x][i][0]==3 || part_map[x][i][1]==3){
             if(!strcmp(subfolder, "NONE")){
               char filepath[128];
@@ -472,7 +476,7 @@ int main(int argc, char * argv[]){
             temp=0;
           }
 
-
+          /**** If Hash Mod is 3 ****/
           if(part_map[x][i][0]==4 || part_map[x][i][1]==4){
             if(!strcmp(subfolder, "NONE")){
               char filepath[128];
