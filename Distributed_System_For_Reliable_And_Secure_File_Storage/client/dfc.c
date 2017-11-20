@@ -219,7 +219,7 @@ int main(int argc, char * argv[]){
 
     /* Display the availble commands for the user */
     printf("\n\tEnter Command as under: \n");
-    printf("\t1. list \n" "\t2. get <filename>\n" "\t3. put <filename>\n" "\t4. mkdir <SubDirect-name>\n");
+    printf("\t1. list <subfolder> \n" "\t2. get <filename> <subfolder>\n" "\t3. put <filename> <subfolder>\n" "\t4. mkdir <SubDirect-name>\n");
     scanf(" %[^\n]s",command);	// store the command entered by the user
     bzero(cname, sizeof(cname));
     bzero(filename, sizeof(filename));
@@ -337,13 +337,31 @@ int main(int argc, char * argv[]){
           };
 
           if(part_map[x][i][0]==1 || part_map[x][i][1]==1){
-            bzero(buffer, MAXBUFSIZE);
-            sprintf(buffer, "Part:1 %s %lu", filename, len_part);
-            printf("PUT information: %s\n", buffer );
-            if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
-              printf("Sending to DFS2: %d bytes\n", nbytes);
-              printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
+            // bzero(buffer, MAXBUFSIZE);
+            // sprintf(buffer, "Part:1 %s %lu", filename, len_part);
+            // printf("PUT information: %s\n", buffer );
+
+            if(!strcmp(subfolder, "NONE")){
+              char filepath[128];
+              bzero(filepath, sizeof(filepath));
+              sprintf(filepath, "Part:1 %s %lu %s", filename, len_part, *parse.username);
+              if((nbytes = send(sockfd[i], filepath, strlen(filepath), 0)) < 0){
+                perror("Error: \n");
+              }
             }
+            else{
+              char filepath[128];
+              bzero(filepath, sizeof(filepath));
+              sprintf(filepath, "Part:1 %s %lu %s/%s", filename, len_part, *parse.username, subfolder);
+              if((nbytes = send(sockfd[i], filepath, strlen(filepath), 0)) < 0){
+                perror("Error: \n");
+              }
+            }
+
+            // if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
+            //   printf("Sending to DFS2: %d bytes\n", nbytes);
+            //   printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
+            // }
             bzero(buffer, MAXBUFSIZE);
             recv(sockfd[i], buffer, sizeof(buffer), 0);
             printf("%s \n", buffer );
@@ -386,14 +404,37 @@ int main(int argc, char * argv[]){
           }
 
           if(part_map[x][i][0]==2 || part_map[x][i][1]==2){
-            bzero(buffer, MAXBUFSIZE);
-            sprintf(buffer, "Part:2 %s %lu", filename, len_part);
-            printf("PUT information: %s\n", buffer );
-            //printf("String Length of Buffer: %lu\n",  strlen(buffer));
-            if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
-              printf("Sending to DFS2: %d bytes\n", nbytes);
-              printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
-            }//printf("Sending to DFS2: %d bytes\n", nbytes);
+            if(!strcmp(subfolder, "NONE")){
+              char filepath[128];
+              bzero(filepath, sizeof(filepath));
+              sprintf(filepath, "Part:2 %s %lu %s", filename, len_part, *parse.username);
+              if((nbytes = send(sockfd[i], filepath, strlen(filepath), 0)) < 0){
+                perror("Error: \n");
+              }
+              // bzero(buffer, MAXBUFSIZE);
+              // nbytes = 0;
+              // if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
+              //   perror("Error: \n");
+              // }
+            }
+            else{
+              char filepath[128];
+              bzero(filepath, sizeof(filepath));
+              sprintf(filepath, "Part:2 %s %lu %s/%s", filename, len_part, *parse.username, subfolder);
+              if((nbytes = send(sockfd[i], filepath, strlen(filepath), 0)) < 0){
+                perror("Error: \n");
+              }
+              // bzero(buffer, MAXBUFSIZE);
+              // nbytes = 0;
+              // if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
+              //   perror("Error: \n");
+              // }
+            }
+
+            // if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
+            //   printf("Sending to DFS2: %d bytes\n", nbytes);
+            //   printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
+            // }
             bzero(buffer, MAXBUFSIZE);
             recv(sockfd[i], buffer, sizeof(buffer), 0);
             //printf("%s \n", buffer );
@@ -433,13 +474,37 @@ int main(int argc, char * argv[]){
 
 
           if(part_map[x][i][0]==3 || part_map[x][i][1]==3){
-            bzero(buffer, MAXBUFSIZE);
-            sprintf(buffer, "Part:3 %s %lu", filename, len_part);
-            printf("PUT information: %s\n", buffer );
-            if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
-              printf("Sending to DFS3: %d bytes\n", nbytes);
-              printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
-            }//printf("Sending to DFS3: %d bytes\n", nbytes);
+            if(!strcmp(subfolder, "NONE")){
+              char filepath[128];
+              bzero(filepath, sizeof(filepath));
+              sprintf(filepath, "Part:3 %s %lu %s", filename, len_part, *parse.username);
+              if((nbytes = send(sockfd[i], filepath, strlen(filepath), 0)) < 0){
+                perror("Error: \n");
+              }
+              // bzero(buffer, MAXBUFSIZE);
+              // nbytes = 0;
+              // if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
+              //   perror("Error: \n");
+              // }
+            }
+            else{
+              char filepath[128];
+              bzero(filepath, sizeof(filepath));
+              sprintf(filepath, "Part:3 %s %lu %s/%s", filename, len_part, *parse.username, subfolder);
+              if((nbytes = send(sockfd[i], filepath, strlen(filepath), 0)) < 0){
+                perror("Error: \n");
+              }
+              // bzero(buffer, MAXBUFSIZE);
+              // nbytes = 0;
+              // if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
+              //   perror("Error: \n");
+              // }
+            }
+
+            // if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
+            //   printf("Sending to DFS2: %d bytes\n", nbytes);
+            //   printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
+            // }
             bzero(buffer, MAXBUFSIZE);
             recv(sockfd[i], buffer, sizeof(buffer), 0);
             //printf("%s \n", buffer );
@@ -479,13 +544,37 @@ int main(int argc, char * argv[]){
 
 
           if(part_map[x][i][0]==4 || part_map[x][i][1]==4){
-            bzero(buffer, MAXBUFSIZE);
-            sprintf(buffer, "Part:4 %s %lu", filename, len_part4);
-            printf("PUT information: %s\n", buffer );
-            if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
-              printf("Sending to DFS4: %d bytes\n", nbytes);
-              printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
-            }//printf("Sending to DFS4: %d bytes\n", nbytes);
+            if(!strcmp(subfolder, "NONE")){
+              char filepath[128];
+              bzero(filepath, sizeof(filepath));
+              sprintf(filepath, "Part:4 %s %lu %s", filename, len_part, *parse.username);
+              if((nbytes = send(sockfd[i], filepath, strlen(filepath), 0)) < 0){
+                perror("Error: \n");
+              }
+              // bzero(buffer, MAXBUFSIZE);
+              // nbytes = 0;
+              // if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
+              //   perror("Error: \n");
+              // }
+            }
+            else{
+              char filepath[128];
+              bzero(filepath, sizeof(filepath));
+              sprintf(filepath, "Part:4 %s %lu %s/%s", filename, len_part, *parse.username, subfolder);
+              if((nbytes = send(sockfd[i], filepath, strlen(filepath), 0)) < 0){
+                perror("Error: \n");
+              }
+              // bzero(buffer, MAXBUFSIZE);
+              // nbytes = 0;
+              // if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
+              //   perror("Error: \n");
+              // }
+            }
+
+            // if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
+            //   printf("Sending to DFS2: %d bytes\n", nbytes);
+            //   printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
+            // }
             bzero(buffer, MAXBUFSIZE);
             recv(sockfd[i], buffer, sizeof(buffer), 0);
             //printf("%s \n", buffer );

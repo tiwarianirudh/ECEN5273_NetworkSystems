@@ -189,8 +189,12 @@ int main(int argc, char * argv[]){
           bzero(buffer, MAXBUFSIZE);
           recv(newsockfd, buffer, sizeof(buffer), 0);
           printf("%s ****\n", buffer );
-          sscanf(buffer, "%*[^:]%*c%d %s %lu", &part_num, part_file, &len_part);
-          printf("Part Number:%d, Filename: %s, Part Length:%lu\n", part_num, part_file, len_part );
+
+          char filepath[128];
+          bzero(filepath, sizeof(filepath));
+
+          sscanf(buffer, "%*[^:]%*c%d %s %lu %s", &part_num, part_file, &len_part, filepath);
+          printf("Part Number:%d, Filename: %s, Part Length:%lu\n Filepath:%s", part_num, part_file, len_part, filepath );
 
           bzero(buffer, MAXBUFSIZE);
           strcpy(buffer, "Recieved Iteration");
@@ -206,8 +210,8 @@ int main(int argc, char * argv[]){
           //FILE* dfs_file;
 
           bzero(path_directory, sizeof(path_directory));
-          sprintf(path_directory, ".%s/%s", argv[1], &auth->username[0] );
-          printf("%s\n", path_directory );
+          sprintf(path_directory, ".%s/%s", argv[1], filepath );
+          printf("Path Directory:%s\n", path_directory );
           mkdir(path_directory, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 
           // if(part_num == 1){
@@ -257,9 +261,14 @@ int main(int argc, char * argv[]){
           /******Recieving Servers Part-B ******/
           bzero(buffer, MAXBUFSIZE);
           recv(newsockfd, buffer, sizeof(buffer), 0);
-          printf("%s \n", buffer );
-          sscanf(buffer, "%*[^:]%*c%d %s %lu", &part_num, part_file, &len_part);
-          printf("Part Number:%d, Filename: %s, Part Length:%lu\n", part_num, part_file, len_part );
+          printf("%s ****\n", buffer );
+
+          //char filepath[128];
+          bzero(filepath, sizeof(filepath));
+
+          sscanf(buffer, "%*[^:]%*c%d %s %lu %s", &part_num, part_file, &len_part, filepath);
+          //printf("Part Number:%d, Filename: %s, Part Length:%lu\n", part_num, part_file, len_part );
+
           parts_iteration = (len_part/MAXBUFSIZE);
           printf("********** Number of iterations: %d **********\n", parts_iteration);
 
@@ -271,9 +280,9 @@ int main(int argc, char * argv[]){
           }
           //FILE* dfs_file;
 
-          bzero(path_directory, MAXBUFSIZE);
-          sprintf(path_directory, ".%s/%s", argv[1], &auth->username[0] );
-          printf("%s\n", path_directory );
+          bzero(path_directory, sizeof(path_directory));
+          sprintf(path_directory, ".%s/%s", argv[1], filepath );
+          printf("Path Directory:%s\n", path_directory );
           mkdir(path_directory, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 
           // if(part_num == 1){
