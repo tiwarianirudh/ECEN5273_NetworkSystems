@@ -145,11 +145,8 @@ char* MD5sum(char *filename){
   }
   MD5_Final (hash_hex,&mdContext);
   for(i = 0; i < MD5_DIGEST_LENGTH; i++){
-    //printf("%02x", c[i]);
     snprintf(&md5string[i*2], 32, "%02x", hash_hex[i]);
   }
-  printf("\n************\n");
-  printf ("Hash Value: %s\n\n", md5string);
   fclose(fp);
   return (char *)md5string;
 }
@@ -157,7 +154,6 @@ char* MD5sum(char *filename){
 int* intMD5sum(char * hash_value){
   int *hash_int = (int*)malloc(sizeof(int));
   *hash_int = strtol(hash_value+31, NULL, 16);
-  printf("Integer Hash: %d\n", *hash_int );
   return (int *)hash_int;
 }
 
@@ -177,17 +173,13 @@ int main(int argc, char * argv[]){
   int nbytes;
   char buffer[MAXBUFSIZE];
   int x; //Modulo4 value of hash_int
-  //FILE* fp;
+
   unsigned long int file_length;
   unsigned long int len_part;
   unsigned long int len_part4;
   int parts_iteration;
-  //int parts_iteration4;
   unsigned long int read_length;
   int temp=0;
-
-  //int read_bytes;
-
 
 
     if (argc != 2)
@@ -196,7 +188,6 @@ int main(int argc, char * argv[]){
   		exit(1);
   	}
     conf = argv[1];
-    //scanf(" %[^\n]s",conf);
 
     parse_status = parse_file(&(parse), conf);
     if(parse_status==-1){
@@ -214,7 +205,7 @@ int main(int argc, char * argv[]){
     char filename3[128];
     char filename4[128];
 
-    printf("\n\n*******************Files in your folder*********************\n");
+    printf("\n\n*******************Files in CLIENT folder*********************\n");
     system("ls");
 
     /* Display the availble commands for the user */
@@ -229,12 +220,10 @@ int main(int argc, char * argv[]){
     strcpy(subfolder, "NONE");
     sscanf(command, "%s %s %s", cname, filename, subfolder);
     printf("%s %s %s\n", cname, filename, subfolder );
-    //printf("Filename: %s\n", filename);
 
     strcpy(auth->username, *parse.username);
     strcpy(auth->password, *parse.password);
     strcpy(auth->command, cname);
-    //strcpy(auth->filename, filename);
 
     int key_length = strlen(*parse.password);
     char key1[key_length];
@@ -287,25 +276,21 @@ int main(int argc, char * argv[]){
           printf("Error Opening file or it Does not exist\n");
           continue;
         }
-        printf ("Hash Value in PUT: %s\n\n", hash_value);
 
         int *hash_int = intMD5sum(hash_value);
-        printf ("Hash Integer Value in PUT: %d\n\n", *hash_int);
 
         x = (*hash_int)%4;
         printf("\n************\n");
         printf("MD5HASH%%4 value: %d\n", x );
 
-
-        //printf("Nbytes Sent: %d\n", nbytes);
         bzero(buffer, MAXBUFSIZE);
         nbytes = 0;
         if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
           perror("Error: \n");
         }
-        //for(int i=0; i<entry;i++){
+
         else printf("\n/**********\n%s\n**********/\n", buffer);
-        //}
+
         if(!(strcmp(buffer, "User Exists" ))){
           printf("User Exists: Server Ready to Put File\n");
 
@@ -314,11 +299,11 @@ int main(int argc, char * argv[]){
           if(fp_part == NULL){
             perror("Error Opening File for sending to DFS: \n");
           }
-          //printf("%lu\n", &(*fp) );
+
           fseek(fp_part, 0, SEEK_END);
           file_length = ftell(fp_part);
           fseek(fp_part, 0, SEEK_SET);
-          //printf("%lu\n", &(*fp) );
+
           len_part = (file_length/4);
           len_part4 = len_part + (file_length%4);
 
@@ -326,7 +311,6 @@ int main(int argc, char * argv[]){
           printf("first 3: %lu, last: %lu\n", len_part, len_part4 );
           parts_iteration = (len_part/MAXBUFSIZE);
           printf("Iterations: %d\n", parts_iteration);
-          //parts_iteration4 = (len_part4/MAXBUFSIZE);
 
 
           int part_map[4][4][2] = {
@@ -337,9 +321,6 @@ int main(int argc, char * argv[]){
           };
 
           if(part_map[x][i][0]==1 || part_map[x][i][1]==1){
-            // bzero(buffer, MAXBUFSIZE);
-            // sprintf(buffer, "Part:1 %s %lu", filename, len_part);
-            // printf("PUT information: %s\n", buffer );
 
             if(!strcmp(subfolder, "NONE")){
               char filepath[128];
@@ -358,13 +339,8 @@ int main(int argc, char * argv[]){
               }
             }
 
-            // if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
-            //   printf("Sending to DFS2: %d bytes\n", nbytes);
-            //   printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
-            // }
             bzero(buffer, MAXBUFSIZE);
             recv(sockfd[i], buffer, sizeof(buffer), 0);
-            printf("%s \n", buffer );
 
 
             fseek(fp_part, 0, SEEK_SET);
@@ -372,32 +348,26 @@ int main(int argc, char * argv[]){
             do{
               bzero(buffer, MAXBUFSIZE);
               read_length = fread(buffer, 1, MAXBUFSIZE, fp_part);
-              //printf("Read length out of the Temp check: %lu\n", read_length );
-              //printf("String Length of Buffer: %lu\n",  read_length);
               data_encryption(buffer, read_length, key1); //encrypting data to be sent on the server
               if((nbytes = send(sockfd[i], buffer, read_length, 0)) < 0){
                 printf("Sending to DFS1: %d bytes\n", nbytes);
                 printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
-              }//printf("Sending to DFS1: %d bytes\n", nbytes);
+              }
               bzero(buffer, MAXBUFSIZE);
               recv(sockfd[i], buffer, sizeof(buffer), 0);
-              //printf("%s \n", buffer );
-              //temp = len_part - nbytes;
+
               temp++;
 
               if(temp == (parts_iteration)){
                 bzero(buffer, MAXBUFSIZE);
                 read_length = fread(buffer, 1, (len_part%MAXBUFSIZE), fp_part);
-                //printf("Read length in the Temp check: %lu\n", read_length );
-                //printf("String Length of Buffer: %lu\n", read_length);
                 data_encryption(buffer, read_length, key1);
                 if((nbytes = send(sockfd[i], buffer, read_length, 0)) < 0){
                   printf("Sending to DFS1: %d bytes\n", nbytes);
                   printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
-                }//printf("Sending to DFS1: %d bytes\n", nbytes);
+                }
                 bzero(buffer, MAXBUFSIZE);
                 recv(sockfd[i], buffer, sizeof(buffer), 0);
-                //printf("%s \n", buffer );
               }
             }while(temp<parts_iteration);
             temp=0;
@@ -411,11 +381,6 @@ int main(int argc, char * argv[]){
               if((nbytes = send(sockfd[i], filepath, strlen(filepath), 0)) < 0){
                 perror("Error: \n");
               }
-              // bzero(buffer, MAXBUFSIZE);
-              // nbytes = 0;
-              // if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
-              //   perror("Error: \n");
-              // }
             }
             else{
               char filepath[128];
@@ -424,49 +389,32 @@ int main(int argc, char * argv[]){
               if((nbytes = send(sockfd[i], filepath, strlen(filepath), 0)) < 0){
                 perror("Error: \n");
               }
-              // bzero(buffer, MAXBUFSIZE);
-              // nbytes = 0;
-              // if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
-              //   perror("Error: \n");
-              // }
             }
 
-            // if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
-            //   printf("Sending to DFS2: %d bytes\n", nbytes);
-            //   printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
-            // }
             bzero(buffer, MAXBUFSIZE);
             recv(sockfd[i], buffer, sizeof(buffer), 0);
-            //printf("%s \n", buffer );
             fseek(fp_part, len_part, SEEK_SET);
 
             do{
               bzero(buffer, MAXBUFSIZE);
               read_length = fread(buffer, 1, MAXBUFSIZE, fp_part);
-              //printf("Read length out of the Temp check: %lu\n", read_length );
-              //printf("String Length of Buffer: %lu\n",  read_length);
               data_encryption(buffer, read_length, key1);
               if((nbytes = send(sockfd[i], buffer, read_length, 0)) < 0){
                 printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
-              }//printf("Sending to DFS2: %d bytes\n", nbytes);
-              //temp = len_part - nbytes;
+              }
               temp++;
               bzero(buffer, MAXBUFSIZE);
               recv(sockfd[i], buffer, sizeof(buffer), 0);
-              //printf("%s \n", buffer );
 
               if(temp == (parts_iteration)){
                 bzero(buffer, MAXBUFSIZE);
                 read_length = fread(buffer, 1, (len_part%MAXBUFSIZE), fp_part);
-                //printf("Read length in the Temp check: %lu\n", read_length );
-                //printf("String Length of Buffer: %lu\n",  read_length);
                 data_encryption(buffer, read_length, key1);
                 if((nbytes = send(sockfd[i], buffer, read_length, 0)) < 0){
                   printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
-                }//printf("Sending to DFS2: %d bytes\n", nbytes);
+                }
                 bzero(buffer, MAXBUFSIZE);
                 recv(sockfd[i], buffer, sizeof(buffer), 0);
-                //printf("%s \n", buffer );
               }
             }while(temp<parts_iteration);
             temp=0;
@@ -481,11 +429,6 @@ int main(int argc, char * argv[]){
               if((nbytes = send(sockfd[i], filepath, strlen(filepath), 0)) < 0){
                 perror("Error: \n");
               }
-              // bzero(buffer, MAXBUFSIZE);
-              // nbytes = 0;
-              // if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
-              //   perror("Error: \n");
-              // }
             }
             else{
               char filepath[128];
@@ -494,49 +437,36 @@ int main(int argc, char * argv[]){
               if((nbytes = send(sockfd[i], filepath, strlen(filepath), 0)) < 0){
                 perror("Error: \n");
               }
-              // bzero(buffer, MAXBUFSIZE);
-              // nbytes = 0;
-              // if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
-              //   perror("Error: \n");
-              // }
             }
 
-            // if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
-            //   printf("Sending to DFS2: %d bytes\n", nbytes);
-            //   printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
-            // }
             bzero(buffer, MAXBUFSIZE);
             recv(sockfd[i], buffer, sizeof(buffer), 0);
-            //printf("%s \n", buffer );
             fseek(fp_part, (2*len_part), SEEK_SET);
 
             do{
               bzero(buffer, MAXBUFSIZE);
               read_length = fread(buffer, 1, MAXBUFSIZE, fp_part);
-              //printf("Read length out of the Temp check: %lu\n", read_length );
               data_encryption(buffer, read_length, key1);
               if((nbytes = send(sockfd[i], buffer, read_length, 0)) < 0){
                 printf("Sending to DFS2: %d bytes\n", nbytes);printf("Sending to DFS3: %d bytes\n", nbytes);
                 printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
-              }//printf("Sending to DFS3: %d bytes\n", nbytes);
-              //temp = len_part - nbytes;
+              }
+
               temp++;
+
               bzero(buffer, MAXBUFSIZE);
               recv(sockfd[i], buffer, sizeof(buffer), 0);
-              printf("%s \n", buffer );
 
               if(temp == (parts_iteration)){
                 bzero(buffer, MAXBUFSIZE);
                 read_length = fread(buffer, 1, (len_part%MAXBUFSIZE), fp_part);
-                //printf("Read length in the Temp check: %lu\n", read_length );
                 data_encryption(buffer, read_length, key1);
                 if((nbytes = send(sockfd[i], buffer, read_length, 0)) < 0){
                   printf("Sending to DFS3: %d bytes\n", nbytes);
                   printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
-                }//printf("Sending to DFS2: %d bytes\n", nbytes);
+                }
                 bzero(buffer, MAXBUFSIZE);
                 recv(sockfd[i], buffer, sizeof(buffer), 0);
-                //printf("%s \n", buffer );
               }
             }while(temp<parts_iteration);
             temp=0;
@@ -551,11 +481,6 @@ int main(int argc, char * argv[]){
               if((nbytes = send(sockfd[i], filepath, strlen(filepath), 0)) < 0){
                 perror("Error: \n");
               }
-              // bzero(buffer, MAXBUFSIZE);
-              // nbytes = 0;
-              // if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
-              //   perror("Error: \n");
-              // }
             }
             else{
               char filepath[128];
@@ -564,41 +489,28 @@ int main(int argc, char * argv[]){
               if((nbytes = send(sockfd[i], filepath, strlen(filepath), 0)) < 0){
                 perror("Error: \n");
               }
-              // bzero(buffer, MAXBUFSIZE);
-              // nbytes = 0;
-              // if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
-              //   perror("Error: \n");
-              // }
             }
 
-            // if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
-            //   printf("Sending to DFS2: %d bytes\n", nbytes);
-            //   printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
-            // }
             bzero(buffer, MAXBUFSIZE);
             recv(sockfd[i], buffer, sizeof(buffer), 0);
-            //printf("%s \n", buffer );
             fseek(fp_part, (3*len_part), SEEK_SET);
 
             do{
               bzero(buffer, MAXBUFSIZE);
               read_length = fread(buffer, 1, MAXBUFSIZE, fp_part);
-              //printf("Read length out of the Temp check: %lu\n", read_length );
               data_encryption(buffer, read_length, key1);
               if((nbytes = send(sockfd[i], buffer, read_length, 0)) < 0){
                 printf("Sending to DFS4: %d bytes\n", nbytes);
                 printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
               }printf("Sending to DFS4: %d bytes\n", nbytes);
-              //temp = len_part - nbytes;
+
               temp++;
               bzero(buffer, MAXBUFSIZE);
               recv(sockfd[i], buffer, sizeof(buffer), 0);
-              //printf("%s \n", buffer );
 
               if(temp == (parts_iteration)){
                 bzero(buffer, MAXBUFSIZE);
                 read_length = fread(buffer, 1, (len_part4%MAXBUFSIZE), fp_part);
-                printf("Read length in the Temp check: %lu\n", read_length );
                 data_encryption(buffer, read_length, key1);
                 if((nbytes = send(sockfd[i], buffer, read_length, 0)) < 0){
                   printf("Sending to DFS4: %d bytes\n", nbytes);
@@ -606,19 +518,20 @@ int main(int argc, char * argv[]){
                 }//printf("Sending to DFS4: %d bytes\n", nbytes);
                 bzero(buffer, MAXBUFSIZE);
                 recv(sockfd[i], buffer, sizeof(buffer), 0);
-                //printf("%s \n", buffer );
               }
             }while(temp<parts_iteration);
             temp=0;
           }
         }
       }
+
+
+
       /***************************
       *****Functionality: LIST
       ***************************/
       else if(!strcmp(cname, "list")){
-        //printf("\n************IN List*********\n");
-        //printf("Nbytes Sent: %d\n", nbytes);
+
         bzero(buffer, MAXBUFSIZE);
         nbytes = 0;
         if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
@@ -631,9 +544,6 @@ int main(int argc, char * argv[]){
           printf("In Synq Send()\n");
           perror("Error: \n");
         }
-        //for(int i=0; i<entry;i++){
-        //else printf("Data in Buffer with Auth: %s\n", buffer);
-        //}
         if(!(strcmp(buffer, "User Exists" ))){
           printf("User Exists: Server Ready to List File\n");
           bzero(buffer, MAXBUFSIZE);
@@ -678,7 +588,6 @@ int main(int argc, char * argv[]){
             printf("In Synq Send()\n");
             perror("Error: \n");
           }
-          //printf("List Data From Server: %s\n", buffer);
 
 
           FILE *fp;
@@ -692,11 +601,16 @@ int main(int argc, char * argv[]){
         }
       }
 
+
+
+
+
       /***************************
       *****Functionality: GET
       ***************************/
       else if(!strcmp(cname, "get")){
         printf("\n************IN GET*********\n");
+
         char msg[] = "Synq message";
         printf("Get File: \"%s\" from the server.\n", filename);
         bzero(buffer, MAXBUFSIZE);
@@ -704,9 +618,8 @@ int main(int argc, char * argv[]){
         if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
           perror("Error: \n");
         }
-        //for(int i=0; i<entry;i++){
         else printf("\n/**********\n%s\n**********/\n", buffer);
-        //}
+
         if(!(strcmp(buffer, "User Exists" ))){
           printf("User Exists: Server Ready to SEND File\n");
 
@@ -717,11 +630,6 @@ int main(int argc, char * argv[]){
             if((nbytes = send(sockfd[i], filepath, strlen(filepath), 0)) < 0){
               perror("Error: \n");
             }
-            // bzero(buffer, MAXBUFSIZE);
-            // nbytes = 0;
-            // if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
-            //   perror("Error: \n");
-            // }
           }
           else{
             char filepath[128];
@@ -730,34 +638,20 @@ int main(int argc, char * argv[]){
             if((nbytes = send(sockfd[i], filepath, strlen(filepath), 0)) < 0){
               perror("Error: \n");
             }
-            // bzero(buffer, MAXBUFSIZE);
-            // nbytes = 0;
-            // if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
-            //   perror("Error: \n");
-            // }
           }
 
-          // if((nbytes = send(sockfd[i], filename, strlen(filename), 0)) < 0){
-          //   printf("Sending to DFS%d: %d bytes\n", i+1, nbytes);
-          //   printf("Error in sending to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
-          // }
-
-          //char filename1[128];
           bzero(filename1, sizeof(filename1));
           sprintf(filename1, ".%s.1", filename);
-          //printf("Part1: %s\n", filename1);
-          //char filename2[128];
+
           bzero(filename2, sizeof(filename2));
           sprintf(filename2, ".%s.2", filename);
-          //printf("Part2: %s\n", filename2);
-          //char filename3[128];
+
           bzero(filename3, sizeof(filename3));
           sprintf(filename3, ".%s.3", filename);
-          //printf("Part3: %s\n", filename3);
-          //char filename4[128];
+
           bzero(filename4, sizeof(filename4));
           sprintf(filename4, ".%s.4", filename);
-          //printf("Part4: %s\n", filename4);
+
 
 
           /****************
@@ -766,10 +660,7 @@ int main(int argc, char * argv[]){
           bzero(buffer, MAXBUFSIZE);
           recv(sockfd[i], buffer, sizeof(buffer), 0);
           printf("Part status: %s \n", buffer );
-          // if((nbytes = send(sockfd[i], msg, strlen(msg), 0)) < 0){
-          //   printf("In Synq Send()\n");
-          //   perror("Error: \n");
-          // }
+
           if((strstr(buffer, "YES") != NULL) && (strstr(buffer, filename1) != NULL) && (flag1==0)){
             if((nbytes = send(sockfd[i], "SEND", strlen("SEND"), 0)) < 0){
               perror("Error In Part Send: \n");
@@ -783,14 +674,10 @@ int main(int argc, char * argv[]){
             else{
               do{
                 bzero(buffer, MAXBUFSIZE);
-                //printf("%s\n", buffer );
-                //printf("Read Length of file requested:%d\n", read_length );
                 if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0)) < 0){
                   printf("Error: Reading from the socket\n");
-                  //fseek(fp, (-1)*sizeof(buffer), SEEK_CUR);
                 }
 
-                //printf("File write wala buffer%s\n", buffer);
                 printf("Read length %d\n", nbytes );
 
                 data_decryption(buffer, nbytes, key1);
@@ -816,9 +703,6 @@ int main(int argc, char * argv[]){
               perror("Error: \n");
             }
             sleep(1);
-            // bzero(buffer, MAXBUFSIZE);
-            // recv(sockfd[i], buffer, sizeof(buffer), 0);
-            // printf("%s \n", buffer );
           }
 
           bzero(buffer, MAXBUFSIZE);
@@ -835,10 +719,7 @@ int main(int argc, char * argv[]){
           bzero(buffer, MAXBUFSIZE);
           recv(sockfd[i], buffer, sizeof(buffer), 0);
           printf("Part status: %s \n", buffer );
-          // if((nbytes = send(sockfd[i], msg, strlen(msg), 0)) < 0){
-          //   printf("In Synq Send()\n");
-          //   perror("Error: \n");
-          // }
+
           if((strstr(buffer, "YES") != NULL) && (strstr(buffer, filename2) != NULL) && (flag2==0)){
             if((nbytes = send(sockfd[i], "SEND", strlen("SEND"), 0)) < 0){
               printf("In Part Send\n");
@@ -853,14 +734,11 @@ int main(int argc, char * argv[]){
             else{
               do{
                 bzero(buffer, MAXBUFSIZE);
-                //printf("%s\n", buffer );
-                //printf("Read Length of file requested:%d\n", read_length );
+
                 if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0)) < 0){
                   printf("Error: Reading from the socket\n");
-                  //fseek(fp, (-1)*sizeof(buffer), SEEK_CUR);
                 }
 
-                //printf("File write wala buffer%s\n", buffer);
                 printf("Read length %d\n", nbytes );
 
                 data_decryption(buffer, nbytes, key1);
@@ -878,13 +756,6 @@ int main(int argc, char * argv[]){
               }while(1);
               flag2 = 1;
               fclose(fp);
-
-              // bzero(buffer, MAXBUFSIZE);
-              // strcpy(buffer, "Recieved Part");
-              // if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
-              //   printf("In Synq Send()\n");
-              //   perror("Error: \n");
-              // }
             }
           }
           else if((strstr(buffer, "YES") != NULL) && (strstr(buffer, filename2) != NULL) && (flag2==1)){
@@ -893,9 +764,6 @@ int main(int argc, char * argv[]){
               perror("Error: \n");
             }
             sleep(1);
-            // bzero(buffer, MAXBUFSIZE);
-            // recv(sockfd[i], buffer, sizeof(buffer), 0);
-            // printf("%s \n", buffer );
           }
           bzero(buffer, MAXBUFSIZE);
           strcpy(buffer, "Last Synq message in part2");
@@ -911,10 +779,7 @@ int main(int argc, char * argv[]){
           bzero(buffer, MAXBUFSIZE);
           recv(sockfd[i], buffer, sizeof(buffer), 0);
           printf("Part Status: %s \n", buffer );
-          // if((nbytes = send(sockfd[i], msg, strlen(msg), 0)) < 0){
-          //   printf("In Synq Send()\n");
-          //   perror("Error: \n");
-          // }
+
           if((strstr(buffer, "YES") != NULL) && (strstr(buffer, filename3) != NULL) && (flag3==0)){
             if((nbytes = send(sockfd[i], "SEND", strlen("SEND"), 0)) < 0){
               printf("In Part Send\n");
@@ -929,14 +794,10 @@ int main(int argc, char * argv[]){
             else{
               do{
                 bzero(buffer, MAXBUFSIZE);
-                //printf("%s\n", buffer );
-                //printf("Read Length of file requested:%d\n", read_length );
                 if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0)) < 0){
                   printf("Error: Reading from the socket\n");
-                  //fseek(fp, (-1)*sizeof(buffer), SEEK_CUR);
                 }
 
-                //printf("File write wala buffer%s\n", buffer);
                 printf("Read length %d\n", nbytes );
 
                 data_decryption(buffer, nbytes, key1);
@@ -953,13 +814,6 @@ int main(int argc, char * argv[]){
               }while(1);
               flag3 = 1;
               fclose(fp);
-
-              // bzero(buffer, MAXBUFSIZE);
-              // strcpy(buffer, "Recieved Part");
-              // if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
-              //   printf("In Synq Send()\n");
-              //   perror("Error: \n");
-              // }
             }
           }
           else if((strstr(buffer, "YES") != NULL) && (strstr(buffer, filename3) != NULL) && (flag3==1)){
@@ -968,9 +822,6 @@ int main(int argc, char * argv[]){
               perror("Error: \n");
             }
             sleep(1);
-            // bzero(buffer, MAXBUFSIZE);
-            // recv(sockfd[i], buffer, sizeof(buffer), 0);
-            // printf("%s \n", buffer );
           }
           bzero(buffer, MAXBUFSIZE);
           strcpy(buffer, "Last Synq message in part3");
@@ -986,10 +837,7 @@ int main(int argc, char * argv[]){
           bzero(buffer, MAXBUFSIZE);
           recv(sockfd[i], buffer, sizeof(buffer), 0);
           printf("Part Status: %s \n", buffer );
-          // if((nbytes = send(sockfd[i], msg, strlen(msg), 0)) < 0){
-          //   printf("In Synq Send()\n");
-          //   perror("Error: \n");
-          // }
+
           if((strstr(buffer, "YES") != NULL) && (strstr(buffer, filename4) != NULL) && (flag4==0)){
             if((nbytes = send(sockfd[i], "SEND", strlen("SEND"), 0)) < 0){
               printf("In Part Send\n");
@@ -1004,14 +852,11 @@ int main(int argc, char * argv[]){
             else{
               do{
                 bzero(buffer, MAXBUFSIZE);
-                //printf("%s\n", buffer );
-                //printf("Read Length of file requested:%d\n", read_length );
+
                 if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0)) < 0){
                   printf("Error: Reading from the socket\n");
-                  //fseek(fp, (-1)*sizeof(buffer), SEEK_CUR);
                 }
 
-                //printf("File write wala buffer%s\n", buffer);
                 printf("Read length %d\n", nbytes );
                 data_decryption(buffer, nbytes, key1);
 
@@ -1028,13 +873,6 @@ int main(int argc, char * argv[]){
               }while(1);
               flag4 = 1;
               fclose(fp);
-
-              // bzero(buffer, MAXBUFSIZE);
-              // strcpy(buffer, "Recieved Part");
-              // if((nbytes = send(sockfd[i], buffer, strlen(buffer), 0)) < 0){
-              //   printf("In Synq Send()\n");
-              //   perror("Error: \n");
-              // }
             }
           }
           else if((strstr(buffer, "YES") != NULL) && (strstr(buffer, filename4) != NULL) && (flag4==1)){
@@ -1043,9 +881,6 @@ int main(int argc, char * argv[]){
               perror("Error: \n");
             }
             sleep(1);
-            // bzero(buffer, MAXBUFSIZE);
-            // recv(sockfd[i], buffer, sizeof(buffer), 0);
-            // printf("%s \n", buffer );
           }
           bzero(buffer, MAXBUFSIZE);
           strcpy(buffer, "Last Synq message in part4");
@@ -1059,21 +894,23 @@ int main(int argc, char * argv[]){
         }
       }
 
+
+
       /***************************
       *****Functionality: MKDIR
       ***************************/
       else if(!strcmp(cname, "mkdir")){
         printf("\n************IN MKDIR*********\n");
-      //  char msg[] = "Synq message";
+
         printf("Make Subfolder: \"%s\" on the server.\n", filename);
         bzero(buffer, MAXBUFSIZE);
         nbytes = 0;
         if((nbytes = recv(sockfd[i], buffer, sizeof(buffer), 0))<0){
           perror("Error: \n");
         }
-        //for(int i=0; i<entry;i++){
+
         else printf("\n/**********\n%s\n**********/\n", buffer);
-        //}
+
         if(!(strcmp(buffer, "User Exists" ))){
           printf("User Exists: Server Ready to MAKE subfolder\n");
 
@@ -1086,7 +923,11 @@ int main(int argc, char * argv[]){
       }
     }
 
-
+    /****************************
+    *****Sub-Functionality: LIST
+    ***** with File Availability
+    ***** Result
+    ***************************/
     if(!strcmp(cname, "list")){
       system("sort list_file_temp | uniq > list_file");
 
@@ -1110,8 +951,7 @@ int main(int argc, char * argv[]){
         if((c = strstr((char *)line, "."))){
           bzero(list_filename, sizeof(list_filename));
           strncpy(list_filename, line+strlen("."), strlen(line)-4);
-          //printf("File name in the LIST: %s\n", list_filename);
-          //strcpy(line_dup,line);
+
           fp_dup = fp;
           while(fgets(line_dup, sizeof(line_dup), fp_dup)){
             if((c = strstr((char *)line_dup, "."))){
@@ -1120,7 +960,6 @@ int main(int argc, char * argv[]){
               //printf("Dup File name in the LIST: %s\n", list_filename_dup);
               if(!strcmp(list_filename_dup, list_filename)){
                 count = count + 1;
-                //printf("*************Count : %d\n", count );
               }
               else{
                 if(count==3){
@@ -1149,6 +988,12 @@ int main(int argc, char * argv[]){
       remove("list_file");
       remove("list_file_temp");
     }
+
+    /****************************
+    *****Sub-Functionality: GET
+    ***** with File Availability
+    ***** Result
+    ***************************/
     else if(!strcmp(cname, "get")){
       if((flag1==1) && (flag2==1) && (flag3==1) && (flag4==1)){
         char concat_parts_rm[264];
@@ -1156,9 +1001,9 @@ int main(int argc, char * argv[]){
         bzero(concat_parts_rm, sizeof(concat_parts_rm));
         bzero(concat_command, sizeof(concat_command));
         sprintf(concat_parts_rm, "rm %s %s %s %s", filename1, filename2, filename3, filename4);
-        //printf("RM %s\n", concat_parts_rm );
+
         sprintf(concat_command, "cat %s %s %s %s > %s", filename1, filename2, filename3, filename4, filename);
-        //printf("COMM %s\n", concat_command );
+
         system(concat_command);
         system(concat_parts_rm);
       }
