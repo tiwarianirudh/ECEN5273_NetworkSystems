@@ -90,6 +90,7 @@ int main(int argc, char * argv[]){
   char dfs_partname[128];
   char path_directory[128];
   int auth_flag = 0;
+  int pid;
 //  char msg[] = "synq";
 
   if (argc != 3)
@@ -134,85 +135,151 @@ int main(int argc, char * argv[]){
       printf("Error in accept. \n");
       exit(-1);
     }
-    printf("**********New Connection at Port %s - Socket : %d**********\n\n", port_num, newsockfd);
-    recv(newsockfd, auth, sizeof(*auth), 0);
-    //for(int i=0; i<entry;i++){
-      printf("Username in struct_auth recieved: %s\t Password: %s Command: %s \n\n", &auth->username[0], &auth->password[0],&auth->command[0]);
-    //}
+    pid = fork();
+    if(pid==0){
+      printf("**********New Connection at Port %s - Socket : %d**********\n\n", port_num, newsockfd);
+      recv(newsockfd, auth, sizeof(*auth), 0);
+      //for(int i=0; i<entry;i++){
+        printf("Username in struct_auth recieved: %s\t Password: %s Command: %s \n\n", &auth->username[0], &auth->password[0],&auth->command[0]);
+      //}
 
-    /******Validating a Client******/
-    for(int i=0; i<*entry; i++){
-      if(!(strcmp((parse).username[i], &auth->username[0]))){
-        if(!(strcmp((parse).password[i], &auth->password[0]))){
+      /******Validating a Client******/
+      for(int i=0; i<*entry; i++){
+        if(!(strcmp((parse).username[i], &auth->username[0]))){
+          if(!(strcmp((parse).password[i], &auth->password[0]))){
+            bzero(buffer, MAXBUFSIZE);
+            strcpy(buffer, "User Exists");
+            auth_flag = 1;
+            if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
+              printf("exists nbytes%d\n", nbytes);
+              perror("Error: \n");
+            }
+            break;
+          }
+          else{
+            bzero(buffer, MAXBUFSIZE);
+            strcpy(buffer, "password error");
+            if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
+              printf("error nbytes%d\n", nbytes);
+              perror("Error: \n");
+            }
+          break;
+          }
+        }
+        else if(i == *entry-1){
           bzero(buffer, MAXBUFSIZE);
-          strcpy(buffer, "User Exists");
-          auth_flag = 1;
+          strcpy(buffer, "Invalid User: User Does not exist");
           if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
-            printf("exists nbytes%d\n", nbytes);
+            printf("invalid nbytes%d\n", nbytes);
             perror("Error: \n");
           }
           break;
         }
-        else{
+      }
+      if(auth_flag==1){
+
+
+
+  /***************************
+  *****Functionality: PUT
+  ***************************/
+        if(!strcmp(&auth->command[0], "put")){
+
+          /******Recieving Servers Part-A******/
           bzero(buffer, MAXBUFSIZE);
-          strcpy(buffer, "password error");
+          recv(newsockfd, buffer, sizeof(buffer), 0);
+          printf("%s ****\n", buffer );
+          sscanf(buffer, "%*[^:]%*c%d %s %lu", &part_num, part_file, &len_part);
+          printf("Part Number:%d, Filename: %s, Part Length:%lu\n", part_num, part_file, len_part );
+
+          bzero(buffer, MAXBUFSIZE);
+          strcpy(buffer, "Recieved Iteration");
           if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
-            printf("error nbytes%d\n", nbytes);
+            printf("In Synq Send()\n");
             perror("Error: \n");
           }
-        break;
-        }
-      }
-      else if(i == *entry-1){
-        bzero(buffer, MAXBUFSIZE);
-        strcpy(buffer, "Invalid User: User Does not exist");
-        if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
-          printf("invalid nbytes%d\n", nbytes);
-          perror("Error: \n");
-        }
-        break;
-      }
-    }
-    if(auth_flag==1){
 
+          int parts_iteration = (len_part/MAXBUFSIZE);
+          //printf("********** Number of iterations: %d **********\n", parts_iteration);
+          int temp = 0;
 
+          //FILE* dfs_file;
 
-/***************************
-*****Functionality: PUT
-***************************/
-      if(!strcmp(&auth->command[0], "put")){
+          bzero(path_directory, MAXBUFSIZE);
+          sprintf(path_directory, ".%s/%s", argv[1], &auth->username[0] );
+          printf("%s\n", path_directory );
+          mkdir(path_directory, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 
-        /******Recieving Servers Part-A******/
-        bzero(buffer, MAXBUFSIZE);
-        recv(newsockfd, buffer, sizeof(buffer), 0);
-        printf("%s ****\n", buffer );
-        sscanf(buffer, "%*[^:]%*c%d %s %lu", &part_num, part_file, &len_part);
-        printf("Part Number:%d, Filename: %s, Part Length:%lu\n", part_num, part_file, len_part );
+          // if(part_num == 1){
+            bzero(dfs_partname, sizeof(dfs_partname));
+            sprintf(dfs_partname, "%s/.%s.%d", path_directory, part_file, part_num);
+            printf("%s \n", dfs_partname );
 
-        bzero(buffer, MAXBUFSIZE);
-        strcpy(buffer, "Recieved Iteration");
-        if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
-          printf("In Synq Send()\n");
-          perror("Error: \n");
-        }
+            FILE* dfs_file;
+            dfs_file = fopen(dfs_partname, "ab");
+            if(!dfs_file){
+              printf("Error creating part number: %d\n", part_num);
+              return -1;
+            }
+            do{
+              bzero(buffer, MAXBUFSIZE);
+              nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
+              fwrite(buffer, 1, nbytes, dfs_file);
+              temp++;
+              bzero(buffer, MAXBUFSIZE);
+              strcpy(buffer, "Recieved Iteration");
+              if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
+                printf("In Synq Send()\n");
+                perror("Error: \n");
+              }
+              if(temp == (parts_iteration)){
+                bzero(buffer, MAXBUFSIZE);
+                nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
+                fwrite(buffer, 1, nbytes, dfs_file);
 
-        int parts_iteration = (len_part/MAXBUFSIZE);
-        //printf("********** Number of iterations: %d **********\n", parts_iteration);
-        int temp = 0;
+                bzero(buffer, MAXBUFSIZE);
+                strcpy(buffer, "Recieved Iteration");
+                if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
+                  printf("In Synq Send()\n");
+                  perror("Error: \n");
+                }
+              }
+            }while(temp<parts_iteration);
+            //printf("LoopRan : %d\n", temp);
+            temp=0;
+            part_num = 0;
+            len_part = 0;
 
-        //FILE* dfs_file;
+            bzero(part_file, sizeof(part_file));
+            fclose(dfs_file);
+          // }
 
-        bzero(path_directory, MAXBUFSIZE);
-        sprintf(path_directory, ".%s/%s", argv[1], &auth->username[0] );
-        printf("%s\n", path_directory );
-        mkdir(path_directory, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+          /******Recieving Servers Part-B ******/
+          bzero(buffer, MAXBUFSIZE);
+          recv(newsockfd, buffer, sizeof(buffer), 0);
+          printf("%s \n", buffer );
+          sscanf(buffer, "%*[^:]%*c%d %s %lu", &part_num, part_file, &len_part);
+          printf("Part Number:%d, Filename: %s, Part Length:%lu\n", part_num, part_file, len_part );
+          parts_iteration = (len_part/MAXBUFSIZE);
+          printf("********** Number of iterations: %d **********\n", parts_iteration);
 
-        // if(part_num == 1){
+          bzero(buffer, MAXBUFSIZE);
+          strcpy(buffer, "Recieved Iteration");
+          if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
+            printf("In Synq Send()\n");
+            perror("Error: \n");
+          }
+          //FILE* dfs_file;
+
+          bzero(path_directory, MAXBUFSIZE);
+          sprintf(path_directory, ".%s/%s", argv[1], &auth->username[0] );
+          printf("%s\n", path_directory );
+          mkdir(path_directory, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+
+          // if(part_num == 1){
           bzero(dfs_partname, sizeof(dfs_partname));
           sprintf(dfs_partname, "%s/.%s.%d", path_directory, part_file, part_num);
-          printf("%s \n", dfs_partname );
-
-          FILE* dfs_file;
+          printf("%s\n", dfs_partname );
           dfs_file = fopen(dfs_partname, "ab");
           if(!dfs_file){
             printf("Error creating part number: %d\n", part_num);
@@ -233,7 +300,6 @@ int main(int argc, char * argv[]){
               bzero(buffer, MAXBUFSIZE);
               nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
               fwrite(buffer, 1, nbytes, dfs_file);
-
               bzero(buffer, MAXBUFSIZE);
               strcpy(buffer, "Recieved Iteration");
               if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
@@ -242,457 +308,393 @@ int main(int argc, char * argv[]){
               }
             }
           }while(temp<parts_iteration);
-          //printf("LoopRan : %d\n", temp);
-          temp=0;
+          //printf("LoopRan2 : %d\n", temp);
+          temp = 0;
           part_num = 0;
           len_part = 0;
-
           bzero(part_file, sizeof(part_file));
           fclose(dfs_file);
-        // }
 
-        /******Recieving Servers Part-B ******/
+          printf("\n\n********PUT operation Complete********\n\n");
+        }
+
+
+
+  /***************************
+  *****Functionality: LIST
+  ***************************/
+      else if(!strcmp(&auth->command[0],"list")){
         bzero(buffer, MAXBUFSIZE);
         recv(newsockfd, buffer, sizeof(buffer), 0);
-        printf("%s \n", buffer );
-        sscanf(buffer, "%*[^:]%*c%d %s %lu", &part_num, part_file, &len_part);
-        printf("Part Number:%d, Filename: %s, Part Length:%lu\n", part_num, part_file, len_part );
-        parts_iteration = (len_part/MAXBUFSIZE);
-        printf("********** Number of iterations: %d **********\n", parts_iteration);
-
-        bzero(buffer, MAXBUFSIZE);
-        strcpy(buffer, "Recieved Iteration");
-        if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
-          printf("In Synq Send()\n");
-          perror("Error: \n");
-        }
-        //FILE* dfs_file;
+  			DIR *current_dir;
+  			struct dirent *struct_dir;
 
         bzero(path_directory, MAXBUFSIZE);
         sprintf(path_directory, ".%s/%s", argv[1], &auth->username[0] );
-        printf("%s\n", path_directory );
+        //printf("%s\n", path_directory );
         mkdir(path_directory, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 
-        // if(part_num == 1){
-        bzero(dfs_partname, sizeof(dfs_partname));
-        sprintf(dfs_partname, "%s/.%s.%d", path_directory, part_file, part_num);
-        printf("%s\n", dfs_partname );
-        dfs_file = fopen(dfs_partname, "ab");
-        if(!dfs_file){
-          printf("Error creating part number: %d\n", part_num);
-          return -1;
-        }
-        do{
-          bzero(buffer, MAXBUFSIZE);
-          nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
-          fwrite(buffer, 1, nbytes, dfs_file);
-          temp++;
-          bzero(buffer, MAXBUFSIZE);
-          strcpy(buffer, "Recieved Iteration");
+  			current_dir = opendir(path_directory);
+  			if(current_dir == NULL){
+  				char msg[] = "Unable to read Directory";
+          printf("%s\n", msg );
+  				/* sending error if unable to read the directory */
+  				nbytes = send(newsockfd, msg, strlen(msg), 0);
+  				perror("Error");
+          continue;
+  			}
+  			else{
+  				bzero(buffer, sizeof(buffer));
+  				//Concatinating the file names in the buffer
+  				while((struct_dir = readdir(current_dir)) != NULL){
+            if(!strcmp(struct_dir->d_name, ".") || !strcmp(struct_dir->d_name, "..")){
+              continue;
+            }
+            else{
+              strcat(buffer, struct_dir->d_name);
+  					  strcat(buffer, "\n");
+            }
+  				}
+        //printf("SIZE of Buffer: %s\n",  );
+  			/* Sending the file-names to the client*/
+        if(strlen(buffer) != 0){
+          printf("Buffer Sending In list(NOT NULL):%s\n", buffer );
           if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
-            printf("In Synq Send()\n");
+            //printf("");
+            perror("Error: \n");
+          }//printf("%d\n", nbytes );
+        }
+        else{
+          bzero(buffer, sizeof(buffer));
+          sprintf(buffer, "...NO FILES on SERVER....%s  \n", argv[1]);
+          printf("Buffer Sending In list:%s\n", buffer );
+          if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
+            //printf("");
+            perror("Error: \n");
+          }//printf("%d\n", nbytes );
+        }
+
+
+        bzero(buffer, MAXBUFSIZE);
+        recv(newsockfd, buffer, sizeof(buffer), 0);
+  			}
+  		}
+
+
+  /***************************
+  *****Functionality: GET
+  ***************************/
+      else if(!strcmp(&auth->command[0],"get")){
+        printf("\n************IN GET*********\n");
+
+        FILE *fp;
+        bzero(path_directory, MAXBUFSIZE);
+        sprintf(path_directory, ".%s/%s/", argv[1], &auth->username[0] );
+        //printf("%s\n", path_directory );
+        mkdir(path_directory, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+
+
+        bzero(buffer, MAXBUFSIZE);
+        recv(newsockfd, buffer, sizeof(buffer), 0);
+        printf("Buffer: %s \n", buffer );
+        char filename[128];
+        bzero(filename, sizeof(filename));
+        //sscanf(buffer, "%s", filename);
+        strcpy(filename, buffer);
+        printf("Filename:%s:::::\n", filename );
+
+
+
+
+        /****************
+            GET PART-1
+        ****************/
+        char filename1[128];
+        bzero(filename1, sizeof(filename1));
+        sprintf(filename1, "%s.%s.1", path_directory, filename);
+        //printf("Filename1:%s\n", filename1 );
+        fp = fopen(filename1, "r");
+        if(!fp){
+          bzero(buffer, MAXBUFSIZE);
+          strcpy(buffer, filename1);
+          strcat(buffer, " NO");
+          if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
+            perror("Error \n");
+          }
+          printf("Part 1 does not exist\n");
+          // bzero(buffer, MAXBUFSIZE);
+          // nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
+          // printf("Recv after file no exits on server:%s\n", buffer);
+          // perror("Error\n");
+        }
+        else{
+          bzero(buffer, MAXBUFSIZE);
+          strcpy(buffer, filename1);
+          strcat(buffer, " YES");
+          if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
             perror("Error: \n");
           }
-          if(temp == (parts_iteration)){
-            bzero(buffer, MAXBUFSIZE);
-            nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
-            fwrite(buffer, 1, nbytes, dfs_file);
-            bzero(buffer, MAXBUFSIZE);
-            strcpy(buffer, "Recieved Iteration");
-            if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
-              printf("In Synq Send()\n");
-              perror("Error: \n");
-            }
-          }
-        }while(temp<parts_iteration);
-        //printf("LoopRan2 : %d\n", temp);
-        temp = 0;
-        part_num = 0;
-        len_part = 0;
-        bzero(part_file, sizeof(part_file));
-        fclose(dfs_file);
-
-        printf("\n\n********PUT operation Complete********\n\n");
-      }
-
-
-
-/***************************
-*****Functionality: LIST
-***************************/
-    else if(!strcmp(&auth->command[0],"list")){
-      bzero(buffer, MAXBUFSIZE);
-      recv(newsockfd, buffer, sizeof(buffer), 0);
-			DIR *current_dir;
-			struct dirent *struct_dir;
-
-      bzero(path_directory, MAXBUFSIZE);
-      sprintf(path_directory, ".%s/%s", argv[1], &auth->username[0] );
-      //printf("%s\n", path_directory );
-      mkdir(path_directory, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-
-			current_dir = opendir(path_directory);
-			if(current_dir == NULL){
-				char msg[] = "Unable to read Directory";
-        printf("%s\n", msg );
-				/* sending error if unable to read the directory */
-				nbytes = send(newsockfd, msg, strlen(msg), 0);
-				perror("Error");
-        continue;
-			}
-			else{
-				bzero(buffer, sizeof(buffer));
-				//Concatinating the file names in the buffer
-				while((struct_dir = readdir(current_dir)) != NULL){
-          if(!strcmp(struct_dir->d_name, ".") || !strcmp(struct_dir->d_name, "..")){
-            continue;
-          }
-          else{
-            strcat(buffer, struct_dir->d_name);
-					  strcat(buffer, "\n");
-          }
-				}
-      //printf("SIZE of Buffer: %s\n",  );
-			/* Sending the file-names to the client*/
-      if(strlen(buffer) != 0){
-        printf("Buffer Sending In list(NOT NULL):%s\n", buffer );
-        if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
-          //printf("");
-          perror("Error: \n");
-        }//printf("%d\n", nbytes );
-      }
-      else{
-        bzero(buffer, sizeof(buffer));
-        sprintf(buffer, "...NO FILES on SERVER....%s  \n", argv[1]);
-        printf("Buffer Sending In list:%s\n", buffer );
-        if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
-          //printf("");
-          perror("Error: \n");
-        }//printf("%d\n", nbytes );
-      }
-
-
-      bzero(buffer, MAXBUFSIZE);
-      recv(newsockfd, buffer, sizeof(buffer), 0);
-			}
-		}
-
-
-/***************************
-*****Functionality: GET
-***************************/
-    else if(!strcmp(&auth->command[0],"get")){
-      printf("\n************IN GET*********\n");
-
-      FILE *fp;
-      bzero(path_directory, MAXBUFSIZE);
-      sprintf(path_directory, ".%s/%s/", argv[1], &auth->username[0] );
-      //printf("%s\n", path_directory );
-      mkdir(path_directory, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-
-
-      bzero(buffer, MAXBUFSIZE);
-      recv(newsockfd, buffer, sizeof(buffer), 0);
-      printf("Buffer: %s \n", buffer );
-      char filename[128];
-      bzero(filename, sizeof(filename));
-      //sscanf(buffer, "%s", filename);
-      strcpy(filename, buffer);
-      printf("Filename:%s:::::\n", filename );
-
-
-
-
-      /****************
-          GET PART-1
-      ****************/
-      char filename1[128];
-      bzero(filename1, sizeof(filename1));
-      sprintf(filename1, "%s.%s.1", path_directory, filename);
-      //printf("Filename1:%s\n", filename1 );
-      fp = fopen(filename1, "r");
-      if(!fp){
-        bzero(buffer, MAXBUFSIZE);
-        strcpy(buffer, filename1);
-        strcat(buffer, " NO");
-        if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
-          perror("Error \n");
-        }
-        printf("Part 1 does not exist\n");
-        // bzero(buffer, MAXBUFSIZE);
-        // nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
-        // printf("Recv after file no exits on server:%s\n", buffer);
-        // perror("Error\n");
-      }
-      else{
-        bzero(buffer, MAXBUFSIZE);
-        strcpy(buffer, filename1);
-        strcat(buffer, " YES");
-        if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
-          perror("Error: \n");
-        }
-        bzero(buffer, MAXBUFSIZE);
-        nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
-        printf("Confirmation Buffer: %s\n", buffer );
-        if(strstr(buffer, "SEND") != NULL){
-          do{
-            bzero(buffer, MAXBUFSIZE);
-            int read_length = fread(buffer, 1, MAXBUFSIZE, fp);
-            //printf("%s\n", buffer );
-            printf("Read Length of file requested:%d\n", read_length );
-            if((nbytes = send(newsockfd, buffer, read_length, 0) < 0)){
-              printf("Error: Writing to the socket\n");
-              fseek(fp, (-1)*sizeof(buffer), SEEK_CUR);
-            }
-            if(read_length != MAXBUFSIZE){
-              break;
-            }
-
-            bzero(buffer, MAXBUFSIZE);
-            nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
-            printf("buffer recv for parts iteration : %s\n", buffer);
-          }while(1);
-        }
-        // else{
-        //   if((nbytes = recv(newsockfd, buffer, strlen(buffer), 0) < 0)){
-        //     printf("Error: Writing to the socket\n");
-        //     perror("Error:\n");
-        //   }
-        // }
-        fclose(fp);
-        // bzero(buffer, MAXBUFSIZE);
-        // nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
-
-      }
-      bzero(buffer, MAXBUFSIZE);
-      nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
-      printf("Recv after last iteraction:%s\n", buffer );
-
-
-
-      /****************
-          GET PART-2
-      ****************/
-      char filename2[128];
-      bzero(filename2, sizeof(filename2));
-      sprintf(filename2, "%s.%s.2", path_directory, filename);
-      //printf("Filename2:%s\n", filename2 );
-      fp = fopen(filename2, "r");
-      if(!fp){
-        bzero(buffer, MAXBUFSIZE);
-        strcpy(buffer, filename2);
-        strcat(buffer, " NO");
-        if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
-          perror("Error: \n");
-        }
-        printf("Part 2 does not exist\n");
-        // bzero(buffer, MAXBUFSIZE);
-        // nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
-        // printf("Recv after file no exits on server:%s\n", buffer);
-        // perror("Error\n");
-      }
-      else{
-        bzero(buffer, MAXBUFSIZE);
-        strcpy(buffer, filename2);
-        strcat(buffer, " YES");
-        if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
-          perror("Error: \n");
-        }
-        bzero(buffer, MAXBUFSIZE);
-        nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
-        printf("Confirmation Buffer: %s\n", buffer );
-        if(strstr(buffer, "SEND") != NULL){
-          do{
-            bzero(buffer, MAXBUFSIZE);
-            int read_length = fread(buffer, 1, MAXBUFSIZE, fp);
-            //printf("%s\n", buffer );
-            printf("Read Length of file requested:%d\n", read_length );
-            if((nbytes = send(newsockfd, buffer, read_length, 0) < 0)){
-              printf("Error: Writing to the socket\n");
-              fseek(fp, (-1)*sizeof(buffer), SEEK_CUR);
-            }
-            if(read_length != MAXBUFSIZE){
-              break;
-            }
-
-            bzero(buffer, MAXBUFSIZE);
-            nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
-            printf("buffer recv for parts iteration : %s\n", buffer);
-
-
-          }while(1);
-        }
-        // else{
-        //   if((nbytes = send(newsockfd, msg, strlen(msg), 0) < 0)){
-        //     printf("Error: Writing to the socket\n");
-        //     perror("Error:\n");
-        //   }
-        // }
-        fclose(fp);
-      }
-      bzero(buffer, MAXBUFSIZE);
-      nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
-      printf("Recv after last iteraction:%s\n", buffer );
-
-
-      /****************
-          GET PART-3
-      ****************/
-      char filename3[128];
-      bzero(filename3, sizeof(filename3));
-      sprintf(filename3, "%s.%s.3", path_directory, filename);
-      //printf("Filename3:%s\n", filename3);
-      fp = fopen(filename3, "r");
-      if(!fp){
-        bzero(buffer, MAXBUFSIZE);
-        strcpy(buffer, filename3);
-        strcat(buffer, " NO");
-        if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
-          perror("Error: \n");
-        }
-        printf("Part 3 does not exist\n");
-        // bzero(buffer, MAXBUFSIZE);
-        // nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
-        // printf("Recv after file no exits on server:%s\n", buffer);
-        // perror("Error: \n");
-      }
-      else{
-        bzero(buffer, MAXBUFSIZE);
-        strcpy(buffer, filename3);
-        strcat(buffer, " YES");
-        if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
-          perror("Error: \n");
-        }
-        bzero(buffer, MAXBUFSIZE);
-        nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
-        printf("Confirmation Buffer: %s\n", buffer );
-        if(strstr(buffer, "SEND") != NULL){
-          do{
-            bzero(buffer, MAXBUFSIZE);
-            int read_length = fread(buffer, 1, MAXBUFSIZE, fp);
-            //printf("%s\n", buffer );
-            printf("Read Length of file requested:%d\n", read_length );
-            if((nbytes = send(newsockfd, buffer, read_length, 0) < 0)){
-              printf("Error: Writing to the socket\n");
-              fseek(fp, (-1)*sizeof(buffer), SEEK_CUR);
-            }
-            if(read_length != MAXBUFSIZE){
-              break;
-            }
-
-            bzero(buffer, MAXBUFSIZE);
-            nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
-            printf("buffer recv for parts iteration : %s\n", buffer);
-
-
-          }while(1);
-        }
-        // else{
-        //   if((nbytes = send(newsockfd, msg, strlen(msg), 0) < 0)){
-        //     printf("Error: Writing to the socket\n");
-        //     perror("Error:\n");
-        //   }
-        // }
-        fclose(fp);
-      }
-      bzero(buffer, MAXBUFSIZE);
-      nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
-      printf("Recv after last iteraction:%s\n", buffer);
-
-
-      /****************
-          GET PART-4
-      ****************/
-      char filename4[128];
-      bzero(filename4, sizeof(filename4));
-      sprintf(filename4, "%s.%s.4", path_directory, filename);
-      //printf("Filename4:%s\n", filename4 );
-      fp = fopen(filename4, "r");
-      if(!fp){
-        bzero(buffer, MAXBUFSIZE);
-        strcpy(buffer, filename4);
-        strcat(buffer, " NO");
-        if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
-          perror("Error: \n");
-        }
-        printf("Part 4 does not exist\n");
-        // bzero(buffer, MAXBUFSIZE);
-        // nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
-        // printf("Recv after file no exits on server:%s\n", buffer);
-        // perror("Error\n");
-      }
-      else{
-        bzero(buffer, MAXBUFSIZE);
-        strcpy(buffer, filename4);
-        strcat(buffer, " YES");
-        if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
-          perror("Error: \n");
-        }
-        bzero(buffer, MAXBUFSIZE);
-        nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
-        printf("Confirmation Buffer: %s\n", buffer );
-        if(strstr(buffer, "SEND") != NULL){
-          do{
-            bzero(buffer, MAXBUFSIZE);
-            int read_length = fread(buffer, 1, MAXBUFSIZE, fp);
-            //printf("%s\n", buffer );
-            printf("Read Length of file requested:%d\n", read_length );
-            if((nbytes = send(newsockfd, buffer, read_length, 0) < 0)){
-              printf("Error: Writing to the socket\n");
-              fseek(fp, (-1)*sizeof(buffer), SEEK_CUR);
-            }
-            if(read_length != MAXBUFSIZE){
-              break;
-            }
-
-            bzero(buffer, MAXBUFSIZE);
-            nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
-            printf("buffer recv for parts iteration : %s\n", buffer);
-
-
-          }while(1);
-        }
-        // else{
-        //   if((nbytes = send(newsockfd, msg, strlen(msg), 0) < 0)){
-        //     printf("Error: Writing to the socket\n");
-        //     perror("Error:\n");
-        //   }
-        // }
-        fclose(fp);
-      }
-
-      bzero(buffer, MAXBUFSIZE);
-      nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
-      printf("Recv after last iteraction:%s\n", buffer );
-
-
-
-    }
-
-    /***************************
-    *****Functionality: MKDIR
-    ***************************/
-        else if(!strcmp(&auth->command[0],"mkdir")){
-          printf("\n************IN MKDIR*********\n");
-
           bzero(buffer, MAXBUFSIZE);
-          recv(newsockfd, buffer, sizeof(buffer), 0);
-          printf("Sub-Directory Request: %s \n", buffer );
-          char dir_name[128];
-          bzero(dir_name, sizeof(dir_name));
-          //sscanf(buffer, "%s", dir_name);
-          strcpy(dir_name, buffer);
-          //printf("MKDIR:%s:::::\n", dir_name );
+          nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
+          printf("Confirmation Buffer: %s\n", buffer );
+          if(strstr(buffer, "SEND") != NULL){
+            do{
+              bzero(buffer, MAXBUFSIZE);
+              int read_length = fread(buffer, 1, MAXBUFSIZE, fp);
+              //printf("%s\n", buffer );
+              printf("Read Length of file requested:%d\n", read_length );
+              if((nbytes = send(newsockfd, buffer, read_length, 0) < 0)){
+                printf("Error: Writing to the socket\n");
+                fseek(fp, (-1)*sizeof(buffer), SEEK_CUR);
+              }
+              if(read_length != MAXBUFSIZE){
+                break;
+              }
 
-          bzero(path_directory, sizeof(path_directory));
-          sprintf(path_directory, ".%s/%s/%s", argv[1], &auth->username[0], dir_name);
-          //printf("PATH: %s.....\n", path_directory );
-          mkdir(path_directory, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+              bzero(buffer, MAXBUFSIZE);
+              nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
+              printf("buffer recv for parts iteration : %s\n", buffer);
+            }while(1);
+          }
+          // else{
+          //   if((nbytes = recv(newsockfd, buffer, strlen(buffer), 0) < 0)){
+          //     printf("Error: Writing to the socket\n");
+          //     perror("Error:\n");
+          //   }
+          // }
+          fclose(fp);
+          // bzero(buffer, MAXBUFSIZE);
+          // nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
 
-          printf("\n\n******* Sub-Directory %s Created *******\n", dir_name);
+        }
+        bzero(buffer, MAXBUFSIZE);
+        nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
+        printf("Recv after last iteraction:%s\n", buffer );
+
+
+
+        /****************
+            GET PART-2
+        ****************/
+        char filename2[128];
+        bzero(filename2, sizeof(filename2));
+        sprintf(filename2, "%s.%s.2", path_directory, filename);
+        //printf("Filename2:%s\n", filename2 );
+        fp = fopen(filename2, "r");
+        if(!fp){
+          bzero(buffer, MAXBUFSIZE);
+          strcpy(buffer, filename2);
+          strcat(buffer, " NO");
+          if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
+            perror("Error: \n");
+          }
+          printf("Part 2 does not exist\n");
+          // bzero(buffer, MAXBUFSIZE);
+          // nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
+          // printf("Recv after file no exits on server:%s\n", buffer);
+          // perror("Error\n");
+        }
+        else{
+          bzero(buffer, MAXBUFSIZE);
+          strcpy(buffer, filename2);
+          strcat(buffer, " YES");
+          if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
+            perror("Error: \n");
+          }
+          bzero(buffer, MAXBUFSIZE);
+          nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
+          printf("Confirmation Buffer: %s\n", buffer );
+          if(strstr(buffer, "SEND") != NULL){
+            do{
+              bzero(buffer, MAXBUFSIZE);
+              int read_length = fread(buffer, 1, MAXBUFSIZE, fp);
+              //printf("%s\n", buffer );
+              printf("Read Length of file requested:%d\n", read_length );
+              if((nbytes = send(newsockfd, buffer, read_length, 0) < 0)){
+                printf("Error: Writing to the socket\n");
+                fseek(fp, (-1)*sizeof(buffer), SEEK_CUR);
+              }
+              if(read_length != MAXBUFSIZE){
+                break;
+              }
+
+              bzero(buffer, MAXBUFSIZE);
+              nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
+              printf("buffer recv for parts iteration : %s\n", buffer);
+
+
+            }while(1);
+          }
+          // else{
+          //   if((nbytes = send(newsockfd, msg, strlen(msg), 0) < 0)){
+          //     printf("Error: Writing to the socket\n");
+          //     perror("Error:\n");
+          //   }
+          // }
+          fclose(fp);
+        }
+        bzero(buffer, MAXBUFSIZE);
+        nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
+        printf("Recv after last iteraction:%s\n", buffer );
+
+
+        /****************
+            GET PART-3
+        ****************/
+        char filename3[128];
+        bzero(filename3, sizeof(filename3));
+        sprintf(filename3, "%s.%s.3", path_directory, filename);
+        //printf("Filename3:%s\n", filename3);
+        fp = fopen(filename3, "r");
+        if(!fp){
+          bzero(buffer, MAXBUFSIZE);
+          strcpy(buffer, filename3);
+          strcat(buffer, " NO");
+          if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
+            perror("Error: \n");
+          }
+          printf("Part 3 does not exist\n");
+          // bzero(buffer, MAXBUFSIZE);
+          // nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
+          // printf("Recv after file no exits on server:%s\n", buffer);
+          // perror("Error: \n");
+        }
+        else{
+          bzero(buffer, MAXBUFSIZE);
+          strcpy(buffer, filename3);
+          strcat(buffer, " YES");
+          if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
+            perror("Error: \n");
+          }
+          bzero(buffer, MAXBUFSIZE);
+          nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
+          printf("Confirmation Buffer: %s\n", buffer );
+          if(strstr(buffer, "SEND") != NULL){
+            do{
+              bzero(buffer, MAXBUFSIZE);
+              int read_length = fread(buffer, 1, MAXBUFSIZE, fp);
+              //printf("%s\n", buffer );
+              printf("Read Length of file requested:%d\n", read_length );
+              if((nbytes = send(newsockfd, buffer, read_length, 0) < 0)){
+                printf("Error: Writing to the socket\n");
+                fseek(fp, (-1)*sizeof(buffer), SEEK_CUR);
+              }
+              if(read_length != MAXBUFSIZE){
+                break;
+              }
+
+              bzero(buffer, MAXBUFSIZE);
+              nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
+              printf("buffer recv for parts iteration : %s\n", buffer);
+
+
+            }while(1);
+          }
+          // else{
+          //   if((nbytes = send(newsockfd, msg, strlen(msg), 0) < 0)){
+          //     printf("Error: Writing to the socket\n");
+          //     perror("Error:\n");
+          //   }
+          // }
+          fclose(fp);
+        }
+        bzero(buffer, MAXBUFSIZE);
+        nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
+        printf("Recv after last iteraction:%s\n", buffer);
+
+
+        /****************
+            GET PART-4
+        ****************/
+        char filename4[128];
+        bzero(filename4, sizeof(filename4));
+        sprintf(filename4, "%s.%s.4", path_directory, filename);
+        //printf("Filename4:%s\n", filename4 );
+        fp = fopen(filename4, "r");
+        if(!fp){
+          bzero(buffer, MAXBUFSIZE);
+          strcpy(buffer, filename4);
+          strcat(buffer, " NO");
+          if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
+            perror("Error: \n");
+          }
+          printf("Part 4 does not exist\n");
+          // bzero(buffer, MAXBUFSIZE);
+          // nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
+          // printf("Recv after file no exits on server:%s\n", buffer);
+          // perror("Error\n");
+        }
+        else{
+          bzero(buffer, MAXBUFSIZE);
+          strcpy(buffer, filename4);
+          strcat(buffer, " YES");
+          if((nbytes = send(newsockfd, buffer, strlen(buffer), 0)) < 0){
+            perror("Error: \n");
+          }
+          bzero(buffer, MAXBUFSIZE);
+          nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
+          printf("Confirmation Buffer: %s\n", buffer );
+          if(strstr(buffer, "SEND") != NULL){
+            do{
+              bzero(buffer, MAXBUFSIZE);
+              int read_length = fread(buffer, 1, MAXBUFSIZE, fp);
+              //printf("%s\n", buffer );
+              printf("Read Length of file requested:%d\n", read_length );
+              if((nbytes = send(newsockfd, buffer, read_length, 0) < 0)){
+                printf("Error: Writing to the socket\n");
+                fseek(fp, (-1)*sizeof(buffer), SEEK_CUR);
+              }
+              if(read_length != MAXBUFSIZE){
+                break;
+              }
+
+              bzero(buffer, MAXBUFSIZE);
+              nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
+              printf("buffer recv for parts iteration : %s\n", buffer);
+
+
+            }while(1);
+          }
+          // else{
+          //   if((nbytes = send(newsockfd, msg, strlen(msg), 0) < 0)){
+          //     printf("Error: Writing to the socket\n");
+          //     perror("Error:\n");
+          //   }
+          // }
+          fclose(fp);
         }
 
+        bzero(buffer, MAXBUFSIZE);
+        nbytes = recv(newsockfd, buffer, sizeof(buffer), 0);
+        printf("Recv after last iteraction:%s\n", buffer );
 
+
+
+      }
+
+      /***************************
+      *****Functionality: MKDIR
+      ***************************/
+      else if(!strcmp(&auth->command[0],"mkdir")){
+        printf("\n************IN MKDIR*********\n");
+
+        bzero(buffer, MAXBUFSIZE);
+        recv(newsockfd, buffer, sizeof(buffer), 0);
+        printf("Sub-Directory Request: %s \n", buffer );
+        char dir_name[128];
+        bzero(dir_name, sizeof(dir_name));
+        //sscanf(buffer, "%s", dir_name);
+        strcpy(dir_name, buffer);
+        //printf("MKDIR:%s:::::\n", dir_name );
+
+        bzero(path_directory, sizeof(path_directory));
+        sprintf(path_directory, ".%s/%s/%s", argv[1], &auth->username[0], dir_name);
+        //printf("PATH: %s.....\n", path_directory );
+        mkdir(path_directory, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+
+        printf("\n\n******* Sub-Directory %s Created *******\n", dir_name);
+      }
+    }
   }
 }
   return 0;

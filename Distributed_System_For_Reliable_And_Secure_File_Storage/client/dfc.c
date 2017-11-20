@@ -238,6 +238,7 @@ int main(int argc, char * argv[]){
     printf("Username:%sPassword:%sCommand:%s\n", auth->username, auth->password, auth->command);
 
     for(int i=0; i<4; i++){
+      struct timeval timeout = {1,0};
       if((sockfd[i] = socket(AF_INET, SOCK_STREAM, 0)) < 0){
         printf("Error in creating a socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
       }
@@ -254,6 +255,13 @@ int main(int argc, char * argv[]){
         perror("Error: \n");
         printf("Error in Connecting to socket for the Server:%s at Port: %d\n", parse.dfs[i], *parse.port_num[i]);
         continue;
+      }
+      //struct timeval timeout;
+	    timeout.tv_sec = 0;
+	    timeout.tv_usec = 0;
+
+	    if(setsockopt (sockfd[i], SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout)) < 0){
+	        perror("SETSOCKOPT failed\n");
       }
 
       if((nbytes = send(sockfd[i], auth, sizeof(*auth), 0)) < 0){
@@ -903,7 +911,7 @@ int main(int argc, char * argv[]){
       ***************************/
       else if(!strcmp(cname, "mkdir")){
         printf("\n************IN MKDIR*********\n");
-        char msg[] = "Synq message";
+      //  char msg[] = "Synq message";
         printf("Make Subfolder: \"%s\" on the server.\n", filename);
         bzero(buffer, MAXBUFSIZE);
         nbytes = 0;
