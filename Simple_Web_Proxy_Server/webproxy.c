@@ -33,6 +33,7 @@
 #define MAXBUFSIZE 1024
 #define ERR_METHOD "<html><body><H1>Error 400 Bad Request: Method Not Supported </H1></body></html>"
 #define ERR_VERSION "<html><body><H1>Error 400 Bad Request: INVALID HTTP Version </H1></body></html>"
+#define ERR_SERVERNOTFOUND "<html><body><H1>Error: Server Not Found </H1></body></html>"
 
 
 // //client handler for multiple requests
@@ -135,7 +136,9 @@ int main(int argc, char* argv[]){
 
           server_hp = gethostbyname(hostname);					 // Return information about host in argv[1]
         	if(server_hp < 0){
-        			perror("Host Unknown");
+            send(newsockfd, ERR_SERVERNOTFOUND, strlen(ERR_SERVERNOTFOUND), 0 );
+            printf("Error:Server Not Found\n");
+            exit(1);
         	}
 
         	bcopy((char*)server_hp->h_addr, (char*)&server.sin_addr, server_hp->h_length);
