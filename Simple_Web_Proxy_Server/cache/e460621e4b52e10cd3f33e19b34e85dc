@@ -1,0 +1,21 @@
+HTTP/1.1 200 OK
+Date: Fri, 08 Dec 2017 11:16:08 GMT
+Server: Apache
+Last-Modified: Sun, 17 Feb 2002 23:16:38 GMT
+ETag: "540b70-596-39a376e81a180"
+Accept-Ranges: bytes
+Content-Length: 1430
+Keep-Alive: timeout=5, max=100
+Connection: Keep-Alive
+Content-Type: text/css
+
+<style type="text/css">A:active  {FONT-FAMILY: geneva, arial; color:#0000FF; font-size: 9 pt}A:link    {FONT-FAMILY: geneva, arial; color:#0000FF; font-size: 9 pt}A:visited {FONT-FAMILY: geneva, arial; color:#0000FF; font-size: 9 pt}A:hover   {FONT-FAMILY: geneva, arial; color:#b52d8c; font-size: 9 pt}BODY{    COLOR: #333366;    FONT-FAMILY: geneva, arial;    FONT-SIZE: 9pt}DIV{    COLOR: #333366;	    FONT-FAMILY: geneva, arial;    FONT-SIZE: 9pt;}CENTER{    COLOR: #333366;    FONT-FAMILY: geneva, arial;    FONT-SIZE: 9pt;}H3{    COLOR: #333366;    FONT-FAMILY: geneva, arial;    FONT-SIZE: 9pt;}H4{    COLOR: #333366;	    FONT-FAMILY: verdana, geneva, arial;    FONT-SIZE: 9pt;}.regular{    COLOR: #333366;    FONT-FAMILY: verdana, geneva, arial;    FONT-SIZE: 9pt;; font-style: normal; line-height: normal; font-weight: normal; font-variant: normal; text-transform: none}.gold10{    COLOR: gold;    FONT-FAMILY: verdana, geneva, arial;    FONT-SIZE: 10pt;}.inside{    COLOR: #333366;    FONT-FAMILY: geneva, arial;    FONT-SIZE: 9pt;; border: 0px none; font-style: normal; clip:   rect(   ); background-color: #FFFFFF; border-color: 0 solid}.cl3{    COLOR: #333366;    FONT-FAMILY: geneva, arial;    FONT-SIZE: 9pt;}H2{    COLOR: #333366;    FONT-FAMILY: geneva, arial;    FONT-SIZE: 11pt;    MARGIN-BOTTOM: 0px;     MARGIN-TOP: 0px;}</style><!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>400 Bad Request</title>
+</head><body>
+<h1>Bad Request</h1>
+<p>Your browser sent a request that this server could not understand.<br />
+</p>
+<hr>
+<address>Apache Server at morse.colorado.edu Port 80</address>
+</body></html>
