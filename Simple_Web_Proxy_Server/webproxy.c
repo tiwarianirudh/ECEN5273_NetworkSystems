@@ -74,6 +74,29 @@ int checkCacheFile(char *url){
   else return 0;
 }
 
+int checkCacheHost(char *hostname, char *ip){
+  FILE* fp;
+  char* line;
+  size_t length;
+  bzero(filename, sizeof(filename));
+  sprintf(filename, "./cache/hosts");
+  fp = fopen(filename, "ab");
+
+  if((fp = fopen(filename, "r")) != NULL){
+    return 0;
+  }
+  else{
+    while((getline(&line, &length, fp))){
+      if(strstr(line, hostname)){
+        sscanf(line, "%*[^ ]%*c%s", ip);
+        break;
+      }
+    }
+    return 1;
+  }
+}
+
+
 
 void response(int newsockfd){
   //int newsockfd = a;
@@ -147,8 +170,13 @@ void response(int newsockfd){
         }
 
         else{
-          if(1==0){
+          int checkHostPresent = checkCacheHost(hostname, ip);
 
+          if(checkHostPresent==1){
+            bzero(&server,sizeof(server));               //zero the struct
+            server.sin_family = AF_INET;                 //address family
+            server.sin_port = htons(80);      //sets port to network byte order
+            server.sin_addr.s_addr = inet_addr(ip); //sets remote IP address
           }
           else{
             bzero(&server,sizeof(server));               //zero the struct
@@ -165,6 +193,7 @@ void response(int newsockfd){
               exit(1);
             }
             else{
+              bzero(filename, sizeof(filename));
               sprintf(filename, "./cache/hosts");
               fp = fopen(filename, "ab");
 
