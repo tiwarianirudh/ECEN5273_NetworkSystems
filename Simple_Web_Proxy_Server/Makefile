@@ -23,7 +23,7 @@ clean:
 	-rm -f webproxy
 
 webproxy: webproxy.o
-	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $@.o -lpthread
+	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $@.o -lpthread -lcrypto -lssl
 
 depend:
 
