@@ -28,10 +28,10 @@
 
 //MACROS
 #define MAXBUFSIZE 1024
-#define ERR_METHOD "<html><body><H1>Error 400 Bad Request: Method Not Supported </H1></body></html>"
-#define ERR_VERSION "<html><body><H1>Error 400 Bad Request: INVALID HTTP Version </H1></body></html>"
-#define ERR_SERVERNOTFOUND "<html><body><H1>Error: Server Not Found </H1></body></html>"
-#define ERR_BLOCKED "<html><body><H1>ERROR 403 Forbidden </H1></body></html>"
+#define ERR_METHOD "HTTP/1.1 400 Bad Request\n\rContent-Type: text/html\nContent-Length: %d\n\r\n<html><body><H1>Error 400 Bad Request: Method Not Supported </H1></body></html>"
+#define ERR_VERSION "HTTP/1.1 400 Bad Request\n\rContent-Type: text/html\nContent-Length: %d\n\r\n<html><body><H1>Error 400 Bad Request: Invalid HTTP Version </H1></body></html>"
+#define ERR_SERVERNOTFOUND "HTTP/1.1 400 Bad Request\n\rContent-Type: text/html\nContent-Length: %d\n\r\n<html><body><H1>Error 400 Bad Request: Server Not Found </H1></body></html>"
+#define ERR_BLOCKED "HTTP/1.1 403 Forbidden\n\rContent-Type: text/html\nContent-Length: %d\n\r\n<html><body>ERROR 403 Forbidden</body></html>"
 
 
 char* MD5sum(char *url){
@@ -110,7 +110,6 @@ int checkCacheHost(char *hostname, char *ip){
   }
   else{
     while((getline(&line, &length, fp)) != -1){
-      //printf("****************In checkCacheHost File Open ELSE***************\n");
       if(strstr(line, hostname)){
         sscanf(line, "%*[^ ]%*c%s", ip);
         flag =1;
@@ -205,14 +204,18 @@ void response(int newsockfd, unsigned long int timeout){
     url_hash = MD5sum(url);
 
     if(strcmp(method, "GET") != 0){
-      send(newsockfd, ERR_METHOD, strlen(ERR_METHOD), 0 );
-      printf("Error:Method Not Supported\n");
+      bzero(buffer, sizeof(buffer));
+      sprintf(buffer, ERR_METHOD, (int)strlen("<html><body><H1>Error 400 Bad Request: Method Not Supported </H1></body></html>"));
+      printf("Error Buffer\n%s\n", buffer);
+      nbytes = send(newsockfd, buffer, strlen(buffer), 0 );
       exit(1);
     }
 
     else if((strcmp(version, "HTTP/1.0") != 0) && (strcmp(version, "HTTP/1.1") != 0)){
-      send(newsockfd, ERR_VERSION, strlen(ERR_VERSION), 0 );
-      printf("Error:Invalid Version\n");
+      bzero(buffer, sizeof(buffer));
+      sprintf(buffer, ERR_VERSION, (int)strlen("HTTP/1.1 400 Bad Request\n\rContent-Type: text/html\nContent-Length: %d\n\r\n<html><body><H1>Error 400 Bad Request: Invalid HTTP Version </H1></body></html>"));
+      printf("Error Buffer\n%s\n", buffer);
+      nbytes = send(newsockfd, buffer, strlen(buffer), 0 );
       exit(1);
     }
 
@@ -223,8 +226,10 @@ void response(int newsockfd, unsigned long int timeout){
       int checkForbidden = checkForbiddenHost(hostname, forbid_ip);
 
       if(checkForbidden == 1){
-        send(newsockfd, ERR_BLOCKED, strlen(ERR_BLOCKED), 0 );
-        printf("Error: Blocked\n");
+        bzero(buffer, sizeof(buffer));
+        sprintf(buffer, ERR_BLOCKED, (int)strlen("<html><body>ERROR 403 Forbidden</body></html>"));
+        printf("Error Buffer\n%s\n", buffer);
+        nbytes = send(newsockfd, buffer, strlen(buffer), 0 );
         continue;
       }
 
@@ -284,8 +289,10 @@ void response(int newsockfd, unsigned long int timeout){
             server_hp = gethostbyname(hostname);					 // Return information about host in argv[1]
             bcopy((char*)server_hp->h_addr, (char*)&server.sin_addr, server_hp->h_length);
             if(server_hp < 0){
-              send(newsockfd, ERR_SERVERNOTFOUND, strlen(ERR_SERVERNOTFOUND), 0 );
-              printf("Error:Server Not Found\n");
+              bzero(buffer, sizeof(buffer));
+              sprintf(buffer, ERR_SERVERNOTFOUND, (int)strlen("<html><body><H1>Error 400 Bad Request: Server Not Found </H1></body></html>"));
+              printf("Error Buffer\n%s\n", buffer);
+              nbytes = send(newsockfd, buffer, strlen(buffer), 0 );
               exit(1);
             }
             else{
@@ -316,7 +323,7 @@ void response(int newsockfd, unsigned long int timeout){
         bzero(buffer, sizeof(buffer));
         bzero(filename, sizeof(filename));
         sprintf(filename, "./cache/%s", url_hash);
-        printf("*********Filename in CacheFileCreate: %s***********\n", filename );
+        //printf("*********Filename in CacheFileCreate: %s***********\n", filename );
 
         fp = fopen(filename, "ab");
         if(fp < 0){
@@ -325,7 +332,7 @@ void response(int newsockfd, unsigned long int timeout){
         }
         time_t current_time1;
         current_time1 = time(NULL);
-        printf("*******Current time1: %lu*******\n", current_time1 );
+        //printf("*******Current time1: %lu*******\n", current_time1 );
         fprintf(fp, "%lu\n", current_time1);
 
         bzero(buffer, sizeof(buffer));
