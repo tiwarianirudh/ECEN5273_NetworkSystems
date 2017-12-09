@@ -31,7 +31,7 @@
 #define ERR_METHOD "<html><body><H1>Error 400 Bad Request: Method Not Supported </H1></body></html>"
 #define ERR_VERSION "<html><body><H1>Error 400 Bad Request: INVALID HTTP Version </H1></body></html>"
 #define ERR_SERVERNOTFOUND "<html><body><H1>Error: Server Not Found </H1></body></html>"
-
+#define ERR_BLOCKED "<html><body><H1>ERROR 403 Forbidden </H1></body></html>"
 
 
 char* MD5sum(char *url){
@@ -55,7 +55,7 @@ int checkCacheFile(char *url, unsigned long int timeout){
   FILE *fp;
   char *url_hash = MD5sum(url);
   char filename[MAXBUFSIZE];
-  char* line;
+  char* line=NULL;
   size_t length;
   unsigned long int fileCreationTime=0;
   unsigned long int exp_time;
@@ -94,7 +94,7 @@ int checkCacheFile(char *url, unsigned long int timeout){
 
 int checkCacheHost(char *hostname, char *ip){
   FILE* fp;
-  char* line;
+  char* line=NULL;
   size_t length;
   char filename[MAXBUFSIZE];
   int flag=0;
@@ -126,6 +126,47 @@ int checkCacheHost(char *hostname, char *ip){
   }
 }
 
+int checkForbiddenHost(char *hostname, char *forbid_ip){
+  FILE * fp;
+  char* line=NULL;
+  size_t length;
+  int flag = 0;
+  if((fp = fopen("forbidden", "r")) != NULL){
+
+    if(strchr(hostname, ':')){
+      sscanf(hostname, "%[^:]%*c", forbid_ip);
+      while((getline(&line, &length, fp)) != -1){
+        if(strstr(line, forbid_ip)){
+          flag =1;
+          break;
+        }
+      }
+      if(flag==1){
+        fclose(fp);
+        return 1;
+      }
+      fclose(fp);
+      return 0;
+    }
+
+    else{
+      while((getline(&line, &length, fp)) != -1){
+        if(strstr(line, hostname)){
+          flag =1;
+          break;
+        }
+      }
+      if(flag==1){
+        fclose(fp);
+        return 1;
+      }
+      fclose(fp);
+      return 0;
+    }
+  }
+  return 0;
+}
+
 
 
 void response(int newsockfd, unsigned long int timeout){
@@ -136,6 +177,7 @@ void response(int newsockfd, unsigned long int timeout){
   char url[MAXBUFSIZE];
   char version[MAXBUFSIZE];
   char ip[128] = "";
+  char forbid_ip[128] = "";
   char port[32];
   char hostname[MAXBUFSIZE];
   struct hostent *server_hp;							// to represent entry in host database
@@ -145,7 +187,7 @@ void response(int newsockfd, unsigned long int timeout){
   char buffer[MAXBUFSIZE];
   char req_buffer[MAXBUFSIZE];
   char *url_hash;
-  char* line;
+  char* line=NULL;
   size_t length;
 
   bzero(buffer, sizeof(buffer));
@@ -175,6 +217,16 @@ void response(int newsockfd, unsigned long int timeout){
     }
 
     else{
+      sscanf(url, "%*[^/]%*c%*c%[^/]", hostname);
+      printf("Hostname: %s\n", hostname );
+
+      int checkForbidden = checkForbiddenHost(hostname, forbid_ip);
+
+      if(checkForbidden == 1){
+        send(newsockfd, ERR_BLOCKED, strlen(ERR_BLOCKED), 0 );
+        printf("Error: Blocked\n");
+        continue;
+      }
 
       int cacheFilePresent = checkCacheFile(url, timeout);
 
@@ -197,9 +249,6 @@ void response(int newsockfd, unsigned long int timeout){
 
       else{
         printf("*****Page Not found in Cache:%d*****\n", newsockfd);
-
-        sscanf(url, "%*[^/]%*c%*c%[^/]", hostname);
-        printf("Hostname: %s\n", hostname );
 
         if(strchr(hostname, ':')){
           sscanf(hostname, "%[^:]%*c%[^/]", ip, port);
