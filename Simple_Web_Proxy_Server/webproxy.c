@@ -24,6 +24,7 @@
 #include <string.h>
 #include <dirent.h>
 #include <openssl/md5.h>
+#include <time.h>
 
 //MACROS
 #define MAXBUFSIZE 1024
@@ -31,11 +32,6 @@
 #define ERR_VERSION "<html><body><H1>Error 400 Bad Request: INVALID HTTP Version </H1></body></html>"
 #define ERR_SERVERNOTFOUND "<html><body><H1>Error: Server Not Found </H1></body></html>"
 
-int nbytes;
-char buffer[MAXBUFSIZE];
-char filename[MAXBUFSIZE];  //Cache filename
-char req_buffer[MAXBUFSIZE];
-char *url_hash;
 
 
 char* MD5sum(char *url){
@@ -55,21 +51,43 @@ char* MD5sum(char *url){
   return (char *)md5string;
 }
 
-int checkCacheFile(char *url){
+int checkCacheFile(char *url, unsigned long int timeout){
   FILE *fp;
-  url_hash = MD5sum(url);
+  char *url_hash = MD5sum(url);
+  char filename[MAXBUFSIZE];
+  char* line;
+  size_t length;
+  unsigned long int fileCreationTime=0;
+  unsigned long int exp_time;
+  time_t current_time;
+
+  current_time = time(NULL);
+
   if(url_hash == 0){
     printf("Error Calculating Hash value\n");
   }
   // printf("Hash Value: %s\n", url_hash);
 
-  bzero(buffer, sizeof(buffer));
   bzero(filename, sizeof(filename));
   sprintf(filename, "./cache/%s", url_hash);
-  bzero(buffer, sizeof(buffer));
+  printf("Filename in CacheFileCheck: %s\n", filename );
+
 
   if((fp = fopen(filename, "r")) != NULL){
-    return 1;
+    getline(&line, &length, fp);
+    sscanf(line, "%lu", &fileCreationTime);
+
+    exp_time = current_time - fileCreationTime;
+    //printf("Timeout: %lu, FileCreation: %lu, CurrentTime: %lu, Expiry:%lu %s", timeout, fileCreationTime, current_time, exp_time, url_hash);
+    if(exp_time < timeout){
+      fclose(fp);
+      return 1;
+    }
+    else{
+      fclose(fp);
+      remove(filename);
+      return 0;
+    }
   }
   else return 0;
 }
@@ -78,38 +96,57 @@ int checkCacheHost(char *hostname, char *ip){
   FILE* fp;
   char* line;
   size_t length;
+  char filename[MAXBUFSIZE];
+  int flag=0;
+  //printf("****************In checkCacheHost***************\n");
+
   bzero(filename, sizeof(filename));
   sprintf(filename, "./cache/hosts");
-  fp = fopen(filename, "ab");
 
-  if((fp = fopen(filename, "r")) != NULL){
+  if((fp = fopen(filename, "r")) == NULL){
+    //fclose(fp);
+    //printf("****************In checkCacheHost File Open***************\n");
     return 0;
   }
   else{
-    while((getline(&line, &length, fp))){
+    while((getline(&line, &length, fp)) != -1){
+      //printf("****************In checkCacheHost File Open ELSE***************\n");
       if(strstr(line, hostname)){
         sscanf(line, "%*[^ ]%*c%s", ip);
+        flag =1;
         break;
       }
     }
-    return 1;
+    if(flag==1){
+      fclose(fp);
+      return 1;
+    }
+    fclose(fp);
+    return 0;
   }
 }
 
 
 
-void response(int newsockfd){
+void response(int newsockfd, unsigned long int timeout){
   //int newsockfd = a;
+  char filename[MAXBUFSIZE];
   int sockfd1;
   char method[MAXBUFSIZE];
   char url[MAXBUFSIZE];
   char version[MAXBUFSIZE];
-  char ip[128];
+  char ip[128] = "";
   char port[32];
   char hostname[MAXBUFSIZE];
   struct hostent *server_hp;							// to represent entry in host database
   FILE *fp;
   struct sockaddr_in server;
+  int nbytes;
+  char buffer[MAXBUFSIZE];
+  char req_buffer[MAXBUFSIZE];
+  char *url_hash;
+  char* line;
+  size_t length;
 
   bzero(buffer, sizeof(buffer));
   bzero(req_buffer, sizeof(req_buffer));
@@ -122,6 +159,8 @@ void response(int newsockfd){
     bzero(version, sizeof(version));
     sscanf(buffer, "%s %s %s", method, url, version);
     printf("Method: %s \tURL: %s \tVersion:%s\n", method, url, version );
+
+    url_hash = MD5sum(url);
 
     if(strcmp(method, "GET") != 0){
       send(newsockfd, ERR_METHOD, strlen(ERR_METHOD), 0 );
@@ -137,7 +176,7 @@ void response(int newsockfd){
 
     else{
 
-      int cacheFilePresent = checkCacheFile(url);
+      int cacheFilePresent = checkCacheFile(url, timeout);
 
       if(cacheFilePresent == 1){
         printf("*****Page found in Cache Socket:%d*****\n", newsockfd );
@@ -145,9 +184,10 @@ void response(int newsockfd){
         bzero(filename, sizeof(filename));
         sprintf(filename, "./cache/%s", url_hash);
         fp = fopen(filename, "r");
+        getline(&line, &length, fp);
 
         bzero(buffer, sizeof(buffer));
-        while((nbytes = fread(buffer, 1, nbytes, fp))){
+        while((nbytes = fread(buffer, 1, sizeof(buffer), fp))){
           send(newsockfd, buffer, nbytes, 0);
           bzero(buffer, sizeof(buffer));
         }
@@ -173,12 +213,19 @@ void response(int newsockfd){
           int checkHostPresent = checkCacheHost(hostname, ip);
 
           if(checkHostPresent==1){
+            printf("*******Host Present in Cache*******\n");
+
+            bzero(filename, sizeof(filename));
+            sprintf(filename, "./cache/hosts");
+            //fp = fopen(filename, "ab");
+
             bzero(&server,sizeof(server));               //zero the struct
             server.sin_family = AF_INET;                 //address family
             server.sin_port = htons(80);      //sets port to network byte order
             server.sin_addr.s_addr = inet_addr(ip); //sets remote IP address
           }
           else{
+            printf("*******Host Not Present in Cache*******\n");
             bzero(&server,sizeof(server));               //zero the struct
             server.sin_family = AF_INET;                 //address family
             server.sin_port = htons(80);      //sets port to network byte order
@@ -203,9 +250,7 @@ void response(int newsockfd){
               fclose(fp);
             }
           }
-
         }
-
         /***** Creating the socket*****/
         if ((sockfd1 = socket(AF_INET, SOCK_STREAM, 0)) < 0){
           printf("Error creating socket at proxy \n");
@@ -222,12 +267,18 @@ void response(int newsockfd){
         bzero(buffer, sizeof(buffer));
         bzero(filename, sizeof(filename));
         sprintf(filename, "./cache/%s", url_hash);
+        printf("*********Filename in CacheFileCreate: %s***********\n", filename );
 
         fp = fopen(filename, "ab");
         if(fp < 0){
           printf("Error Creating Cache file\n");
           exit(1);
         }
+        time_t current_time1;
+        current_time1 = time(NULL);
+        printf("*******Current time1: %lu*******\n", current_time1 );
+        fprintf(fp, "%lu\n", current_time1);
+
         bzero(buffer, sizeof(buffer));
         while((nbytes = recv(sockfd1, buffer, sizeof(buffer), 0))){
           //printf("Received Bytes: %d\n", nbytes);
@@ -239,6 +290,7 @@ void response(int newsockfd){
           bzero(buffer, sizeof(buffer));
         }
         // printf("\n\n Loop Exit\n");
+        fclose(fp);
       }
     }
   }
@@ -248,14 +300,15 @@ void response(int newsockfd){
 /*****Main Function *****/
 int main(int argc, char* argv[]){
   int sockfd;
+  unsigned long int timeout;
   struct sockaddr_in client_addr, proxy_addr;
   unsigned int length_client = sizeof(client_addr);
   int newsockfd;
   int pid;
 
-  if (argc != 2)
+  if (argc != 3)
   {
-    printf ("\nUsage: <portNo>\n");
+    printf ("\nUsage: <portNo> <timeout>\n");
     exit(1);
   }
 
@@ -300,8 +353,8 @@ int main(int argc, char* argv[]){
 
       if(pid==0){
         printf("**********New Connection at Port %d - Socket : %d**********\n\n", atoi(argv[1]), newsockfd);
-
-        response(newsockfd);
+        timeout = atoi(argv[2]);
+        response(newsockfd, timeout);
 
         close(newsockfd);
         exit(0);
