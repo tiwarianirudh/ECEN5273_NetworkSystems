@@ -166,6 +166,97 @@ int checkForbiddenHost(char *hostname, char *forbid_ip){
   return 0;
 }
 
+int linkPrefetch(char* prefetch_ip, char* filename, char* hostname ){
+  FILE * fp1;
+  FILE * fp2;
+  char* line = NULL;
+  size_t length;
+  char* url_full;
+  char url[MAXBUFSIZE];
+  char url_inc[MAXBUFSIZE]; //URL Incomplete
+  char server_req[MAXBUFSIZE];
+  char buffer[MAXBUFSIZE];
+  int nbytes = 0;
+  char* url_hash = NULL;
+  char cacheFilename[64];
+  struct sockaddr_in server_add_prefetch;
+  int sockfd2;
+  char * ret_strstr = NULL;
+
+  bzero(&server_add_prefetch,sizeof(server_add_prefetch));               //zero the struct
+  server_add_prefetch.sin_family = AF_INET;                 //address family
+  server_add_prefetch.sin_port = htons(80);      //sets port to network byte order
+  server_add_prefetch.sin_addr.s_addr = inet_addr(prefetch_ip); //sets remote IP address
+
+  if((fp1 = fopen(filename, "r")) != NULL){
+
+    while((getline(&line, &length, fp1) != -1)){
+      bzero(cacheFilename, sizeof(cacheFilename));
+      bzero(url, sizeof(url));
+      bzero(url_inc, sizeof(url_inc));
+      bzero(server_req, sizeof(server_req));
+      bzero(buffer, sizeof(buffer));
+
+      if((ret_strstr = strstr(line, "href"))){
+        if ((sockfd2 = socket(AF_INET, SOCK_STREAM, 0)) < 0){
+          printf("Error creating socket at proxy \n");
+          exit(1);
+        }
+
+        if((connect(sockfd2, (struct sockaddr *)&server_add_prefetch, sizeof(server_add_prefetch))) < 0){
+          printf("Error in Connect to the server. \n");
+          exit(1);
+        }
+
+        if((url_full = strstr(line, "http://"))){
+          sscanf(url_full, "%[^\"]", url);
+        }
+        else{
+          sscanf(ret_strstr, "%*[^=]%*c%*c%[^\"]", url_inc );
+          if(url_inc[0] == '/'){
+            sprintf(url, "http://%s%s", hostname, url_inc);
+          }
+          else{
+            sprintf(url, "http://%s/%s", hostname, url_inc);
+          }
+        }
+        sprintf(server_req, "GET %s HTTP/1.0\r\n\r\n", url);
+
+        url_hash = MD5sum(url);
+
+        sprintf(cacheFilename, "./cache/%s", url_hash );
+        send(sockfd2, server_req, strlen(server_req), 0);
+
+        fp2 = fopen(cacheFilename, "ab");
+        if(fp2 < 0){
+          printf("Error Creating Cache file in Prefetch\n");
+          exit(1);
+        }
+        time_t current_time2;
+        current_time2 = time(NULL);
+        //printf("*******Current time1: %lu*******\n", current_time1 );
+        fprintf(fp2, "%lu\n", current_time2);
+
+        while((nbytes = recv(sockfd2, buffer, sizeof(buffer), 0))){
+          printf("Prefetch Link Received Bytes: %d\n", nbytes);
+          //printf("Buffer Recieved: %s\n", buffer );
+          fwrite(buffer, 1, nbytes, fp2);
+          //printf("\n\n Loop\n");
+          bzero(buffer, sizeof(buffer));
+        }
+        // printf("\n\n Loop Exit\n");
+        fclose(fp2);
+        printf("######Link Prefetched: %s\tSockedFD2: %d\n Filename:%s", url, sockfd2, cacheFilename );
+      }
+    }
+    fclose(fp1);
+    return 0;
+  }
+  else{
+    return 1;
+  }
+
+}
 
 
 void response(int newsockfd, unsigned long int timeout){
@@ -188,6 +279,8 @@ void response(int newsockfd, unsigned long int timeout){
   char *url_hash;
   char* line=NULL;
   size_t length;
+  int flag = 0;
+  int pid2;
 
   bzero(buffer, sizeof(buffer));
   bzero(req_buffer, sizeof(req_buffer));
@@ -208,7 +301,7 @@ void response(int newsockfd, unsigned long int timeout){
       sprintf(buffer, ERR_METHOD, (int)strlen("<html><body><H1>Error 400 Bad Request: Method Not Supported </H1></body></html>"));
       printf("Error Buffer\n%s\n", buffer);
       nbytes = send(newsockfd, buffer, strlen(buffer), 0 );
-      exit(1);
+      continue;
     }
 
     else if((strcmp(version, "HTTP/1.0") != 0) && (strcmp(version, "HTTP/1.1") != 0)){
@@ -216,7 +309,7 @@ void response(int newsockfd, unsigned long int timeout){
       sprintf(buffer, ERR_VERSION, (int)strlen("HTTP/1.1 400 Bad Request\n\rContent-Type: text/html\nContent-Length: %d\n\r\n<html><body><H1>Error 400 Bad Request: Invalid HTTP Version </H1></body></html>"));
       printf("Error Buffer\n%s\n", buffer);
       nbytes = send(newsockfd, buffer, strlen(buffer), 0 );
-      exit(1);
+      continue;
     }
 
     else{
@@ -236,7 +329,7 @@ void response(int newsockfd, unsigned long int timeout){
       int cacheFilePresent = checkCacheFile(url, timeout);
 
       if(cacheFilePresent == 1){
-        printf("*****Page found in Cache Socket:%d*****\n", newsockfd );
+        printf("\n*****Page found in Cache Socket:%d*****\n", newsockfd );
         FILE *fp;
         bzero(filename, sizeof(filename));
         sprintf(filename, "./cache/%s", url_hash);
@@ -253,7 +346,7 @@ void response(int newsockfd, unsigned long int timeout){
       }
 
       else{
-        printf("*****Page Not found in Cache:%d*****\n", newsockfd);
+        printf("\n*****Page Not found in Cache:%d*****\n", newsockfd);
 
         if(strchr(hostname, ':')){
           sscanf(hostname, "%[^:]%*c%[^/]", ip, port);
@@ -267,7 +360,7 @@ void response(int newsockfd, unsigned long int timeout){
           int checkHostPresent = checkCacheHost(hostname, ip);
 
           if(checkHostPresent==1){
-            printf("*******Host Present in Cache*******\n");
+            printf("\n*******Host Present in Cache*******\n");
 
             bzero(filename, sizeof(filename));
             sprintf(filename, "./cache/hosts");
@@ -279,7 +372,7 @@ void response(int newsockfd, unsigned long int timeout){
             server.sin_addr.s_addr = inet_addr(ip); //sets remote IP address
           }
           else{
-            printf("*******Host Not Present in Cache*******\n");
+            printf("\n*******Host Not Present in Cache*******\n");
             bzero(&server,sizeof(server));               //zero the struct
             server.sin_family = AF_INET;                 //address family
             server.sin_port = htons(80);      //sets port to network byte order
@@ -293,7 +386,7 @@ void response(int newsockfd, unsigned long int timeout){
               sprintf(buffer, ERR_SERVERNOTFOUND, (int)strlen("<html><body><H1>Error 400 Bad Request: Server Not Found </H1></body></html>"));
               printf("Error Buffer\n%s\n", buffer);
               nbytes = send(newsockfd, buffer, strlen(buffer), 0 );
-              exit(1);
+              continue;
             }
             else{
               bzero(filename, sizeof(filename));
@@ -310,12 +403,12 @@ void response(int newsockfd, unsigned long int timeout){
         /***** Creating the socket*****/
         if ((sockfd1 = socket(AF_INET, SOCK_STREAM, 0)) < 0){
           printf("Error creating socket at proxy \n");
-          exit(1);
+          continue;
         }
 
         if((connect(sockfd1, (struct sockaddr *)&server, sizeof(server))) < 0){
           printf("Error in Connect to the server. \n");
-          exit(1);
+          continue;
         }
 
         send(sockfd1, req_buffer, strlen(req_buffer), 0);
@@ -339,6 +432,9 @@ void response(int newsockfd, unsigned long int timeout){
         while((nbytes = recv(sockfd1, buffer, sizeof(buffer), 0))){
           //printf("Received Bytes: %d\n", nbytes);
           //printf("Buffer Recieved: %s\n", buffer );
+          if(strstr(buffer, "<html")){
+            flag = 1;
+          }
 
           send(newsockfd, buffer, nbytes, 0);
           fwrite(buffer, 1, nbytes, fp);
@@ -347,6 +443,15 @@ void response(int newsockfd, unsigned long int timeout){
         }
         // printf("\n\n Loop Exit\n");
         fclose(fp);
+
+        if(flag==1){
+          pid2 = fork();
+
+          if(pid2 == 0){
+            int ret = linkPrefetch(inet_ntoa(server.sin_addr), filename, hostname );
+            exit(0);
+          }
+        }
       }
     }
   }
