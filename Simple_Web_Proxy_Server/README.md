@@ -10,7 +10,7 @@
 **Instruction for Running the code**
 >1. Step 1: make clean
 >2. Step 2: make
->3. Step 3: "./webproxy <port number> <Cache Expiration time> & "  {For My Mozilla browser Cache setting is for port number 10001}
+>3. Step 3: "./webproxy \<port number\> \<Cache Expiration time\> & "  {For My Mozilla browser Cache setting is for port number 10001}
 
 **Features Implemented**
 >1. Multi-threaded Proxy.
