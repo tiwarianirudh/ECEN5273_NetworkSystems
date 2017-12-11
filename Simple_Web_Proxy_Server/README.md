@@ -4,8 +4,8 @@
 ### University of Colorado Boulder  
 
 **Objective**
->a. In this programming assignment, a simple web proxy server is built that is capable of accepting HTTP requests from clients, pass them to HTTP server and handle returning traffic from the HTTP server back to clients.
->b. As a part of Extra Credit, build on top of caching and content transformation code, the last piece of functionality that is called link prefetching.
+>1. In this programming assignment, a simple web proxy server is built that is capable of accepting HTTP requests from clients, pass them to HTTP server and handle returning traffic from the HTTP server back to clients.
+>2. As a part of Extra Credit, build on top of caching and content transformation code, the last piece of functionality that is called link prefetching.
 
 **Instruction for Running the code**
 >1. Step 1: make clean
