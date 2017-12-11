@@ -58,5 +58,5 @@ README.txt
 
 
 **Functionality**
->> Implemented Reliability accounting for loss in data packets and loss of acknowledgement.
->> Implemented Data Encryption and Data Decryption at both the client and the server.
+> Implemented Reliability accounting for loss in data packets and loss of acknowledgement.
+> Implemented Data Encryption and Data Decryption at both the client and the server.
