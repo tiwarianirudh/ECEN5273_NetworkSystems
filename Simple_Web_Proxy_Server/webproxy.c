@@ -29,6 +29,7 @@
 /***** Macros *****/
 #define MAXBUFSIZE 1024
 #define ERR_METHOD "HTTP/1.1 400 Bad Request\n\rContent-Type: text/html\nContent-Length: %d\n\r\n<html><body><H1>Error 400 Bad Request: Method Not Supported </H1></body></html>"
+#define ERR_URL "HTTP/1.1 400 Bad Request\n\rContent-Type: text/html\nContent-Length: %d\n\r\n<html><body><H1>Error 400 Bad Request: Invalid URL </H1></body></html>"
 #define ERR_VERSION "HTTP/1.1 400 Bad Request\n\rContent-Type: text/html\nContent-Length: %d\n\r\n<html><body><H1>Error 400 Bad Request: Invalid HTTP Version </H1></body></html>"
 #define ERR_SERVERNOTFOUND "HTTP/1.1 400 Bad Request\n\rContent-Type: text/html\nContent-Length: %d\n\r\n<html><body><H1>Error 400 Bad Request: Server Not Found </H1></body></html>"
 #define ERR_BLOCKED "HTTP/1.1 403 Forbidden\n\rContent-Type: text/html\nContent-Length: %d\n\r\n<html><body>ERROR 403 Forbidden</body></html>"
@@ -171,7 +172,7 @@ int checkForbiddenHost(char *hostname, char *forbid_ip){
 }
 
 /***** Link Prefetching: Extra-Credits Part *****/
-int linkPrefetch(char* prefetch_ip, char* filename, char* hostname ){
+int linkPrefetch(char* prefetch_ip, char* filename, char* hostname, char* port ){
   FILE * fp1;
   FILE * fp2;
   char* line = NULL;
@@ -192,7 +193,7 @@ int linkPrefetch(char* prefetch_ip, char* filename, char* hostname ){
   // Initializing new struct for Prefetching links
   bzero(&server_add_prefetch,sizeof(server_add_prefetch));               //zero the struct
   server_add_prefetch.sin_family = AF_INET;                 //address family
-  server_add_prefetch.sin_port = htons(80);      //sets port to network byte order
+  server_add_prefetch.sin_port = htons(atoi(port));      //sets port to network byte order
   server_add_prefetch.sin_addr.s_addr = inet_addr(prefetch_ip); //sets remote IP address
 
 
@@ -271,7 +272,7 @@ void response(int newsockfd, unsigned long int timeout){
   char version[MAXBUFSIZE];
   char ip[128] = "";
   char forbid_ip[128] = "";
-  char port[32];
+  char port[32] = "80";
   char hostname[MAXBUFSIZE];
   struct hostent *server_hp;							// to represent entry in host database
   FILE *fp;
@@ -307,6 +308,16 @@ void response(int newsockfd, unsigned long int timeout){
       nbytes = send(newsockfd, buffer, strlen(buffer), 0 );
       continue;
     }
+
+    //Check for HTTP request
+    else if((strstr(url, "https") != NULL) || (strstr(url, "http") == NULL)){
+      bzero(buffer, sizeof(buffer));
+      sprintf(buffer, ERR_URL, (int)strlen("<html><body><H1>Error 400 Bad Request: Invalid URL </H1></body></html>"));
+      printf("Error Buffer\n%s\n", buffer);
+      nbytes = send(newsockfd, buffer, strlen(buffer), 0 );
+      continue;
+    }
+
     //Check for Valid HTTP Version
     else if((strcmp(version, "HTTP/1.0") != 0) && (strcmp(version, "HTTP/1.1") != 0)){
       bzero(buffer, sizeof(buffer));
@@ -357,6 +368,7 @@ void response(int newsockfd, unsigned long int timeout){
 
         //Check for a formatting possibility for hostname
         if(strchr(hostname, ':')){
+          bzero(port, sizeof(port));
           sscanf(hostname, "%[^:]%*c%[^/]", ip, port);
           bzero(&server,sizeof(server));               //zero the struct
           server.sin_family = AF_INET;                 //address family
@@ -377,14 +389,14 @@ void response(int newsockfd, unsigned long int timeout){
 
             bzero(&server,sizeof(server));               //zero the struct
             server.sin_family = AF_INET;                 //address family
-            server.sin_port = htons(80);      //sets port to network byte order
+            server.sin_port = htons(atoi(port));      //sets port to network byte order
             server.sin_addr.s_addr = inet_addr(ip); //sets remote IP address
           }
           else{
             printf("\n*******Host Not Present in Cache*******\n");
             bzero(&server,sizeof(server));               //zero the struct
             server.sin_family = AF_INET;                 //address family
-            server.sin_port = htons(80);      //sets port to network byte order
+            server.sin_port = htons(atoi(port));      //sets port to network byte order
             //server.sin_addr.s_addr = inet_addr(hostname); //sets remote IP address
 
 
@@ -461,7 +473,7 @@ void response(int newsockfd, unsigned long int timeout){
           pid2 = fork();
 
           if(pid2 == 0){
-            int ret = linkPrefetch(inet_ntoa(server.sin_addr), filename, hostname );
+            int ret = linkPrefetch(inet_ntoa(server.sin_addr), filename, hostname, port );
             exit(0);
           }
         }
