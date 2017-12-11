@@ -1,0 +1,28 @@
+1512974280
+HTTP/1.1 404 Not Found
+Date: Mon, 11 Dec 2017 06:38:00 GMT
+Server: Apache
+Content-Length: 277
+Keep-Alive: timeout=5, max=100
+Connection: Keep-Alive
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL /favicon.ico was not found on this server.</p>
+<hr>
+<address>Apache Server at morse.colorado.edu Port 80</address>
+</body></html>
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>501 Method Not Implemented</title>
+</head><body>
+<h1>Method Not Implemented</h1>
+<p>.7728f91073 to /index.html not supported.<br />
+</p>
+<hr>
+<address>Apache Server at morse.colorado.edu Port 80</address>
+</body></html>

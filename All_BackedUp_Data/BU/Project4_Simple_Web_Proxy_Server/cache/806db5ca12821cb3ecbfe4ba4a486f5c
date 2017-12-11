@@ -1,0 +1,134 @@
+1512974277
+HTTP/1.1 200 OK
+Date: Mon, 11 Dec 2017 06:37:57 GMT
+Server: Apache
+Accept-Ranges: bytes
+Content-Length: 8097
+Connection: close
+Content-Type: text/html
+
+<HTML>
+<HEAD>
+
+<TITLE>Telecommunication Systems Lab</TITLE>
+<META NAME="description" content="Interdisciplinary Telecommunications Department - Telecomunication Systems Laboratory"> 
+<LINK REL="Home" HREF="http://itdlab.colorado.edu">
+<LINK REL="stylesheet" TYPE="text/css" HREF="include/style.css">
+<script language="JavaScript" src="include/program.js">
+
+</script>
+</HEAD>
+
+<BODY bgcolor="#FFFFFF" leftmargin=0 topmargin=0 marginheight=0 marginwidth=0 text="#003366" link="#000066" vlink="#000099">
+<TABLE width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr valign="top"> 
+    <TD background="inside/background.jpg" height="77"><img src="inside/banner.jpg" width="269" height="80" border="0"><BR>
+    </TD>
+    <TD align="RIGHT" background="inside/background.jpg" nowrap height="77"><img src="inside/earthtop.jpg" width="75" height="33" border="0"><a href="about2.html" onMouseOver="onImgs('img9')" onMouseOut="offImgs('img9')"><img name="img9" alt="" border="0" src="inside/buttons/inside_off.jpg" width="109" height="33"></a><a href="equipment.html" onMouseOver="onImgs('img10')" onMouseOut="offImgs('img10')"><img name="img10" alt="" border="0" src="inside/buttons/equipment_off.jpg" width="83" height="33"></a><a href="sponsors.html" onMouseOver="onImgs('img11')" onMouseOut="offImgs('img11')"><img name="img11" alt="" border="0"  src="inside/buttons/sponsors_off.jpg" width="143" height="33"></a><br>
+      <img src="inside/earthbot.jpg" width="56" height="47" border="0"><a href="multimedia.html" onMouseOver="document.img12_on.src='inside/buttons/media_on.jpg';" onMouseOut="document.img12_on.src='inside/buttons/media.jpg';"><img name="img12_on" alt="" border="0" src="inside/buttons/media.jpg" width="106" height="47"></a><a href="march.html" onMouseOver="onImgs('img13')" onMouseOut="offImgs('img13')"><img name="img13" alt="" border="0"  src="inside/buttons/schedule_off.jpg" width="69" height="47"></a><a href="distance.html" onMouseOver="onImgs('img14')" onMouseOut="offImgs('img14')"><img name="img14" alt="" border="0"  src="inside/buttons/distance_off.jpg" width="120" height="47"></a><a href="contact.html" onMouseOver="onImgs('img16')" onMouseOut="offImgs('img16')"><img name="img16" alt="" border="0" src="inside/buttons/contact_off.jpg" width="59" height="47"></a><br>
+    </TD>
+  </TR>
+</TABLE>
+<TABLE border="0" cellspacing="0" cellpadding="0" width="100%">
+  <TR valign="TOP"> 
+    <TD width="137" height="622" nowrap> 
+      <table width="136" border="0" cellspacing="0" cellpadding="0">
+        <tr> 
+          <td height="9"><img src="inside/sidebar1.jpg" width="136" height="21"></td>
+        </tr>
+        <tr> 
+          <td><a href="multimedia.html" onMouseOver="document.img17_on.src='inside/multimedia/sidebar2_on.jpg';" onMouseOut="document.img17_on.src='inside/multimedia/sidebar2.jpg';"><img name="img17_on" alt="" border="0"  src="inside/multimedia/sidebar2.jpg" width="136" height="18"></a></td>
+        </tr>
+        <tr> 
+          <td><a href="reservation.html" onMouseOver="document.img18_on.src='inside/multimedia/sidebar3_on.jpg';" onMouseOut="document.img18_on.src='inside/multimedia/sidebar3_off.jpg';"><img name="img18_on" alt="" border="0"  src="inside/multimedia/sidebar3_off.jpg" width="136" height="18"></a></td>
+        </tr>
+        <tr> 
+          <td><img name="img19_on" alt="" border="0"  src="inside/sidebar4.jpg" width="136" height="18"></td>
+        </tr>
+        <tr> 
+          <td><img name="img20_on" alt="" border="0"  src="inside/sidebar5.jpg" width="136" height="18"></td>
+        </tr>
+        <tr> 
+          <td><img name="img21_on" alt="" border="0"  src="inside/sidebar6.jpg" width="136" height="18"></td>
+        </tr>
+      </table>
+      <img src="inside/sidebarbot.jpg" width="136" height="183"> </TD>
+    <TD colspan="2"> 
+      <TABLE border="0" cellspacing="0" cellpadding="0" width="379">
+        <TR> 
+          <TD height="32" width="379" nowrap><img src="inside/multimedia/mediatitle.jpg" width="434" height="60"></TD>
+        </TR>
+      </TABLE>
+      <table border="0" cellspacing="0" cellpadding="0" width="97%">
+        <tr> 
+          <td width="40" nowrap><img src="inside/contact/blank.gif" width="40" height="2"></td>
+          <td width="97%"> 
+            <table width="471" border="0" cellpadding="0" cellspacing="0" height="269">
+              <tr> 
+                <td rowspan="5" width="9" height="269" nowrap><img src="inside/multimedia/leftbar.gif" width="9" height="269"></td>
+                <td width="298" height="4" nowrap><img src="inside/multimedia/topbar.gif" width="310" height="16"></td>
+                <td nowrap width="152" height="4"><img src="inside/multimedia/righttop.gif" width="152" height="16"></td>
+              </tr>
+              <tr> 
+                <td width="298" height="222" nowrap rowspan="3"><img src="inside/multimedia/multimedia.jpg" width="310" height="222"></td>
+                <td width="152" height="130" nowrap><img src="inside/multimedia/rightbar.gif" width="152" height="130"></td>
+              </tr>
+              <tr> 
+                <td width="152" height="44"><a href="reservation.html"><img src="inside/multimedia/rightbot.gif" width="140" height="44" border="0"></a></td>
+              </tr>
+              <tr> 
+                <td width="152" height="48">&nbsp;</td>
+              </tr>
+              <tr> 
+                <td width="298" height="31" nowrap><img src="inside/multimedia/bottombar.gif" width="310" height="31"></td>
+                <td width="163" height="31">&nbsp;</td>
+              </tr>
+            </table>
+            <p>&nbsp;</p>
+            <hr size="1" noshade>
+            <h2><font face="Arial, Helvetica, sans-serif" size="+2">Smart Room</font></h2>
+            <p><font face="Arial, Helvetica, sans-serif" size="2">The Multimedia 
+              room is the Interdisciplinary Telecommunication Department's smart 
+              media room. The room includes full Internet access and the ability 
+              to present digital media using an LCD projector or analog video 
+              using TV/VCR. The room includes 4 high speed PC computers and 5 
+              Sun Ultra 10 workstations.</font></p>
+            <p> 
+            <h2><font face="Arial, Helvetica, sans-serif" size="+2">Presentations</font></h2>
+            <p><font face="Arial, Helvetica, sans-serif" size="2">The room is 
+              used for any event requiring the use of media. This includes, lectures, 
+              presentations, thesis defense, and presentations encoded for digital 
+              streaming.</font></p>
+            <p> 
+            <h2><font face="Arial, Helvetica, sans-serif" size="+2">Video Streaming</font></h2>
+            <p><font face="Arial, Helvetica, sans-serif" size="2">Students have 
+              the ability to watch course lectures over the web. The course is 
+              delivered as a full screen image at 30 frames per second. The resolution 
+              is comparable to a VCR tape. </font></p>
+            <p> 
+            <h2><font face="Arial, Helvetica, sans-serif" size="+2">Simulations</font></h2>
+            <p><font face="Arial, Helvetica, sans-serif" size="2">The Sun Ultra 
+              workstations are used for research and simulations of wireless cell 
+              coverage and satellite signal coverage.</font></p>
+          </td>
+        </tr>
+      </table>
+    </TD>
+  </TR>
+  <tr> 
+    <td nowrap width="137"> </td>
+    <td width="97%" nowrap> 
+      <hr noshade size="1" align="right">
+      <div align="right"><font face="Arial, Helvetica, sans-serif" size="1"><a href="about2.html">About 
+        the Lab</a> | <a href="equipment.html">Equipment</a> | <a href="sponsors.html">Sponsors 
+        & Donators</a> |<a href="multimedia.html"> Multimedia Lab</a> | <a href="march.html">Schedule</a> 
+        | <a href="distance.html">Distance Learning</a> | <a href="contact.html">Contact</a> 
+        | <a href="index.html">Home </a><br>
+        </font></div>
+      <p align="right">&nbsp;</p>
+    </td>
+    <td width="3%"></td>
+  </tr>
+</TABLE>
+</BODY>
+</HTML>

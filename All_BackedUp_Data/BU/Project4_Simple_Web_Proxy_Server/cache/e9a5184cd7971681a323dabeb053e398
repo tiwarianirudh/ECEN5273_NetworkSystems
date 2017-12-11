@@ -1,0 +1,117 @@
+1512974277
+HTTP/1.1 200 OK
+Date: Mon, 11 Dec 2017 06:37:57 GMT
+Server: Apache
+Accept-Ranges: bytes
+Content-Length: 7224
+Connection: close
+Content-Type: text/html
+
+<HTML>
+<HEAD>
+
+<TITLE>Telecommunication Systems Lab</TITLE>
+<META NAME="description" content="Interdisciplinary Telecommunications Department - Telecomunication Systems Laboratory"> 
+<LINK REL="Home" HREF="http://itdlab.colorado.edu">
+<LINK REL="stylesheet" TYPE="text/css" HREF="include/style.css">
+<script language="JavaScript" src="include/program.js">
+
+</script>
+</HEAD>
+
+<BODY bgcolor="#FFFFFF" leftmargin=0 topmargin=0 marginheight=0 marginwidth=0 text="#003366" link="#000066" vlink="#000099">
+<TABLE width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr valign="top"> 
+    <TD background="inside/background.jpg" height="77"><img src="inside/banner.jpg" width="269" height="80" border="0"><BR>
+    </TD>
+    <TD align="RIGHT" background="inside/background.jpg" nowrap height="77"><img src="inside/earthtop.jpg" width="75" height="33" border="0"><a href="about2.html" onMouseOver="onImgs('img9')" onMouseOut="offImgs('img9')"><img name="img9" alt="" border="0" src="inside/buttons/inside_off.jpg" width="109" height="33"></a><a href="equipment.html" onMouseOver="onImgs('img10')" onMouseOut="offImgs('img10')"><img name="img10" alt="" border="0" src="inside/buttons/equipment_off.jpg" width="83" height="33"></a><a href="sponsors.html" onMouseOver="onImgs('img11')" onMouseOut="offImgs('img11')"><img name="img11" alt="" border="0"  src="inside/buttons/sponsors_off.jpg" width="143" height="33"></a><br>
+      <img src="inside/earthbot.jpg" width="56" height="47" border="0"><a href="multimedia.html" onMouseOver="onImgs('img12')" onMouseOut="offImgs('img12')"><img name="img12" alt="" border="0" src="inside/buttons/media_off.jpg" width="106" height="47"></a><a href="march.html" onMouseOver="onImgs('img13')" onMouseOut="offImgs('img13')"><img name="img13" alt="" border="0"  src="inside/buttons/schedule_off.jpg" width="69" height="47"></a><a href="distance.html" onMouseOver="document.img14_on.src='inside/buttons/distance_on.jpg';" onMouseOut="document.img14_on.src='inside/buttons/distance.jpg';"><img name="img14_on" alt="" border="0"  src="inside/buttons/distance.jpg" width="120" height="47"></a><a href="contact.html" onMouseOver="onImgs('img16')" onMouseOut="offImgs('img16')"><img name="img16" alt="" border="0" src="inside/buttons/contact_off.jpg" width="59" height="47"></a><br>
+    </TD>
+  </TR>
+</TABLE>
+<TABLE border="0" cellspacing="0" cellpadding="0" width="100%">
+  <TR valign="TOP"> 
+    <TD width="137" height="227" nowrap> 
+      <table width="136" border="0" cellspacing="0" cellpadding="0">
+        <tr> 
+          <td height="9"><img src="inside/sidebar1.jpg" width="136" height="21"></td>
+        </tr>
+        <tr> 
+          <td><a href="distance.html" onMouseOver="document.img17_on.src='inside/distance/sidebar2_on.jpg';" onMouseOut="document.img17_on.src='inside/distance/sidebar2.jpg';"><img name="img17_on" alt="" border="0"  src="inside/distance/sidebar2.jpg" width="136" height="18"></a></td>
+        </tr>
+        <tr> 
+          <td><a href="distance.html" onMouseOver="document.img18_on.src='inside/distance/sidebar3_on.jpg';" onMouseOut="document.img18_on.src='inside/distance/sidebar3_off.jpg';"><img name="img18_on" alt="" border="0"  src="inside/distance/sidebar3_off.jpg" width="136" height="18"></a></td>
+        </tr>
+        <tr> 
+          <td><a href="http://itdonline.colorado.edu" onMouseOver="document.img19_on.src='inside/distance/sidebar4_on.jpg';" onMouseOut="document.img19_on.src='inside/distance/sidebar4_off.jpg';"><img name="img19_on" alt="" border="0"  src="inside/distance/sidebar4_off.jpg" width="136" height="18"></a></td>
+        </tr>
+        <tr> 
+          <td><img name="img20_on" alt="" border="0"  src="inside/sidebar5.jpg" width="136" height="18"></td>
+        </tr>
+        <tr> 
+          <td><img name="img21_on" alt="" border="0"  src="inside/sidebar6.jpg" width="136" height="18"></td>
+        </tr>
+      </table>
+      <img src="inside/sidebarbot.jpg" width="136" height="183"> </TD>
+    <TD colspan="2" height="227"> 
+      <table width="97%" border="0" cellspacing="0" cellpadding="0">
+        <tr valign="TOP"> 
+          <td height="43"> 
+            <table border="0" cellspacing="0" cellpadding="0">
+              <tr> 
+                <td height="43"><img src="inside/distance/title.jpg" width="500" height="43"></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr valign="TOP"> 
+          <td height="95" nowrap><img src="inside/distance/img1.jpg" width="209" height="167"><img src="inside/distance/img2.jpg" width="168" height="167"></td>
+        </tr>
+      </table>
+      <table border="0" cellspacing="0" cellpadding="0" width="97%">
+        <tr> 
+          <td width="10" nowrap><img src="inside/contact/blank.gif" width="10" height="2"></td>
+          <td> 
+            <p><font face="Arial, Helvetica, sans-serif" size="2">The explosion 
+              in information technologies is creating a growing number of students 
+              seeking technical degrees in the field of telecommunications. To 
+              respond to this need, most educational institutions have simply 
+              increased their size and scope through the addition of faculty, 
+              courses and with the adoption of distance learning through anytime, 
+              anywhere technologies. The key missing element to supporting an 
+              expanded number of students in telecommunications is an interactive, 
+              remotely accessible laboratory experience. </font></p>
+            <p><font face="Arial, Helvetica, sans-serif" size="2">The solution 
+              is to provide remote access to laboratory activities, providing 
+              a means to eliminate the need for physical presence in the laboratory. 
+              Laboratory experiences have long been recognized as essential to 
+              an understanding of technology through their use of problem solving, 
+              experimental learning, and analysis opportunities. Modern lab development 
+              and facilities are costly and difficult to keep up-to-date. Students 
+              are often forced to substitute hands-on lab experiences with demonstrations 
+              or theoretical discussions. For the distant learner, there is no 
+              option whatsoever. </font></p>
+            <p><font face="Arial, Helvetica, sans-serif" size="2">This is the 
+              past, today and tomorrow hold unlimited possibilities </font></p>
+          </td>
+        </tr>
+      </table>
+    </TD>
+  </TR>
+  <TR> 
+    <TD nowrap width="137"> </TD>
+    <TD width="97%" nowrap> 
+      <hr noshade size="1" align="right">
+      <div align="right"><font face="Arial, Helvetica, sans-serif" size="1"><a href="about2.html">About 
+        the Lab</a> | <a href="equipment.html">Equipment</a> | <a href="sponsors.html">Sponsors 
+        & Donators</a> |<a href="multimedia.html"> Multimedia Lab</a> | <a href="march.html">Schedule</a> 
+        | <a href="distance.html">Distance Learning</a> | <a href="contact.html">Contact</a> 
+        | <a href="index.html">Home </a><br>
+        </font></div>
+      <p align="right">&nbsp;</p>
+    </TD>
+    <TD width="3%"></TD>
+  </TR>
+</TABLE>
+</BODY>
+</HTML>

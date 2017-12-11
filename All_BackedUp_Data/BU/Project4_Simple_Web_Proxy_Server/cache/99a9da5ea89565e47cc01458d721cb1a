@@ -1,0 +1,131 @@
+1512974272
+HTTP/1.1 200 OK
+Date: Mon, 11 Dec 2017 06:37:52 GMT
+Server: Apache
+Accept-Ranges: bytes
+Content-Length: 7544
+Connection: close
+Content-Type: text/html
+
+<HTML>
+<HEAD>
+
+<TITLE>Telecommunication Systems Lab</TITLE>
+<META NAME="description" content="Interdisciplinary Telecommunications Program - Telecomunication Systems Laboratory"> 
+<LINK REL="Home" HREF="http://itdlab.colorado.edu">
+<LINK REL="stylesheet" TYPE="text/css" HREF="include/style.css">
+<script language="JavaScript" src="include/program.js">
+
+</script>
+</HEAD>
+
+<BODY bgcolor="#FFFFFF" leftmargin=0 topmargin=0 marginheight=0 marginwidth=0 text="#003366" link="#000066" vlink="#000099">
+<TABLE width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr valign="top"> 
+    <TD background="inside/background.jpg" height="77"><img src="inside/banner.jpg" width="269" height="80" border="0"><BR>
+    </TD>
+    <TD align="RIGHT" background="inside/background.jpg" nowrap height="77"><img src="inside/earthtop.jpg" width="75" height="33" border="0"><a href="about2.html" onMouseOver="document.img9_on.src='inside/buttons/inside_on.jpg';" onMouseOut="document.img9_on.src='inside/buttons/inside.jpg';"><img name="img9_on" alt="" border="0" src="inside/buttons/inside.jpg" width="109" height="33"></a><a href="equipment.html" onMouseOver="onImgs('img10')" onMouseOut="offImgs('img10')"><img name="img10" alt="" border="0" src="inside/buttons/equipment_off.jpg" width="83" height="33"></a><a href="sponsors.html" onMouseOver="onImgs('img11')" onMouseOut="offImgs('img11')"><img name="img11" alt="" border="0"  src="inside/buttons/sponsors_off.jpg" width="143" height="33"></a><br>
+      <img src="inside/earthbot.jpg" width="56" height="47" border="0"><a href="multimedia.html" onMouseOver="onImgs('img12')" onMouseOut="offImgs('img12')"><img name="img12" alt="" border="0" src="inside/buttons/media_off.jpg" width="106" height="47"></a><a href="march.html" onMouseOver="onImgs('img13')" onMouseOut="offImgs('img13')"><img name="img13" alt="" border="0"  src="inside/buttons/schedule_off.jpg" width="69" height="47"></a><a href="distance.html" onMouseOver="onImgs('img14')" onMouseOut="offImgs('img14')"><img name="img14" alt="" border="0"  src="inside/buttons/distance_off.jpg" width="120" height="47"></a><a href="contact.html" onMouseOver="onImgs('img16')" onMouseOut="offImgs('img16')"><img name="img16" alt="" border="0" src="inside/buttons/contact_off.jpg" width="59" height="47"></a><br>
+    </TD>
+  </TR>
+</TABLE>
+<TABLE border="0" cellspacing="0" cellpadding="0" height="353">
+  <TR valign="TOP"> 
+    <TD width="137" height="288" nowrap> 
+      <table width="136" border="0" cellspacing="0" cellpadding="0">
+        <tr> 
+          <td height="9"><img src="inside/sidebar1.jpg" width="136" height="21"></td>
+        </tr>
+        <tr> 
+          <td><a href="about2.html" onMouseOver="document.img17_on.src='inside/about/sidebar2_on.jpg';" onMouseOut="document.img17_on.src='inside/about/sidebar2.jpg';"><img name="img17_on" alt="" border="0"  src="inside/about/sidebar2.jpg" width="136" height="18"></a></td>
+        </tr>
+        <tr> 
+          <td><a href="mission.html" onMouseOver="document.img18_on.src='inside/about/sidebar3_on.jpg';" onMouseOut="document.img18_on.src='inside/about/sidebar3_off.jpg';"><img name="img18_on" alt="" border="0"  src="inside/about/sidebar3_off.jpg" width="136" height="18"></a></td>
+        </tr>
+        <tr> 
+          <td><a href="policy.html" onMouseOver="document.img19_on.src='inside/about/sidebar4_on.jpg';" onMouseOut="document.img19_on.src='inside/about/sidebar4_off.jpg';"><img name="img19_on" alt="" border="0"  src="inside/about/sidebar4_off.jpg" width="136" height="18"></a></td>
+        </tr>
+        <tr> 
+          <td><img name="img20_on" alt="" border="0"  src="inside/sidebar5.jpg" width="136" height="18"></td>
+        </tr>
+        <tr> 
+          <td><img name="img21_on" alt="" border="0"  src="inside/sidebar6.jpg" width="136" height="18"></td>
+        </tr>
+      </table>
+      <img src="inside/sidebarbot.jpg" width="136" height="183"> </TD>
+    <TD colspan="2" height="288"> 
+      <TABLE border="0" cellspacing="0" cellpadding="0" width="317">
+        <TR> 
+          <TD height="95" width="432" nowrap> 
+            <table border="0" cellspacing="0" cellpadding="0">
+              <tr> 
+                <td height="28"><img src="inside/about/about_title.jpg" width="432" height="43"></td>
+              </tr>
+              <tr> 
+                <td height="2"><img src="inside/about/aboutimage_top.jpg" width="432" height="52"></td>
+              </tr>
+            </table>
+          </TD>
+        </TR>
+      </TABLE>
+      <table border="0" cellspacing="0" cellpadding="0" width="97%">
+        <tr> 
+          <td nowrap height="150"> 
+            <table border="0" cellpadding="0" cellspacing="0" width="504" height="203">
+              <tr> 
+                <td rowspan="3" valign="TOP" width="60"><img src="inside/about/aboutimage_mid.jpg" width="60" height="143"></td>
+                <td height="10" nowrap colspan="3"> 
+                  <p><img src="inside/about/topbar.jpg" width="504" height="10"></p>
+                </td>
+              </tr>
+              <tr> 
+                <td nowrap width="26" height="190"> 
+                  <p><img src="inside/about/leftbar.jpg" width="26" height="190"></p>
+                </td>
+                <td nowrap width="452" height="190"> 
+                  <p><font face="Geneva, Arial, Helvetica, san-serif" size="2">The 
+                    Telecommunication Systems Laboratory is the research and applied 
+                    arm of the Interdisciplinary Telecommunications Program 
+                    (ITP). The laboratory provides instruction in the latest telecommunication 
+                    technologies, offers a facility for student and faculty research, 
+                    serves as a focus for partnership with industry, and supports 
+                    department activities in both on-campus and distance learning.</font></p>
+                  <p><font face="Geneva, Arial, Helvetica, san-serif" size="2">The 
+                    laboratory has the capacity to simulate large telephony and 
+                    data networks. The current capabilities include VoIP, PBXs, 
+                    ATM, Frame Relay, DSL, ISDN, as well as more advanced routing 
+                    and switching technologies such as MPLS and VLANs.</font></p>
+                </td>
+                <td nowrap width="26" height="190"><img src="inside/about/rightbar.jpg" width="26" height="190"></td>
+              </tr>
+              <tr> 
+                <td height="2" nowrap colspan="3"> 
+                  <p><img src="inside/about/bottombar.jpg" width="504" height="10"></p>
+                </td>
+              </tr>
+              <tr> 
+                <td valign="top" colspan="5" bgcolor="#FFFFFF" height="10"></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </TD>
+  </TR>
+  <tr> 
+    <td nowrap width="137"> </td>
+    <td width="97%" nowrap> 
+      <hr noshade size="1" align="right">
+      <div align="right"><font face="Arial, Helvetica, sans-serif" size="1"><a href="about2.html">About 
+        the Lab</a> | <a href="equipment.html">Equipment</a> | <a href="sponsors.html">Sponsors 
+        & Donators</a> |<a href="multimedia.html"> Multimedia Lab</a> | <a href="march.html">Schedule</a> 
+        | <a href="distance.html">Distance Learning</a> | <a href="contact.html">Contact</a> 
+        | <a href="index.html">Home </a><br>
+        </font></div>
+      <p align="right">&nbsp;</p>
+    </td>
+    <td width="3%"></td>
+  </tr>
+</TABLE>
+</BODY>
+</HTML>

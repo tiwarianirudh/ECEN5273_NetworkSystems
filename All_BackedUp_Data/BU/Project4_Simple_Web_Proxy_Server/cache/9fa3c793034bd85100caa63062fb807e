@@ -1,0 +1,143 @@
+1512974272
+HTTP/1.1 200 OK
+Date: Mon, 11 Dec 2017 06:37:52 GMT
+Server: Apache
+Accept-Ranges: bytes
+Content-Length: 5538
+Connection: close
+Content-Type: text/html
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>Telecommunication Systems Lab</title>
+  <meta name="description"
+ content="Interdisciplinary Telecommunications Department - Telecomunication Systems Laboratory">
+  <link rel="Home" href="http://itdlab.colorado.edu">
+  <link rel="stylesheet" type="text/css" href="include/style.css">
+  <script language="JavaScript" src="include/program.js"></script>
+</head>
+<body style="background-color: rgb(51, 51, 102);" topmargin="0"
+ leftmargin="0">
+<table border="0" cellspacing="0" cellpadding="0" width="100%"
+ height="413">
+  <tbody>
+    <tr>
+      <td width="100%" align="center">
+      <table border="0" cellspacing="0" cellpadding="0" height="420">
+        <tbody>
+          <tr>
+            <td><br>
+            </td>
+            <td width="36"><img alt="" border="" src="images/pixel.gif"
+ width="36" height="1"></td>
+          </tr>
+          <tr>
+            <td>
+            <table border="0" cellspacing="0" cellpadding="0"
+ width="592">
+              <tbody>
+                <tr>
+                  <td width="336" valign="bottom" align="right">
+                  <table border="0" cellspacing="0" cellpadding="0"
+ width="336" height="126">
+                    <tbody>
+                      <tr>
+                        <td width="64"><img alt="" border=""
+ src="spacer.gif" width="64" height="1"></td>
+                        <td width="284"><img src="swash.gif" width="250"
+ height="54" align="middle"></td>
+                        <td height="125" valign="top" width="1">&nbsp;</td>
+                      </tr>
+                      <tr>
+                        <td colspan="3"><img alt="" border="0"
+ src="swash_line.gif" width="336" height="1"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  </td>
+                  <td width="20"><img alt="" border="0"
+ src="nav_bar.gif" width="20" height="179"></td>
+                  <td width="236" valign="bottom"><br>
+                  <a href="about2.html" onmouseover="onImgs('img1')"
+ onmouseout="offImgs('img1')"><img name="img1" alt="" border="0"
+ src="buttons/about_off.jpg" width="236" height="16"></a><br>
+                  <a href="equipment.html" onmouseover="onImgs('img3')"
+ onmouseout="offImgs('img3')"><img name="img3" alt="" border="0"
+ src="buttons/equip_off.gif" width="236" height="15"></a><br>
+                  <a href="sponsors.html" onmouseover="onImgs('img2')"
+ onmouseout="offImgs('img2')"><img name="img2" alt="" border="0"
+ src="buttons/sponsors_off.gif" width="236" height="15"></a><br>
+                  <a href="multimedia.html" onmouseover="onImgs('img4')"
+ onmouseout="offImgs('img4')"><img name="img4" alt="" border="0"
+ src="buttons/media_off.gif" width="236" height="15"></a><br>
+                  <a href="march.html" onmouseover="onImgs('img5')"
+ onmouseout="offImgs('img5')"><img name="img5" alt="" border="0"
+ src="buttons/sched_off.gif" width="236" height="15"></a><br>
+                  <a href="distance.html" onmouseover="onImgs('img6')"
+ onmouseout="offImgs('img6')"><img name="img6" alt="" border="0"
+ src="buttons/distance_off.gif" width="236" height="15"></a><br>
+                  <a href="contact.html" onmouseover="onImgs('img8')"
+ onmouseout="offImgs('img8')"><img name="img8" alt="" border="0"
+ src="buttons/contactus_off.gif" width="236" height="15"></a><br>
+                  <img alt="" border="0" src="buttons/bottom.jpg"
+ width="236" height="15"></td>
+                </tr>
+              </tbody>
+            </table>
+            </td>
+          </tr>
+          <tr>
+            <td>
+            <table border="0" width="592" cellspacing="0"
+ cellpadding="0" height="230">
+              <tbody>
+                <tr>
+                  <td align="center" colspan="2"><img alt="" border="0"
+ src="line_a.gif" width="592" height="3"></td>
+                </tr>
+                <tr>
+                  <td align="right" colspan="2"><img src="image_sml.jpg"
+ width="601" height="94"></td>
+                </tr>
+                <tr>
+                  <td align="center" colspan="2" height="5"><img
+ src="titlebar.gif" width="600" height="16"></td>
+                </tr>
+                <tr>
+                  <td align="right"><img alt="" border="0"
+ src="circles.gif" width="224" height="119"><br>
+                  <img alt="" border="0" src="bar_bottom.gif" width="13"
+ height="43"></td>
+                  <td valign="top" width="60%">
+                  <p><img alt="" border="0" src="top_bar.gif"
+ width="362" 8=""></p>
+                  <table border="0" cellspacing="0" cellpadding="0"
+ width="293" height="70">
+                    <tbody>
+                      <tr>
+                        <td width="306">
+                        <p><!--<a href="http://itp.colorado.edu"><img src="itd.jpg" width="200" height="54" hspace="50" border="0"></a>--></p>
+                        <div style="text-align: center;"><a
+ href="http://itd.colorado.edu" style="text-decoration: none;"><small><span
+ style="color: rgb(255, 255, 0); font-family: helvetica,arial,sans-serif;">Interdisciplinary
+Telecommunications Program</span></small></a><br>
+                        </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</body>
+</html>

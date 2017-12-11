@@ -1,0 +1,140 @@
+1512974273
+HTTP/1.1 200 OK
+Date: Mon, 11 Dec 2017 06:37:54 GMT
+Server: Apache
+Accept-Ranges: bytes
+Content-Length: 9303
+Connection: close
+Content-Type: text/html
+
+<HTML>
+<HEAD>
+
+<TITLE>Telecommunication Systems Lab</TITLE>
+<META NAME="description" content="Interdisciplinary Telecommunications Department - Telecomunication Systems Laboratory"> 
+<LINK REL="Home" HREF="http://itdlab.colorado.edu">
+<LINK REL="stylesheet" TYPE="text/css" HREF="include/style.css">
+<script language="JavaScript" src="include/program.js">
+
+</script>
+</HEAD>
+
+<BODY bgcolor="#FFFFFF" leftmargin=0 topmargin=0 marginheight=0 marginwidth=0 text="#003366" link="#000066" vlink="#000099">
+<TABLE width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr valign="top"> 
+    <TD background="inside/background.jpg" height="77"><img src="inside/banner.jpg" width="269" height="80" border="0"><BR>
+    </TD>
+    <TD align="RIGHT" background="inside/background.jpg" nowrap height="77"><img src="inside/earthtop.jpg" width="75" height="33" border="0"><a href="about2.html" onMouseOver="onImgs('img9')" onMouseOut="offImgs('img9')"><img name="img9" alt="" border="0" src="inside/buttons/inside_off.jpg" width="109" height="33"></a><a href="equipment.html" onMouseOver="document.img10_on.src='inside/buttons/equipment_on.jpg';" onMouseOut="document.img10_on.src='inside/buttons/equipment.jpg';"><img name="img10_on" alt="" border="0" src="inside/buttons/equipment.jpg" width="83" height="33"></a><a href="sponsors.html" onMouseOver="onImgs('img11')" onMouseOut="offImgs('img11')"><img name="img11" alt="" border="0"  src="inside/buttons/sponsors_off.jpg" width="143" height="33"></a><br>
+      <img src="inside/earthbot.jpg" width="56" height="47" border="0"><a href="multimedia.html" onMouseOver="onImgs('img12')" onMouseOut="offImgs('img12')"><img name="img12" alt="" border="0" src="inside/buttons/media_off.jpg" width="106" height="47"></a><a href="march.html" onMouseOver="onImgs('img13')" onMouseOut="offImgs('img13')"><img name="img13" alt="" border="0"  src="inside/buttons/schedule_off.jpg" width="69" height="47"></a><a href="distance.html" onMouseOver="onImgs('img14')" onMouseOut="offImgs('img14')"><img name="img14" alt="" border="0"  src="inside/buttons/distance_off.jpg" width="120" height="47"></a><a href="contact.html" onMouseOver="onImgs('img16')" onMouseOut="offImgs('img16')"><img name="img16" alt="" border="0" src="inside/buttons/contact_off.jpg" width="59" height="47"></a><br>
+    </TD>
+  </TR>
+</TABLE>
+<TABLE border="0" cellspacing="0" cellpadding="0" width="100%">
+  <TR valign="TOP"> 
+    <TD width="137" height="481" nowrap> 
+      <table width="136" border="0" cellspacing="0" cellpadding="0">
+        <tr> 
+          <td height="9"><img src="inside/sidebar1.jpg" width="136" height="21"></td>
+        </tr>
+        <tr> 
+          <td><a href="equipment.html" onMouseOver="document.img17_on.src='inside/equipment/sidebar2_on.jpg';" onMouseOut="document.img17_on.src='inside/equipment/sidebar2.jpg';"><img name="img17_on" alt="" border="0"  src="inside/equipment/sidebar2.jpg" width="136" height="18"></a></td>
+        </tr>
+        <tr> 
+          <td><a href="routers.html" onMouseOver="document.img18_on.src='inside/equipment/sidebar3_on.jpg';" onMouseOut="document.img18_on.src='inside/equipment/sidebar3_off.jpg';"><img name="img18_on" alt="" border="0"  src="inside/equipment/sidebar3_off.jpg" width="136" height="18"></a></td>
+        </tr>
+        <tr> 
+          <td><a href="switches.html" onMouseOver="document.img19_on.src='inside/equipment/sidebar4_on.jpg';" onMouseOut="document.img19_on.src='inside/equipment/sidebar4_off.jpg';"><img name="img19_on" alt="" border="0"  src="inside/equipment/sidebar4_off.jpg" width="136" height="18"></a></td>
+        </tr>
+        <tr> 
+          <td><a href="misc.html" onMouseOver="document.img20_on.src='inside/equipment/sidebar5_on.jpg';" onMouseOut="document.img20_on.src='inside/equipment/sidebar5_off.jpg';"><img name="img20_on" alt="" border="0"  src="inside/equipment/sidebar5_off.jpg" width="136" height="18"></a></td>
+        </tr>
+        <tr> 
+          <td><a href="instruments.html" onMouseOver="document.img21_on.src='inside/equipment/sidebar6_on.jpg';" onMouseOut="document.img21_on.src='inside/equipment/sidebar6_off.jpg';"><img name="img21_on" alt="" border="0"  src="inside/equipment/sidebar6_off.jpg" width="136" height="18"></a></td>
+        </tr>
+      </table>
+      <img src="inside/sidebarbot.jpg" width="136" height="183"> </TD>
+    <TD colspan="2" height="481"> 
+      <table border="0" cellspacing="0" cellpadding="0" width="508">
+        <tr> 
+          <td height="32"><img src="inside/equipment/equip_title.jpg" width="434" height="44"></td>
+        </tr>
+        <tr> 
+          <td height="43">&nbsp;</td>
+        </tr>
+      </table>
+      <table border="0" cellspacing="0" cellpadding="0" width="97%">
+        <tr> 
+          <td width="40" nowrap>&nbsp;</td>
+          <td width="97%"> 
+            <table width="542" border="0" cellspacing="0" cellpadding="0">
+              <tr> 
+                <td rowspan="3" nowrap width="60">&nbsp;</td>
+                <td colspan="3" nowrap height="23"><a href="routers.html"><img src="inside/equipment/routertop.gif" width="211" height="23" border="0"></a></td>
+                <td rowspan="3" nowrap width="60">&nbsp;</td>
+                <td nowrap height="23" colspan="3"><a href="switches.html"><img src="inside/equipment/switchtop.gif" width="211" height="23" border="0"></a></td>
+              </tr>
+              <tr> 
+                <td nowrap width="13" height="119"><img src="inside/equipment/leftbar.gif" width="13" height="119"></td>
+                <td nowrap width="185" height="119"><a 
+                  href="routers.html"><img 
+                  height=119 
+                  src="inside/equipment/router_main3.jpg" 
+                  width=185 border=0></a></td>
+                <td nowrap width="13" height="119"><img src="inside/equipment/rightbar.gif" width="13" height="119"></td>
+                <td nowrap width="13" height="119"><img src="inside/equipment/leftbar.gif" width="13" height="119"></td>
+                <td nowrap width="185" height="119"><a href="switches.html"><img src="inside/equipment/switch_main.jpg" width="185" height="119" border="0"></a></td>
+                <td nowrap width="13" height="119"><img src="inside/equipment/rightbar.gif" width="13" height="119"></td>
+              </tr>
+              <tr> 
+                <td colspan="3"><a href="routers.html"><img src="inside/equipment/routertab.gif" width="87" height="31" border="0"></a></td>
+                <td nowrap height="31" colspan="3"><a href="switches.html"><img src="inside/equipment/switchtab.gif" width="87" height="31" border="0"></a></td>
+              </tr>
+            </table>
+            <br>
+            <br>
+            <table width="542" border="0" cellspacing="0" cellpadding="0">
+              <tr> 
+                <td nowrap width="60" rowspan="3">&nbsp;</td>
+                <td nowrap width="211" height="23" colspan="3"><a href="misc.html"><img src="inside/equipment/misctop.gif" width="211" height="23" border="0"></a></td>
+                <td nowrap width="60" rowspan="3">&nbsp;</td>
+                <td width="211" nowrap height="23" colspan="3"><img src="inside/equipment/insttop.gif" width="211" height="23"></td>
+              </tr>
+              <tr> 
+                <td nowrap width="13" height="119"><img src="inside/equipment/leftbar.gif" width="13" height="119"></td>
+                <td nowrap width="185" height="119"><a 
+                  href="misc.html"><img 
+                  height=119 
+                  src="inside/equipment/avaya.jpg" 
+                  width=185 border=0></a></td>
+                <td nowrap width="13" height="119"><img src="inside/equipment/rightbar.gif" width="13" height="119"></td>
+                <td width="13" nowrap height="119"><img src="inside/equipment/leftbar.gif" width="13" height="119"></td>
+                <td width="185" nowrap height="119"><a href="instruments.html"><img src="inside/equipment/instruments.jpg" width="185" height="119" border="0"></a></td>
+                <td width="13" nowrap height="119"><img src="inside/equipment/rightbar.gif" width="13" height="119"></td>
+              </tr>
+              <tr> 
+                <td nowrap width="211" colspan="3"><a href="misc.html"><img src="inside/equipment/misctab.gif" width="95" height="31" border="0"></a></td>
+                <td width="211" nowrap colspan="3"><img src="inside/equipment/insttab.gif" width="95" height="31"></td>
+              </tr>
+            </table>
+            <font face="Arial, Helvetica, sans-serif">&nbsp; </font> </td>
+        </tr>
+      </table>
+    </TD>
+  </TR>
+  <tr> 
+    <td nowrap width="137"> </td>
+    <td width="97%" nowrap> 
+      <hr noshade size="1" align="right">
+      <div align="right"><font face="Arial, Helvetica, sans-serif" size="1"><a href="about2.html">About 
+        the Lab</a> | <a href="equipment.html">Equipment</a> | <a href="sponsors.html">Sponsors 
+        & Donators</a> |<a href="multimedia.html"> Multimedia Lab</a> | <a href="march.html">Schedule</a> 
+        | <a href="distance.html">Distance Learning</a> | <a href="contact.html">Contact</a> 
+        | <a href="index.html">Home </a><br>
+        </font></div>
+      <p align="right">&nbsp;</p>
+    </td>
+    <td width="3%"></td>
+  </tr>
+</TABLE>
+</BODY>
+</HTML>

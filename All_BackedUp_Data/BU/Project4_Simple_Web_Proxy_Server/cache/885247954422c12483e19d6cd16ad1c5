@@ -1,0 +1,210 @@
+1512974277
+HTTP/1.1 200 OK
+Date: Mon, 11 Dec 2017 06:37:57 GMT
+Server: Apache
+Accept-Ranges: bytes
+Content-Length: 11473
+Connection: close
+Content-Type: text/html
+
+<HTML>
+<HEAD>
+
+<TITLE>Telecommunication Systems Lab</TITLE>
+<META NAME="description" content="Interdisciplinary Telecommunications Department - Telecomunication Systems Laboratory"> 
+<LINK REL="Home" HREF="http://itdlab.colorado.edu">
+<LINK REL="stylesheet" TYPE="text/css" HREF="include/style.css">
+<script language="JavaScript" src="include/program.js">
+
+</script>
+</HEAD>
+
+<BODY bgcolor="#FFFFFF" leftmargin=0 topmargin=0 marginheight=0 marginwidth=0 text="#003366" link="#000066" vlink="#000099">
+<TABLE width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr valign="top"> 
+    <TD background="inside/background.jpg" height="77"><img src="inside/banner.jpg" width="269" height="80" border="0"><BR>
+    </TD>
+    <TD align="RIGHT" background="inside/background.jpg" nowrap height="77"><img src="inside/earthtop.jpg" width="75" height="33" border="0"><a href="about2.html" onMouseOver="onImgs('img9')" onMouseOut="offImgs('img9')"><img name="img9" alt="" border="0" src="inside/buttons/inside_off.jpg" width="109" height="33"></a><a href="equipment.html" onMouseOver="onImgs('img10')" onMouseOut="offImgs('img10')"><img name="img10" alt="" border="0" src="inside/buttons/equipment_off.jpg" width="83" height="33"></a><a href="sponsors.html" onMouseOver="onImgs('img11')" onMouseOut="offImgs('img11')"><img name="img11" alt="" border="0"  src="inside/buttons/sponsors_off.jpg" width="143" height="33"></a><br>
+      <img src="inside/earthbot.jpg" width="56" height="47" border="0"><a href="multimedia.html" onMouseOver="onImgs('img12')" onMouseOut="offImgs('img12')"><img name="img12" alt="" border="0" src="inside/buttons/media_off.jpg" width="106" height="47"></a><a href="march.html" onMouseOver="onImgs('img13')" onMouseOut="offImgs('img13')"><img name="img13" alt="" border="0"  src="inside/buttons/schedule_off.jpg" width="69" height="47"></a><a href="distance.html" onMouseOver="onImgs('img14')" onMouseOut="offImgs('img14')"><img name="img14" alt="" border="0"  src="inside/buttons/distance_off.jpg" width="120" height="47"></a><a href="contact.html" onMouseOver="document.img16_on.src='inside/buttons/contact_on.jpg';" onMouseOut="document.img16_on.src='inside/buttons/contact.jpg';"><img name="img16_on" alt="" border="0" src="inside/buttons/contact.jpg" width="59" height="47"></a><br>
+    </TD>
+  </TR>
+</TABLE>
+<TABLE border="0" cellspacing="0" cellpadding="0" width="100%">
+  <TR valign="TOP"> 
+    <TD width="137" height="582" nowrap> 
+      <table width="136" border="0" cellspacing="0" cellpadding="0">
+        <tr> 
+          <td height="9"><img src="inside/sidebar1.jpg" width="136" height="21"></td>
+        </tr>
+        <tr> 
+          <td><a href="contact.html" onMouseOver="document.img17_on.src='inside/contact/sidebar2_on.jpg';" onMouseOut="document.img17_on.src='inside/contact/sidebar2.jpg';"><img name="img17_on" alt="" border="0"  src="inside/contact/sidebar2.jpg" width="136" height="18"></a></td>
+        </tr>
+        <tr> 
+          <td><a href="map.html" onMouseOver="document.img18_on.src='inside/contact/sidebar3_on.jpg';" onMouseOut="document.img18_on.src='inside/contact/sidebar3_off.jpg';"><img name="img18_on" alt="" border="0"  src="inside/contact/sidebar3_off.jpg" width="136" height="18"></a></td>
+        </tr>
+        <tr> 
+          <td><img name="img19_on" alt="" border="0"  src="inside/sidebar4.jpg" width="136" height="18"></td>
+        </tr>
+        <tr> 
+          <td><img name="img20_on" alt="" border="0"  src="inside/sidebar5.jpg" width="136" height="18"></td>
+        </tr>
+        <tr> 
+          <td><img name="img21_on" alt="" border="0"  src="inside/sidebar6.jpg" width="136" height="18"></td>
+        </tr>
+      </table>
+      <img src="inside/sidebarbot.jpg" width="136" height="183"> </TD>
+    <TD colspan="2" height="582"> 
+      <TABLE border="0" cellspacing="0" cellpadding="0" width="379">
+        <TR> 
+          <TD height="82" width="434" nowrap><img src="inside/contact/title.jpg" width="434" height="82"></TD>
+        </TR>
+      </TABLE>
+      <table border="0" cellspacing="0" cellpadding="0" width="97%">
+        <tr> 
+          <td width="40" nowrap>&nbsp;</td>
+          <td width="97%"> 
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr> 
+                <td nowrap> 
+                  <table border="0" cellspacing="0" cellpadding="0" width="428" height="206">
+                    <tr> 
+                      <td colspan="3" height="10"> 
+                        <table border="0" cellspacing="0" cellpadding="0" width="100%">
+                          <tr> 
+                            <td nowrap height="20"> 
+                              <p><img src="inside/contact/topbar.gif" width="450" height="20"></p>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                    <tr valign="top"> 
+                      <td width="310" nowrap rowspan="3"><img src="inside/contact/engineering2.jpg" width="310" height="212"></td>
+                      <td width="140" nowrap><img src="inside/contact/midbar.gif" width="140" height="144"></td>
+                      <td width="1" rowspan="3">&nbsp;</td>
+                    </tr>
+                    <tr valign="top"> 
+                      <td width="140" nowrap><a href="map.html"><img src="inside/contact/bottombar.gif" width="140" height="45" border="0"></a></td>
+                    </tr>
+                    <tr valign="top"> 
+                      <td width="140" nowrap height="31">&nbsp;</td>
+                    </tr>
+                  </table>
+                  <hr size="1" noshade>
+                  <br clear=ALL>
+                  <p><font face="Arial, Helvetica, sans-serif" size="2"><b>Dr. 
+                    Jose Santos</b><br>
+                    Faculty/Lab Manager, Telecommunication Systems Laboratory<br>
+                    Interdisciplinary Telecommunications Program<br>
+                    University of Colorado<br>
+                    Campus Box 530<br>
+                    Boulder, CO 80309<br>
+                    Tel: 303 735-0102<br>
+                    E-mail: <a href="mailto:jose.santos@colorado.edu">Jose.Santos@Colorado.Edu</a></font></p>
+                  
+                  <p><font face="Arial, Helvetica, sans-serif" size="2"><br>
+                    <br>
+                    We welcome any comments or inquiries you might have about 
+                    the Lab. <br>
+                    Please use the form below to contact us:</font></p>
+                  <form action="/cgi-bin/ezformml.cgi" name="formemail" method="POST">
+                    <font face="Arial, Helvetica, sans-serif"> </font> 
+                    <table  width="350" border="0" cellspacing="5" cellpadding="0">
+                      <tr valign=TOP> 
+                        <td align="RIGHT">&nbsp;</td>
+                        <td class="smalltext"><font size="2" face="Arial, Helvetica, sans-serif">Please 
+                          select from one of the <br>
+                          following categories:</font></td>
+                      </tr>
+                      <tr valign=TOP> 
+                        <td align="RIGHT"><font face="Arial, Helvetica, sans-serif" size="2" color="#808080">Information 
+                          <br>
+                          required</font><font color="#808080">:</font></td>
+                        <td> 
+                          <select name="select" size="1" style="font-size: 10pt">
+                            <option value="general">General</option>
+                            <option value="donation">Corporate Relations</option>
+                            <option value="media">Multimedia Media Room</option>
+                          </select>
+                          <input type="hidden" name="subject" value="GENERAL WEBPAGE REQUEST">
+                        </td>
+                      </tr>
+                      <tr valign=TOP> 
+                        <td align="RIGHT"><font size="-1" color="#808080" face="Arial, Helvetica, sans-serif">Your 
+                          comments or queries:</font></td>
+                        <td> 
+                          <textarea name="purpose" rows=5 cols=27></textarea>
+                          <p> 
+                        </td>
+                      </tr>
+                      <tr valign=TOP> 
+                        <td align="RIGHT"><font size="-1" color="#808080" face="Arial, Helvetica, sans-serif">Name:</font></td>
+                        <td> 
+                          <input type="text" size="25" name="name">
+                          <br>
+                        </td>
+                      </tr>
+                      <tr valign=TOP> 
+                        <td align="RIGHT"><font size="-1" color="#808080" face="Arial, Helvetica, sans-serif">Company:</font></td>
+                        <td> 
+                          <input type="test" name="company">
+                          <br>
+                        </td>
+                      </tr>
+                      <tr valign=TOP> 
+                        <td align="RIGHT"><font size="-1" color="#808080" face="Arial, Helvetica, sans-serif">Address:</font></td>
+                        <td> 
+                          <textarea name="address" rows=3 cols=27></textarea>
+                          <br>
+                        </td>
+                      </tr>
+                      <tr valign=TOP> 
+                        <td align="RIGHT"><font size="-1" color="#808080" face="Arial, Helvetica, sans-serif">Tel:</font></td>
+                        <td> 
+                          <input type="text" name="tel">
+                          <br>
+                        </td>
+                      </tr>
+                      <tr valign=TOP> 
+                        <td align="RIGHT"><font size="-1" color="#808080" face="Arial, Helvetica, sans-serif">E-mail:</font></td>
+                        <td> 
+                          <input type="text" name="email">
+                          <p> 
+                        </td>
+                      </tr>
+                      <tr valign=TOP> 
+                        <td><font face="Arial, Helvetica, sans-serif">&nbsp;</font></td>
+                        <td> 
+                          <input type="SUBMIT" value="Send Form" name="SUBMIT">
+                          <input type="RESET" value="Clear Form" name="RESET">
+                          <p> 
+                        </td>
+                      </tr>
+                    </table>
+                  </form>
+                </td>
+              </tr>
+            </table>
+            <p><font face="Arial, Helvetica, sans-serif"> </font> </p>
+          </td>
+        </tr>
+      </table>
+    </TD>
+  </TR>
+  <tr> 
+    <td nowrap width="137"> </td>
+    <td width="97%" nowrap> 
+      <hr noshade size="1" align="right">
+      <div align="right"><font face="Arial, Helvetica, sans-serif" size="1"><a href="about2.html">About 
+        the Lab</a> | <a href="equipment.html">Equipment</a> | <a href="sponsors.html">Sponsors 
+        & Donators</a> |<a href="multimedia.html"> Multimedia Lab</a> | <a href="march.html">Schedule</a> 
+        | <a href="distance.html">Distance Learning</a> | <a href="contact.html">Contact</a> 
+        | <a href="index.html">Home </a><br>
+        </font></div>
+      <p align="right">&nbsp;</p>
+    </td>
+    <td width="3%"></td>
+  </tr>
+</TABLE>
+</BODY>
+</HTML>
