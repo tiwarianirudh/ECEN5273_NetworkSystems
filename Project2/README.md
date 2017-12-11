@@ -20,20 +20,20 @@
 **Functionality**
 
 >1. Basic functionality is implemented with error handling for:
->>a. 400 BAD REQUEST for METHOD, URL and VERSION.
->>b. 404 NOT FOUND.
->>c. 501 NOT IMPLEMENTED METHOD.
->>d. 500 INTERNAL SERVER ERROR.
+>> 400 BAD REQUEST for METHOD, URL and VERSION.
+>> 404 NOT FOUND.
+>> 501 NOT IMPLEMENTED METHOD.
+>> 500 INTERNAL SERVER ERROR.
 
 >2. ws.conf The configuration file:
->>a. Check for port number.
->>b. Checks for document root.
->>c. Checks for file requested, its content type and the extension.
+>> Check for port number.
+>> Checks for document root.
+>> Checks for file requested, its content type and the extension.
 
 >3. POST is implemented and can be tested by using telnet and typing in a valid request
 
 >4. Keep alive is implemented with lesser accuracy
->>a. Could not complete the Pipelining but stil the code checks for all the basic functionalities
+>> Could not complete the Pipelining but stil the code checks for all the basic functionalities
 
 
 
