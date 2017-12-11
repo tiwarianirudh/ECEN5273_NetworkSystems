@@ -3,16 +3,14 @@
 ### Author: *Anirudh Tiwari*
 ### University of Colorado Boulder  
 
-Telnet: (echo -en "GET http://www.caida.org/home/ HTTP/1.0\n\n"; sleep 1) | telnet 127.0.0.1 10001
-
 **Objective**
 >a. In this programming assignment, a simple web proxy server is built that is capable of accepting HTTP requests from clients, pass them to HTTP server and handle returning traffic from the HTTP server back to clients.
 >b. As a part of Extra Credit, build on top of caching and content transformation code, the last piece of functionality that is called link prefetching.
 
 **Instruction for Running the code**
->Step 1: make clean
->Step 2: make
->Step 3: ./webproxy <port number> <Cache Expiration time> {For My Mozilla browser Cache setting is for port number 10001}
+>a. Step 1: make clean
+>b. Step 2: make
+>c. Step 3: ./webproxy <port number> <Cache Expiration time> {For My Mozilla browser Cache setting is for port number 10001}
 
 **Features Implemented**
 >1. Multi-threaded Proxy.
