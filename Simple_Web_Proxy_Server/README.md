@@ -21,7 +21,7 @@
 >1. Link Prefetching.
 
 **Implementation**
->a. Proxy Implementation
+>a. **Proxy Implementation**
 >1. Browser sends request to the acting middle-man, the proxy server.
 >2. The Proxy Server checks for a Valid Get Request (ONLY Get are supported) and throws a 400 Bad Request error on being Invalid.
 >3. The Proxy Server Then checks for a Valid HTTP version, HTTP 1.0/1.1 and throws a 400 Bad Request Error on the version being Invalid.
@@ -30,12 +30,12 @@
 >6. If the hostname is not present in cache file, the Proxy Server checks for Hostname Validity, whether the IP generated is Valid or not.
 >7. Upon Validation, the request is sent to the host.
 
->b. Caching and Timeout Implementation
+>b. **Caching and Timeout Implementation**
 >1. MD5 hashing is used to generated the filename for cached files from their respective request url. Thus each URL request is stored seperatedly in cache.
 >2. The response from the host is written into the cache file with the current-time being written to the start of the file for cache-expiration check.
 >3. These cached files if requested within the specified time for expiration are served to the client else are removed from the cache and are requested again from the Host to create a fresh cache.
 
->c. Link Prefetching (Extra-Credit Part)
+>c. **Link Prefetching (Extra-Credit Part)**
 >1. The cached files for a particular request are opened in order to check for any links to be pre-fetched. If there are any, the process is forked and the particular link is prefetched.
 >2. The prefetched links are stored in the same manner with their time of creation written at the starting of the files and same cache check Implementation.
 >3. Link prefetching (If tested by disconnecting the Internet Service) would not display any embed images because the prefetching would only get data from the URL.
