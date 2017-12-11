@@ -8,9 +8,9 @@
 >b. As a part of Extra Credit, build on top of caching and content transformation code, the last piece of functionality that is called link prefetching.
 
 **Instruction for Running the code**
->a. Step 1: make clean
->b. Step 2: make
->c. Step 3: ./webproxy <port number> <Cache Expiration time> {For My Mozilla browser Cache setting is for port number 10001}
+>a. Step 1: make clean .
+>b. Step 2: make .
+>c. Step 3: "./webproxy <port number> <Cache Expiration time> & "  {For My Mozilla browser Cache setting is for port number 10001}
 
 **Features Implemented**
 >1. Multi-threaded Proxy.
