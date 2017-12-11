@@ -27,25 +27,29 @@ README.txt
 
 **Commands expected from the user:**
 
->1. get <filename>
-> To get the ENCRYPTED file from the server if it exists and DECRYPT it.
-> If it is not available on the server then display the error message.
+>a. get <filename> .
+>1. To get the ENCRYPTED file from the server if it exists and DECRYPT it.
+>2. If it is not available on the server then display the error message.
 
->2. put <filename>
-> To transfer the ENCRYPTED file from client onto the server, if it exists on the client, and DECRYPT it on the server.
-> Displays error message on the client terminal/console if the file does not exist
-> Check for the error on client and terminate the write operation if there is error at the client.
+>b. put <filename> .
+>1. To transfer the ENCRYPTED file from client onto the server, if it exists on the client, and DECRYPT it on the server.
+>2. Displays error message on the client terminal/console if the file does not exist
+>3. Check for the error on client and terminate the write operation if there is error at the client.
 
->3. ls
-> Display on the client console/terminal list of files available at the server
-> The server sends an error message if it is unable to read into the directory of the server.
+>c. ls .
+>1. Display on the client console/terminal list of files available at the server
+>2. The server sends an error message if it is unable to read into the directory of the server.
 
->4. exit
-> The client requests the server to close the socket connection.
-> The server sends the release connection message to the client and gracefully exit the connection closing the socket.
+>d. exit .
+>1. The client requests the server to close the socket connection.
+>2. The server sends the release connection message to the client and gracefully exit the connection closing the socket.
 
->5. For other commands
-> Both the server and the client display Unsupported Command.
+>e. delete .
+>1. The client requests the server to delete the file.
+>2. The server deletes the file if available.
+
+>f. For other commands.
+>1. Both the server and the client display Unsupported Command.
 
 
 
