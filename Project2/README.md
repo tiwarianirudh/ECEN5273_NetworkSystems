@@ -21,13 +21,18 @@
 
 >1. Basic functionality is implemented with error handling for:
 >> 400 BAD REQUEST for METHOD, URL and VERSION.
+
 >> 404 NOT FOUND.
+
 >> 501 NOT IMPLEMENTED METHOD.
+
 >> 500 INTERNAL SERVER ERROR.
 
 >2. ws.conf The configuration file:
 >> Check for port number.
+
 >> Checks for document root.
+
 >> Checks for file requested, its content type and the extension.
 
 >3. POST is implemented and can be tested by using telnet and typing in a valid request
