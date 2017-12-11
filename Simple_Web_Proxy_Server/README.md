@@ -6,8 +6,8 @@
 Telnet: (echo -en "GET http://www.caida.org/home/ HTTP/1.0\n\n"; sleep 1) | telnet 127.0.0.1 10001
 
 **Objective**
->In this programming assignment, a simple web proxy server is built that is capable of accepting HTTP requests from clients, pass them to HTTP server and handle returning traffic from the HTTP server back to clients.
->As a part of Extra Credit, build on top of caching and content transformation code, the last piece of functionality that is called link prefetching.
+>a. In this programming assignment, a simple web proxy server is built that is capable of accepting HTTP requests from clients, pass them to HTTP server and handle returning traffic from the HTTP server back to clients.
+>b. As a part of Extra Credit, build on top of caching and content transformation code, the last piece of functionality that is called link prefetching.
 
 **Instruction for Running the code**
 >Step 1: make clean
@@ -23,7 +23,7 @@ Telnet: (echo -en "GET http://www.caida.org/home/ HTTP/1.0\n\n"; sleep 1) | teln
 >1. Link Prefetching.
 
 **Implementation**
-Proxy Implementation
+>a. Proxy Implementation
 >1. Browser sends request to the acting middle-man, the proxy server.
 >2. The Proxy Server checks for a Valid Get Request (ONLY Get are supported) and throws a 400 Bad Request error on being Invalid.
 >3. The Proxy Server Then checks for a Valid HTTP version, HTTP 1.0/1.1 and throws a 400 Bad Request Error on the version being Invalid.
@@ -32,21 +32,21 @@ Proxy Implementation
 >6. If the hostname is not present in cache file, the Proxy Server checks for Hostname Validity, whether the IP generated is Valid or not.
 >7. Upon Validation, the request is sent to the host.
 
-Caching and Timeout Implementation
+>b. Caching and Timeout Implementation
 >1. MD5 hashing is used to generated the filename for cached files from their respective request url. Thus each URL request is stored seperatedly in cache.
 >2. The response from the host is written into the cache file with the current-time being written to the start of the file for cache-expiration check.
 >3. These cached files if requested within the specified time for expiration are served to the client else are removed from the cache and are requested again from the Host to create a fresh cache.
 
-Link Prefetching (Extra-Credit Part)
+>c. Link Prefetching (Extra-Credit Part)
 >1. The cached files for a particular request are opened in order to check for any links to be pre-fetched. If there are any, the process is forked and the particular link is prefetched.
 >2. The prefetched links are stored in the same manner with their time of creation written at the starting of the files and same cache check Implementation.
 >3. Link prefetching (If tested by disconnecting the Internet Service) would not display any embed images because the prefetching would only get data from the URL.
 
 **Websites Tested**
-Browser
+>a. Browser
 >1. morse.colorado.edu
 >2. caida.org
 >3. cplusplus.com
 
-Telnet
+>b. Telnet
 >1. For Single request, tested: Telnet: (echo -en "GET http://www.caida.org/home/ HTTP/1.0\n\n"; sleep 1) | telnet 127.0.0.1 10001
